@@ -26,9 +26,5 @@ public interface UserService {
 
     // 회원 탈퇴
     void deleteUser(Long userId);
-
-//	String getPassword(int userSeq);
-
-//	String getUserId(int userSeq);
 	
 }
