@@ -1,0 +1,65 @@
+package com.ssafy.eatnote.config.jwt;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.ssafy.eatnote.model.dto.User;
+import com.ssafy.eatnote.model.service.UserService;
+
+import java.io.IOException;
+
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService) {
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+                                    throws ServletException, IOException {
+
+        String token = extractToken(request);
+
+        if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
+            String userId = jwtUtil.getUserId(token);
+
+            // DB에서 사용자 조회 (권한 정보 포함)
+            User user = userService.getUserById(Long.parseLong(userId));
+            if (user != null) {
+                // 인증 객체 생성
+                UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(user, null, null); // 권한이 있다면 authorities 추가
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // SecurityContext에 인증 정보 설정
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
+
+        // 다음 필터로 진행
+        filterChain.doFilter(request, response);
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+            return header.substring(7); // "Bearer " 이후의 토큰만 추출
+        }
+        return null;
+    }
+}
