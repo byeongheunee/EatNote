@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.ssafy.eatnote.model.dao.MemberDao">
+
+    <insert id="insertMemberDetails" parameterType="MemberDetails">
+        INSERT INTO member_details (
+            user_id, height, weight, body_water, protein, mineral,
+            body_fat, skeletal_muscle, body_fat_mass, bmi, body_fat_percentage,
+            goal, trainer_id
+        ) VALUES (
+            #{userId}, #{height}, #{weight}, #{bodyWater}, #{protein}, #{mineral},
+            #{bodyFat}, #{skeletalMuscle}, #{bodyFatMass}, #{bmi}, #{bodyFatPercentage},
+            #{goal}, #{trainerId}
+        )
+    </insert>
+
+</mapper>

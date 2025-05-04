@@ -10,7 +10,7 @@ import com.ssafy.eatnote.model.dto.User;
 public interface UserDao {
 
 	// 회원가입
-	void insertUser(User user);
+	boolean insertUser(User user);
 
 //    // 로그인 (userId, userPwd로 조회)
 //    User selectUserByIdAndPwd(String userId, String userPwd) throws Exception;
@@ -25,9 +25,14 @@ public interface UserDao {
 	List<User> selectAllUsers();
 
 	// 회원정보 수정
-	void updateUser(User user);
+	boolean updateUser(User user);
 
 	// userId로 사용자 삭제
-	void deleteUserById(Long userId);
+	boolean deleteUserById(Long userId);
+	
+	// email 확인
+	boolean existsByEmail(String email);
 
+	// 닉네임 중복 체크
+	int countByNickname(String nickname);
 }

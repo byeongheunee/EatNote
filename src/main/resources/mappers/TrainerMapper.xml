@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.ssafy.eatnote.model.dao.TrainerDao">
+
+    <insert id="insertTrainerDetails" parameterType="TrainerDetails">
+        INSERT INTO trainer_details (
+            user_id, phone, address, gym_name, gym_website, certification_number,
+            certification_image, business_number, introduction, career,
+            instagram_url, is_verified
+        ) VALUES (
+            #{userId}, #{phone}, #{address}, #{gymName}, #{gymWebsite}, #{certificationNumber},
+            #{certificationImage}, #{businessNumber}, #{introduction}, #{career},
+            #{instagramUrl}, #{isVerified}
+        )
+    </insert>
+
+</mapper>

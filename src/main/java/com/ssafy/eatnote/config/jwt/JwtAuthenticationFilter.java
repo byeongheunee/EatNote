@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -19,11 +20,14 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final ApplicationContext applicationContext;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService) {
+    // Lazy 로딩
+    private UserService userService;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, ApplicationContext applicationContext) {
         this.jwtUtil = jwtUtil;
-        this.userService = userService;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -37,6 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
             String userId = jwtUtil.getUserId(token);
 
+            // Lazy하게 한 번만 UserService 불러오기
+            if (userService == null) {
+                userService = applicationContext.getBean(UserService.class);
+            }
+            
             // DB에서 사용자 조회 (권한 정보 포함)
             User user = userService.getUserById(Long.parseLong(userId));
             if (user != null) {

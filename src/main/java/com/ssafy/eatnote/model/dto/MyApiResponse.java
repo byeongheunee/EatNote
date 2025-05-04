@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Schema(description = "공통 응답 객체")
-public class ApiResponse<T> {
+public class MyApiResponse<T> {
 
 	@Schema(description = "요청 성공 여부", example = "true")
 	private boolean success;
@@ -24,13 +24,13 @@ public class ApiResponse<T> {
 	private String message;
 
 	// 성공 응답 (데이터 + 코드 + 메시지)
-	public static <T> ApiResponse<T> success(T data, String code, String message) {
-		return ApiResponse.<T>builder().success(true).data(data).code(code).message(message).build();
+	public static <T> MyApiResponse<T> success(T data, String code, String message) {
+		return MyApiResponse.<T>builder().success(true).data(data).code(code).message(message).build();
 	}
 
 	// 실패 응답 (코드 + 메시지)
-	public static <T> ApiResponse<T> failure(String code, String message) {
-		return ApiResponse.<T>builder().success(false).code(code).message(message).build();
+	public static <T> MyApiResponse<T> failure(String code, String message) {
+		return MyApiResponse.<T>builder().success(false).code(code).message(message).build();
 	}
 }
 
