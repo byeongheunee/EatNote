@@ -1,4 +1,7 @@
-package com.ssafy.eatnote.model.dto;
+package com.ssafy.eatnote.model.dto.request;
+
+import com.ssafy.eatnote.model.dto.MemberDetails;
+import com.ssafy.eatnote.model.dto.TrainerDetails;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

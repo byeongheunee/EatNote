@@ -62,11 +62,19 @@ CREATE TABLE users (
 );
 
 
-INSERT INTO users (
-  email, password, name, nickname, gender, user_type, status
-) VALUES (
-  'test@example.com', 'encoded_password', '테스트유저', 'testuser', 'M', 2, 'ACTIVE'
-);
+-- 트레이너 3명
+INSERT INTO users (email, password, name, nickname, gender, user_type, status)
+VALUES 
+('trainer1@fitbob.com', 'hashed_pw_1', '김트레이너', 'trainerkim', 'M', 1, 'ACTIVE'),
+('trainer2@fitbob.com', 'hashed_pw_2', '이트레이너', 'trainerlee', 'F', 1, 'ACTIVE'),
+('trainer3@fitbob.com', 'hashed_pw_3', '박트레이너', 'trainerpark', 'M', 1, 'ACTIVE');
+
+-- 회원 3명
+INSERT INTO users (email, password, name, nickname, gender, user_type, status)
+VALUES 
+('member1@fitbob.com', 'hashed_pw_4', '최회원', 'memberchoi', 'M', 2, 'ACTIVE'),
+('member2@fitbob.com', 'hashed_pw_5', '장회원', 'memberjang', 'F', 2, 'ACTIVE'),
+('member3@fitbob.com', 'hashed_pw_6', '윤회원', 'memberyoon', 'F', 2, 'ACTIVE');
 
 -- ---------------------------------------------------------------------
 -- `member_details` <<< ENUM 정보
@@ -110,6 +118,15 @@ CREATE TABLE member_details (
         ON UPDATE CASCADE
 );
 
+INSERT INTO member_details (
+    user_id, height, weight, body_water, protein, mineral,
+    body_fat, skeletal_muscle, body_fat_mass, bmi,
+    body_fat_percentage, goal, trainer_id
+)
+VALUES
+(4, 175.5, 70.0, 50.0, 13.2, 3.5, 18.5, 28.0, 13.0, 22.8, 18.5, '감량', 1),
+(5, 160.0, 55.0, 45.2, 12.1, 3.0, 15.0, 25.3, 10.5, 21.5, 17.3, '유지', 2),
+(6, 180.0, 85.0, 52.0, 16.5, 3.8, 20.0, 30.0, 15.0, 26.2, 19.5, '증량', 3);
 
 -- ---------------------------------------------------------------------
 -- Table `trainer_details` <<< 트레이너 추가 정보
@@ -132,7 +149,15 @@ CREATE TABLE trainer_details (
         ON UPDATE CASCADE
 );
 
-
+INSERT INTO trainer_details (
+    user_id, phone, address, gym_name, gym_website,
+    certification_number, certification_image, business_number,
+    introduction, career, instagram_url, is_verified
+)
+VALUES 
+(1, '010-1111-2222', '서울 강남구', '핏밥짐 강남', 'https://fitbob1.com', 'CERT-001', '/uploads/cert/cert1.png', '123-45-67890', '열정의 트레이너입니다.', '2020~2024 핏밥짐 강남', 'https://instagram.com/trainerkim', true),
+(2, '010-2222-3333', '서울 송파구', '핏밥짐 송파', 'https://fitbob2.com', 'CERT-002', '/uploads/cert/cert2.png', '234-56-78901', '탄탄하게 만들어드릴게요.', '2019~2023 핏밥짐 송파', 'https://instagram.com/trainerlee', true),
+(3, '010-3333-4444', '서울 마포구', '핏밥짐 마포', 'https://fitbob3.com', 'CERT-003', '/uploads/cert/cert3.png', '345-67-89012', '건강한 습관을 길러드려요.', '2018~2022 핏밥짐 마포', 'https://instagram.com/trainerpark', true);
 
 -- ---------------------------------------------------------------------
 -- `user_follow` <<< ENUM 정보

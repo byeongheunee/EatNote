@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.ssafy.eatnote.model.dao.FollowDao">
+
+    <!-- 중복 확인 -->
+    <select id="existsByFromAndTo" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM user_follow
+            WHERE from_user_id = #{fromUserId}
+              AND to_user_id = #{toUserId}
+              AND status != 'REJECTED'
+        )
+    </select>
+
+    <!-- 팔로우 요청 등록 -->
+    <insert id="insertFollow">
+        INSERT INTO user_follow (from_user_id, to_user_id, status, requested_at)
+        VALUES (#{fromUserId}, #{toUserId}, 'PENDING', NOW())
+    </insert>
+
+</mapper>

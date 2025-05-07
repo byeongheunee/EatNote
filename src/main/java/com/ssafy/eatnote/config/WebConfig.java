@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:///C:/eatnote-uploads/");
+        registry.addResourceHandler("/uploads/profile/**")
+                .addResourceLocations("file:src/main/resources/static/uploads/profile/");
     }
 }

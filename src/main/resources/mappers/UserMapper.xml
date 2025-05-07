@@ -16,7 +16,7 @@
     </insert>
 
     <!-- user_id(PK)로 사용자 조회 -->
-    <select id="selectUserBySeq" parameterType="long" resultType="User">
+    <select id="selectUserById" parameterType="long" resultType="User">
         SELECT *
           FROM users
          WHERE user_id = #{userId}
@@ -70,5 +70,21 @@
 	     WHERE nickname = #{nickname}
 	</select>
     
+    <!-- 닉네임으로 유저 조회 -->
+    <select id="findByNickname" parameterType="string" resultType="User">
+        SELECT *
+          FROM users
+         WHERE nickname = #{nickname}
+         LIMIT 1
+    </select>
+
+    <!-- 트레이너 여부 확인 -->
+    <select id="isTrainer" parameterType="long" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+              FROM trainer_details
+             WHERE user_id = #{userId}
+        )
+    </select>
 
 </mapper>

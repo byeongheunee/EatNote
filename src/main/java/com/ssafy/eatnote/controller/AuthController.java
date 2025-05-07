@@ -1,12 +1,12 @@
 package com.ssafy.eatnote.controller;
 
 import com.ssafy.eatnote.config.jwt.JwtUtil;
-import com.ssafy.eatnote.model.dto.MyApiResponse;
 import com.ssafy.eatnote.model.dto.TrainerDetails;
-import com.ssafy.eatnote.model.dto.LoginRequest;
 import com.ssafy.eatnote.model.dto.MemberDetails;
 import com.ssafy.eatnote.model.dto.User;
+import com.ssafy.eatnote.model.dto.request.LoginRequest;
 import com.ssafy.eatnote.model.dto.response.MemberDetailsResponse;
+import com.ssafy.eatnote.model.dto.response.MyApiResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerDetailsResponse;
 import com.ssafy.eatnote.model.dto.response.UserResponse;
 import com.ssafy.eatnote.model.service.MemberService;

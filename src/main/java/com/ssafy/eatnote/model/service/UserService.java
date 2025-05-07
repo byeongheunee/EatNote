@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.eatnote.model.dto.User;
-import com.ssafy.eatnote.model.dto.UserRegisterRequest;
+import com.ssafy.eatnote.model.dto.request.UserRegisterRequest;
 
 public interface UserService {
 	

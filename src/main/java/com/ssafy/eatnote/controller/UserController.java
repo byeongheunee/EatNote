@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.eatnote.model.dto.MyApiResponse;
-import com.ssafy.eatnote.model.dto.UserRegisterRequest;
-import com.ssafy.eatnote.model.dto.VerifyCodeRequest;
+import com.ssafy.eatnote.model.dto.request.UserRegisterRequest;
+import com.ssafy.eatnote.model.dto.request.VerifyCodeRequest;
+import com.ssafy.eatnote.model.dto.response.MyApiResponse;
 import com.ssafy.eatnote.model.service.AuthCodeStorageService;
 import com.ssafy.eatnote.model.service.EmailService;
 import com.ssafy.eatnote.model.service.UserService;
@@ -80,8 +80,8 @@ public class UserController {
     	log.info("📩 입력한 코드: {}", request.getCode());
     	
     	if (request.getEmail() == null || request.getCode() == null) {
-            return ResponseEntity.badRequest().body(MyApiResponse.failure("EMAIL_CODE_INVALID", "이메일 또는 인증 코드가 누락되었습니다."));
-        }
+    	    throw new IllegalArgumentException("이메일 또는 인증 코드가 누락되었습니다.");
+    	}
     	
         boolean result = authCodeStorageService.verifyCode(request.getEmail(), request.getCode());
 
@@ -95,10 +95,9 @@ public class UserController {
     @GetMapping("/check-nickname")
     @Operation(summary = "닉네임 중복 확인", description = "닉네임이 사용 가능한지 확인합니다.")
     public ResponseEntity<MyApiResponse<Boolean>> checkNickname(@RequestParam String nickname) {
-        if (nickname == null || nickname.isBlank()) {
-            return ResponseEntity.badRequest()
-                .body(MyApiResponse.failure("NICKNAME_EMPTY", "닉네임을 입력해주세요."));
-        }
+    	if (nickname == null || nickname.isBlank()) {
+    	    throw new IllegalArgumentException("닉네임을 입력해주세요.");
+    	}
 
         boolean available = userService.isNicknameAvailable(nickname);
 
@@ -112,28 +111,26 @@ public class UserController {
     
     @Operation(summary = "회원가입", description = "회원 정보를 등록합니다.")
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MyApiResponse<String>> registerUser(
+    public ResponseEntity<MyApiResponse<Void>> registerUser(
         @RequestPart("user") String userJson,
         @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            UserRegisterRequest request = mapper.readValue(userJson, UserRegisterRequest.class);
+        ObjectMapper mapper = new ObjectMapper();
+        UserRegisterRequest request = null;
 
-            boolean success = userService.registerUser(request, file);
-            if (success) {
-                return ResponseEntity.ok(
-                    MyApiResponse.success(null, "AUTH_REGISTER_SUCCESS", "회원가입 성공")
-                );
-            } else {
-                return ResponseEntity.badRequest().body(
-                    MyApiResponse.failure("AUTH_REGISTER_FAILED", "회원가입 실패")
-                );
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(MyApiResponse.failure("INTERNAL_SERVER_ERROR", "회원가입 중 오류 발생: " + e.getMessage()));
+        try {
+            request = mapper.readValue(userJson, UserRegisterRequest.class);
+        } catch (IOException e) {
+            // JSON 파싱 오류는 명확한 잘못된 요청이므로 IllegalArgumentException 처리
+            throw new IllegalArgumentException("회원 정보 형식이 잘못되었습니다.");
         }
+
+        boolean success = userService.registerUser(request, file);
+        if (!success) {
+            throw new IllegalStateException("회원가입 처리에 실패했습니다.");
+        }
+
+        return ResponseEntity.ok(MyApiResponse.success(null, "AUTH_REGISTER_SUCCESS", "회원가입 성공"));
     }
     
 }

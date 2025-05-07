@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import com.ssafy.eatnote.model.dao.UserDao;
 import com.ssafy.eatnote.model.dto.MemberDetails;
 import com.ssafy.eatnote.model.dto.TrainerDetails;
 import com.ssafy.eatnote.model.dto.User;
-import com.ssafy.eatnote.model.dto.UserRegisterRequest;
+import com.ssafy.eatnote.model.dto.request.UserRegisterRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
     private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+    
     @Override
     @Transactional
     public boolean registerUser(UserRegisterRequest request, MultipartFile file) {
@@ -51,8 +55,7 @@ public class UserServiceImpl implements UserService {
         // 이미지 업로드 처리
         if (file != null && !file.isEmpty()) {
             try {
-                String fileName = "profile_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                String uploadDir = "C:/eatnote-uploads/profile"; // 실제 운영 서버의 파일 저장 경로
+            	String fileName = "profile_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
                 // ✅ 디렉토리 존재 확인 및 생성
                 File dir = new File(uploadDir);
@@ -112,7 +115,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserById(Long userId) {
-		return userDao.selectUserBySeq(userId);
+		return userDao.selectUserById(userId);
 	}
 
 	@Override
