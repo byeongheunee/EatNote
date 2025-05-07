@@ -46,22 +46,24 @@ public class UserController {
 
     @GetMapping("/check-email")
     @Operation(summary = "이메일 중복 확인", description = "입력한 이메일이 이미 가입되어 있는지 확인합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "사용 가능한 이메일", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "409", description = "이미 등록된 이메일", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<MyApiResponse<Boolean>> checkEmailDuplicate(@RequestParam String email) {
         boolean duplicated = userService.isEmailDuplicated(email);
 
         if (duplicated) {
-            return ResponseEntity.ok(
-                MyApiResponse.success(true, "USER_EMAIL_DUPLICATED", "이미 사용 중인 이메일입니다.")
-            );
-        } else {
-            return ResponseEntity.ok(
-                MyApiResponse.success(false, "USER_EMAIL_AVAILABLE", "사용 가능한 이메일입니다.")
-            );
+            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
         }
+        return ResponseEntity.ok(MyApiResponse.success(false, "USER_EMAIL_AVAILABLE", "사용 가능한 이메일입니다."));
     }
     
     @PostMapping("/send-code")
     @Operation(summary = "이메일 인증 코드 발송", description = "입력한 이메일로 인증 코드를 전송합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "인증 코드 전송 성공", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<MyApiResponse<Void>> sendAuthCode(@RequestParam String email) {
         String authCode = generateRandomCode();
         emailService.sendAuthCode(email, authCode);
@@ -75,6 +77,11 @@ public class UserController {
     
     @PostMapping("/verify-code")
     @Operation(summary = "이메일 인증 코드 검증", description = "사용자가 입력한 인증 코드가 유효한지 확인합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "인증 성공", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "400", description = "이메일 또는 코드 누락", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "409", description = "인증 실패 (만료 또는 불일치)", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<MyApiResponse<Void>> verifyAuthCode(@RequestBody VerifyCodeRequest request) {
     	log.info("📩 요청 받은 이메일: {}", request.getEmail());
     	log.info("📩 입력한 코드: {}", request.getCode());
@@ -85,15 +92,20 @@ public class UserController {
     	
         boolean result = authCodeStorageService.verifyCode(request.getEmail(), request.getCode());
 
-        if (result) {
-            return ResponseEntity.ok(MyApiResponse.success(null, "EMAIL_CODE_VERIFIED", "인증 코드가 확인되었습니다."));
-        } else {
-            return ResponseEntity.badRequest().body(MyApiResponse.failure("EMAIL_CODE_INVALID", "인증 코드가 올바르지 않거나 만료되었습니다."));
+        if (!result) {
+            throw new IllegalStateException("인증 코드가 올바르지 않거나 만료되었습니다.");
         }
+
+        return ResponseEntity.ok(MyApiResponse.success(null, "EMAIL_CODE_VERIFIED", "인증 코드가 확인되었습니다."));
     }
     
     @GetMapping("/check-nickname")
     @Operation(summary = "닉네임 중복 확인", description = "닉네임이 사용 가능한지 확인합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "사용 가능", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "400", description = "닉네임 누락", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "409", description = "닉네임 중복", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<MyApiResponse<Boolean>> checkNickname(@RequestParam String nickname) {
     	if (nickname == null || nickname.isBlank()) {
     	    throw new IllegalArgumentException("닉네임을 입력해주세요.");
@@ -109,8 +121,13 @@ public class UserController {
         }
     }
     
-    @Operation(summary = "회원가입", description = "회원 정보를 등록합니다.")
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "회원가입", description = "회원 정보를 등록합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "400", description = "회원 정보 JSON 파싱 실패", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "409", description = "회원가입 처리 실패", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<MyApiResponse<Void>> registerUser(
         @RequestPart("user") String userJson,
         @RequestPart(value = "file", required = false) MultipartFile file

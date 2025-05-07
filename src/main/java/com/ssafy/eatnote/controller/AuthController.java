@@ -8,13 +8,17 @@ import com.ssafy.eatnote.model.dto.request.LoginRequest;
 import com.ssafy.eatnote.model.dto.response.MemberDetailsResponse;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerDetailsResponse;
-import com.ssafy.eatnote.model.dto.response.UserResponse;
+import com.ssafy.eatnote.model.dto.response.UserDetailResponse;
 import com.ssafy.eatnote.model.service.MemberService;
 import com.ssafy.eatnote.model.service.TrainerService;
 import com.ssafy.eatnote.model.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -37,8 +41,13 @@ public class AuthController {
     private final MemberService memberService;
     private final TrainerService trainerService;
 
-    @Operation(summary = "로그인", description = "이메일과 비밀번호를 사용하여 로그인하고 JWT 토큰을 발급받습니다.")
     @PostMapping("/login")
+    @Operation(summary = "로그인", description = "이메일과 비밀번호를 사용하여 로그인하고 JWT 토큰을 발급받습니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "401", description = "이메일 또는 비밀번호 틀림", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
@@ -58,8 +67,14 @@ public class AuthController {
         return ResponseEntity.ok(MyApiResponse.success(token, "USER_LOGIN_SUCCESS", "로그인에 성공했습니다."));
     }
     
-    @Operation(summary = "내 정보 조회", description = "JWT 토큰을 통해 로그인된 사용자의 정보를 조회합니다.")
     @GetMapping("/me")
+    @Operation(summary = "내 정보 조회", description = "JWT 토큰을 통해 로그인된 사용자의 정보를 조회합니다.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "401", description = "JWT 토큰 누락 또는 유효하지 않음", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "404", description = "해당 사용자 없음", content = @Content(schema = @Schema(implementation = MyApiResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류", content = @Content(schema = @Schema(implementation = MyApiResponse.class)))
+    })
     public ResponseEntity<?> getMyInfo(HttpServletRequest request) {
         // 1. 토큰 추출 및 유효성 검사
         String token = jwtUtil.resolveToken(request);
@@ -77,7 +92,7 @@ public class AuthController {
         }
 
         // 3. 공통 User 정보 변환
-        UserResponse userResponse = UserResponse.from(user);
+        UserDetailResponse userResponse = UserDetailResponse.from(user);
 
         // 4. 상세 정보 분기
         Map<String, Object> response = new HashMap<>();

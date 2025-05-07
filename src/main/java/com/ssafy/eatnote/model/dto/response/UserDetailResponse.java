@@ -13,7 +13,7 @@ import com.ssafy.eatnote.model.dto.User;
 @AllArgsConstructor
 @Builder
 @Schema(description = "사용자 기본 응답 DTO")
-public class UserResponse {
+public class UserDetailResponse {
 
     @Schema(description = "이메일", example = "test@example.com")
     private String email;
@@ -34,8 +34,8 @@ public class UserResponse {
     private LocalDateTime createdAt;
 
     // 정적 팩토리 메서드 (Entity → Response 변환용)
-    public static UserResponse from(User user) {
-        return UserResponse.builder()
+    public static UserDetailResponse from(User user) {
+        return UserDetailResponse.builder()
                 .email(user.getEmail())
                 .name(user.getName())
                 .nickname(user.getNickname())
