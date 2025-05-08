@@ -10,6 +10,7 @@ import com.ssafy.eatnote.model.dto.response.MyApiResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerDetailsResponse;
 import com.ssafy.eatnote.model.dto.response.UserDetailResponse;
 import com.ssafy.eatnote.model.service.MemberService;
+import com.ssafy.eatnote.model.service.TokenBlacklistService;
 import com.ssafy.eatnote.model.service.TrainerService;
 import com.ssafy.eatnote.model.service.UserService;
 
@@ -40,6 +41,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
     private final TrainerService trainerService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "이메일과 비밀번호를 사용하여 로그인하고 JWT 토큰을 발급받습니다.")
@@ -66,6 +68,21 @@ public class AuthController {
         // 토큰 응답
         return ResponseEntity.ok(MyApiResponse.success(token, "USER_LOGIN_SUCCESS", "로그인에 성공했습니다."));
     }
+
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = jwtUtil.resolveToken(authorizationHeader);  // "Bearer " 제거
+
+        // 토큰 만료까지 남은 시간 계산 (초 단위)
+        long expiration = jwtUtil.getRemainingTime(token);
+
+        // 블랙리스트에 등록
+        tokenBlacklistService.blacklistToken(token, expiration);
+
+        return ResponseEntity.ok("로그아웃 완료!");
+    }
+    
     
     @GetMapping("/me")
     @Operation(summary = "내 정보 조회", description = "JWT 토큰을 통해 로그인된 사용자의 정보를 조회합니다.")
@@ -98,15 +115,15 @@ public class AuthController {
         Map<String, Object> response = new HashMap<>();
         response.put("user", userResponse);
 
-        if (user.getUserType() == 1) { // 일반 회원
+        if (user.getUserType() == 1) { // 트레이너
+        	TrainerDetails trainerDetails = trainerService.getDetailsByUserId(userId);
+            if (trainerDetails != null) {
+                response.put("trainerDetails", TrainerDetailsResponse.from(trainerDetails));
+            }
+        } else if (user.getUserType() == 2) { // 일반 회원
             MemberDetails memberDetails = memberService.getDetailsByUserId(userId);
             if (memberDetails != null) {
                 response.put("memberDetails", MemberDetailsResponse.from(memberDetails));
-            }
-        } else if (user.getUserType() == 2) { // 트레이너
-            TrainerDetails trainerDetails = trainerService.getDetailsByUserId(userId);
-            if (trainerDetails != null) {
-                response.put("trainerDetails", TrainerDetailsResponse.from(trainerDetails));
             }
         }
 

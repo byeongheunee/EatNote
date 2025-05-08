@@ -93,12 +93,12 @@ public class UserServiceImpl implements UserService {
         Long userId = user.getUserId();
 
         // 상세 정보 저장
-        if (request.getUserType() == 2 && request.getTrainerDetails() != null) {
+        if (request.getUserType() == 2 && request.getMemberDetails() != null) {
         	MemberDetails md = request.getMemberDetails();
             md.setUserId(userId);
             boolean mdResult = memberDao.insertMemberDetails(md);
             if (!mdResult) return false;
-        } else if (request.getUserType() == 1 && request.getMemberDetails() != null) {
+        } else if (request.getUserType() == 1 && request.getTrainerDetails() != null) {
             TrainerDetails td = request.getTrainerDetails();
             td.setUserId(userId);
             boolean tdResult = trainerDao.insertTrainerDetails(td);

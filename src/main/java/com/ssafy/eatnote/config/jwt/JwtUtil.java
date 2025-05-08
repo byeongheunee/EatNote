@@ -73,4 +73,25 @@ public class JwtUtil {
         }
         return null;
     }
+    
+    // Authorization 헤더 문자열에서 Bearer 제거
+    public String resolveToken(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // "Bearer " 제거
+        }
+        return null;
+    }
+    
+    // 토큰의 남은 만료시간(초) 계산
+    public long getRemainingTime(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(signingKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        
+        return (expiration.getTime() - System.currentTimeMillis()) / 1000;
+    }
+    
 }
