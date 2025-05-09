@@ -49,8 +49,8 @@ AI가 1차 분석하여 자동 피드백을 제공하고,
 ---
 
 ## 🗂️ 프로젝트 구조
-eatnote/
-├── controller/
+eatnote/n
+├── controller/n
 │ └── AuthController, UserController, ArticleController ...
 ├── model/
 │ ├── dao/ # MyBatis 인터페이스
