@@ -76,8 +76,10 @@ eatnote/
 ---
 
 ## ERD
-.
+./img/ERD.png
 
+## UML Diagram
+./img/umlDiagram.png
 
 
 ## figma
