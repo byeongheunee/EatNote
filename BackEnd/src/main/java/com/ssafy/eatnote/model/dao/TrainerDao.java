@@ -1,8 +1,13 @@
 package com.ssafy.eatnote.model.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.eatnote.model.dto.TrainerDetails;
+import com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary;
+
+import io.lettuce.core.dynamic.annotation.Param;
 
 @Mapper
 public interface TrainerDao {
@@ -15,4 +20,7 @@ public interface TrainerDao {
 	
 	// 트레이너 상세 정보 수정
 	void updateTrainerDetails(TrainerDetails details);
+	
+	List<FolloweeFeedbackSummary> getFolloweeFeedbackSummary(@Param("trainerId") Long trainerId);
+	
 }

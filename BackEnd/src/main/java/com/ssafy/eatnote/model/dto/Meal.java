@@ -67,4 +67,7 @@ public class Meal {
     @Schema(description = "내 반응 상태 (LIKE / DISLIKE / null)", example = "LIKE")
     private String myReaction;
     
+    @Schema(description = "연결된 트레이너 id", example = "5")
+    private Long trainerId;
+    
 }

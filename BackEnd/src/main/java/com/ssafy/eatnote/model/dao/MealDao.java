@@ -1,10 +1,12 @@
 package com.ssafy.eatnote.model.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
+import com.ssafy.eatnote.model.dto.FeedbackCalendarStat;
 import com.ssafy.eatnote.model.dto.Meal;
 import com.ssafy.eatnote.model.dto.response.DailyNutritionStatsResponse;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
@@ -33,4 +35,10 @@ public interface MealDao {
     List<MealListViewResponse> findPopularMealsInLast7Days();
     
     List<MealListViewResponse> findMealsByUserIds(@Param("userIds") List<Long> userIds);
+    
+    List<MealListViewResponse> findMealsWithoutFeedback(@Param("trainerId") Long trainerId);
+    
+    List<FeedbackCalendarStat> getFeedbackCalendarStat(@Param("trainerId") Long trainerId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }
