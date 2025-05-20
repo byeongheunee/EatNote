@@ -7,7 +7,6 @@ import RegisterView from '@/views/RegisterView.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ArticleWriteView from '@/views/ArticleWriteView.vue'
 import VideoRecommendView from '@/views/VideoRecommendView.vue'
-import MealUpload from '@/views/MealUploadPage.vue'
 import MealDetail from '@/views/MealDetailPage.vue'
 import MealList from '@/views/MealListPage.vue'
 import MealStats from '@/views/MyMealStatsPage.vue'
@@ -37,7 +36,6 @@ const router = createRouter({
     { path: '/trainer', name: 'TrainerDashboard', component: TrainerDashboardView, meta: { requiresAuth: true }
     },
 
-<<<<<<< HEAD
     {
       path: '/meal/:id',
       name: 'MealDetail',
@@ -70,10 +68,7 @@ const router = createRouter({
       name: 'EditProfile',
       component: EditProfileView
     },
-=======
-    // ✅ 탭 기반 식단 메인 뷰
     { path: '/meals', name: 'MealView', component: MealView },
->>>>>>> 7f93114 (commit)
   ],
 })
 
