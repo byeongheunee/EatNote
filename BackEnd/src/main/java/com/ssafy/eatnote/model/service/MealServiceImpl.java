@@ -221,6 +221,7 @@ public class MealServiceImpl implements MealService {
 	@Override
 	public MealPublicDetailResponse getPublicMealDetail(Long mealId, Long loginUserId) {
 	    Meal meal = mealDao.findById(mealId);
+	    String nickName = userDao.findNicknameByUserId(meal.getUserId());
 	    if (meal == null)
 	        throw new RuntimeException("❌ 해당 식단을 찾을 수 없습니다.");
 
@@ -240,6 +241,7 @@ public class MealServiceImpl implements MealService {
 	    return MealPublicDetailResponse.builder()
 	            .mealId(meal.getMealId())
 	            .userId(meal.getUserId())
+	            .userNickname(nickName)
 	            .mealType(meal.getMealType())
 	            .mealTime(meal.getMealTime())
 	            .detectedFoods(meal.getDetectedFoods())
