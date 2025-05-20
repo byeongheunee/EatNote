@@ -1,16 +1,8 @@
 <template>
   <div class="home">
     <Header
-      :isLogin="auth.isLoggedIn"
-      :user="auth.user"
       @go-feature="scrollToFeature"
       @go-usage="scrollToUsage"
-      @go-meals="router.push('/meals')"
-      @go-videos="router.push('/videos')"
-      @go-profile="router.push('/profile')"
-      @logout="handleLogout"
-      @go-login="router.push('/login')"
-      @go-register="router.push('/register')"
     />
 
     <!-- 최근 등록 식단 -->

@@ -1,15 +1,8 @@
 <template>
   <div class="article-write px-6 pb-20">
     <Header
-      :isLogin="auth.isLoggedIn"
-      :user="auth.user"
-      @go-community="router.push('/community')"
-      @go-meals="router.push('/meals')"
-      @go-videos="router.push('/videos')"
-      @go-profile="router.push('/profile')"
-      @logout="logout"
-      @go-login="router.push('/login')"
-      @go-register="router.push('/register')"
+      @go-feature="scrollToFeature"
+      @go-usage="scrollToUsage"
     />
 
     <div class="max-w-3xl mx-auto mt-10">
@@ -118,7 +111,7 @@ const submit = async () => {
         Authorization: `Bearer ${auth.accessToken}`
       }
     })
-
+    console.log(res.value)
     alert('게시글이 성공적으로 등록되었습니다!')
     // 생성된 articleId를 응답에서 추출하고 상세 페이지로 이동
     const articleId = res.data.data

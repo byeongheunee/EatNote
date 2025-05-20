@@ -214,6 +214,10 @@ public class UserController {
         MemberUpdateRequest memberRequest;
         ObjectMapper mapper = new ObjectMapper();
         
+        //
+        System.out.println("commonJson = " + commonJson);
+        System.out.println("memberJson = " + memberJson);
+        //
         try {
         	commonRequest = mapper.readValue(commonJson, CommonUserUpdateRequest.class);
         	memberRequest = mapper.readValue(memberJson, MemberUpdateRequest.class);

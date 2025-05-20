@@ -2,13 +2,8 @@
   <div>
     <!-- 로그인 상태 전용 헤더 -->
     <Header
-      :isLogin="true"
-      :user="user"
-      @go-community="router.push('/community')"
-      @go-meals="router.push('/meals')"
-      @go-videos="router.push('/videos')"
-      @go-profile="router.push('/profile')"
-      @logout="handleLogout"
+      @go-feature="scrollToFeature"
+      @go-usage="scrollToUsage"
     />
 
     <!-- 본문 -->
@@ -35,7 +30,16 @@
         <h3 class="text-xl font-semibold mt-6 mb-2">신체 정보</h3>
         <p><strong>키:</strong> {{ memberDetails.height }} cm</p>
         <p><strong>몸무게:</strong> {{ memberDetails.weight }} kg</p>
+        <p><strong>BMI:</strong> {{ memberDetails.bmi }}</p>
+        <p><strong>체수분:</strong> {{ memberDetails.bodyWater }} %</p>
+        <p><strong>단백질:</strong> {{ memberDetails.protein }} %</p>
+        <p><strong>무기질:</strong> {{ memberDetails.mineral }} %</p>
+        <p><strong>체지방:</strong> {{ memberDetails.bodyFat }} kg</p>
+        <p><strong>골격근:</strong> {{ memberDetails.skeletalMuscle }} kg</p>
+        <p><strong>체지방량:</strong> {{ memberDetails.bodyFatMass }} kg</p>
+        <p><strong>체지방률:</strong> {{ memberDetails.bodyFatPercentage }} %</p>
         <p><strong>목표:</strong> {{ memberDetails.goal }}</p>
+        <p><strong>담당 트레이너:</strong> {{ memberDetails.trainerNickname }}</p>
 
         <h3 class="text-xl font-semibold mt-6 mb-2">알레르기</h3>
         <ul>
@@ -47,12 +51,27 @@
 
       <!-- 트레이너 정보 -->
       <div v-if="trainerDetails">
-        <h3 class="text-xl font-semibold mt-6 mb-2">트레이너 상세</h3>
-        <p><strong>헬스장:</strong> {{ trainerDetails.gymName }}</p>
-        <p><strong>자기소개:</strong> {{ trainerDetails.introduction }}</p>
-        <p><strong>경력:</strong> {{ trainerDetails.career }}</p>
+        <h3 class="text-xl font-semibold mt-6 mb-2">트레이너 상세 정보</h3>
         <p><strong>연락처:</strong> {{ trainerDetails.phone }}</p>
-        <p><strong>인증 여부:</strong> {{ trainerDetails.isVerified ? '인증됨' : '미인증' }}</p>
+        <p><strong>주소:</strong> {{ trainerDetails.address }}</p>
+        <p><strong>소속 헬스장:</strong> {{ trainerDetails.gymName }}</p>
+        <p>
+          <strong>헬스장 홈페이지:</strong>
+          <a :href="trainerDetails.gymWebsite" class="text-blue-600 underline" target="_blank">{{ trainerDetails.gymWebsite }}</a>
+        </p>
+        <p><strong>자격증 번호:</strong> {{ trainerDetails.certificationNumber }}</p>
+        <div v-if="trainerDetails.certificationImage">
+          <strong>자격증 이미지:</strong><br />
+          <img :src="getProfileImage(trainerDetails.certificationImage)" alt="자격증" class="w-48 rounded mt-1" />
+        </div>
+        <p><strong>사업자 등록번호:</strong> {{ trainerDetails.businessNumber }}</p>
+        <p><strong>자기소개:</strong> {{ trainerDetails.introduction }}</p>
+        <p><strong>경력 요약:</strong> {{ trainerDetails.career }}</p>
+        <p>
+          <strong>인스타그램:</strong>
+          <a :href="trainerDetails.instagramUrl" class="text-pink-500 underline" target="_blank">{{ trainerDetails.instagramUrl }}</a>
+        </p>
+        <p><strong>인증 여부:</strong> {{ trainerDetails.isVerified ? '✅ 인증됨' : '❌ 미인증' }}</p>
       </div>
     </div>
 
@@ -77,11 +96,13 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/auth'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
 
+const auth = useAuthStore()
 const router = useRouter()
 const user = ref({})
 const memberDetails = ref(null)
@@ -98,7 +119,7 @@ const fetchMyInfo = async () => {
   try {
     const res = await axios.get('/api/auth/me', {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+        Authorization: `Bearer ${auth.accessToken}`
       }
     })
     const data = res.data.data

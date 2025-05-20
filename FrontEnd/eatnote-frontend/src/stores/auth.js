@@ -15,6 +15,12 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    setUser(user) {
+      this.user = user
+    },
+    setToken(token) {
+      this.accessToken = token
+    },
     async login(email, password) {
       try {
         const response = await axios.post('/api/auth/login', { email, password })
@@ -23,7 +29,7 @@ export const useAuthStore = defineStore('auth', {
         this.accessToken = accessToken
         this.user = user
 
-        // 로컬스토리지 저장
+        // localStorage도 명시적으로 덮어쓰기
         localStorage.setItem('accessToken', accessToken)
         localStorage.setItem('user', JSON.stringify(user))
 
@@ -33,21 +39,23 @@ export const useAuthStore = defineStore('auth', {
         return false
       }
     },
-
-    logout() {
-      this.accessToken = null
-      this.user = null
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('user')
-    },
-
-    restore() {
-      const token = localStorage.getItem('accessToken')
-      const user = localStorage.getItem('user')
-      if (token && user) {
-        this.accessToken = token
-        this.user = JSON.parse(user)
+    async logout() {
+      try {
+        await axios.post('/api/auth/logout', {}, {
+          headers: { Authorization: `Bearer ${this.accessToken}` }
+        })
+      } catch (e) {
+        console.warn('서버 로그아웃 실패 (무시)', e)
+      } finally {
+        // 클라이언트 상태 정리
+        this.accessToken = null
+        this.user = null
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('user')
       }
-    }
-  }
+    },
+  },
+
+  // ✅ 자동 저장 + 복원 설정
+  persist: true
 })

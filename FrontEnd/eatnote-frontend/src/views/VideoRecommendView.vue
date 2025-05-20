@@ -2,15 +2,8 @@
   <div class="video-view px-6 pb-16">
     <!-- 공통 헤더 -->
     <Header
-      :isLogin="auth.isLoggedIn"
-      :user="auth.user"
-      @go-community="router.push('/community')"
-      @go-meals="router.push('/meals')"
-      @go-videos="router.push('/videos')"
-      @go-profile="router.push('/profile')"
-      @logout="logout"
-      @go-login="router.push('/login')"
-      @go-register="router.push('/register')"
+      @go-feature="scrollToFeature"
+      @go-usage="scrollToUsage"
     />
 
     <div class="max-w-4xl mx-auto mt-10">

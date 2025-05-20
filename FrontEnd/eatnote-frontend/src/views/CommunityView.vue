@@ -1,15 +1,8 @@
 <template>
   <div class="community-view px-6 pb-10">
     <Header
-      :isLogin="auth.isLoggedIn"
-      :user="auth.user"
-      @go-community="router.push('/community')"
-      @go-meals="router.push('/meals')"
-      @go-videos="router.push('/videos')"
-      @go-profile="router.push('/profile')"
-      @logout="logout"
-      @go-login="router.push('/login')"
-      @go-register="router.push('/register')"
+      @go-feature="scrollToFeature"
+      @go-usage="scrollToUsage"
     />
 
     <h1 class="text-3xl font-bold text-center mt-10 mb-6">게시판</h1>

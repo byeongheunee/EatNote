@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
             	String fileName = "profile_" + System.currentTimeMillis() + "_" + profileImageFile.getOriginalFilename();
 
                 // 디렉토리 존재 확인 및 생성
-                File dir = new File(uploadDir);
+                File dir = new File(uploadDir + "/profile");
                 if (!dir.exists()) {
                     dir.mkdirs(); // 없으면 생성!!
                 }

@@ -1,14 +1,23 @@
 <template>
-  <div class="login-wrapper">
-    <h2>EatNote 로그인 🍽️</h2>
+  <div class="max-w-md mx-auto mt-20 p-8 bg-white shadow-lg rounded-2xl space-y-6">
+    <h2 class="text-2xl font-bold text-center text-gray-800">EatNote 로그인 🍽️</h2>
 
-    <label>이메일</label>
-    <input v-model="email" type="email" placeholder="이메일 입력" />
+    <div>
+      <label class="block text-sm font-medium text-gray-700">이메일</label>
+      <input v-model="email" type="email" placeholder="이메일 입력"
+             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
 
-    <label>비밀번호</label>
-    <input v-model="password" type="password" placeholder="비밀번호 입력" />
+    <div>
+      <label class="block text-sm font-medium text-gray-700">비밀번호</label>
+      <input v-model="password" type="password" placeholder="비밀번호 입력"
+             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    </div>
 
-    <button @click="handleLogin">로그인</button>
+    <button @click="handleLogin"
+            class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300">
+      로그인
+    </button>
   </div>
 </template>
 
@@ -16,17 +25,36 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Client } from '@stomp/stompjs'
 
 const email = ref('')
 const password = ref('')
-
 const auth = useAuthStore()
 const router = useRouter()
 
+let stompClient = null
+
+const connectWebSocket = (userId) => {
+  stompClient = new Client({
+    brokerURL: 'ws://localhost:8080/ws', // 실제 서버 주소로 교체!
+    reconnectDelay: 5000,
+    onConnect: () => {
+      stompClient.subscribe(`/topic/notifications/${userId}`, (message) => {
+        const body = JSON.parse(message.body)
+        alert(`🔔 알림: ${body.content}`)
+      })
+    }
+  })
+
+  stompClient.activate()
+}
+
 const handleLogin = async () => {
+  await auth.logout() // 이전 세션 정리
   const success = await auth.login(email.value, password.value)
   if (success) {
     alert('로그인 성공!')
+    connectWebSocket(auth.user.id) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
     router.push('/')
   } else {
     alert('로그인 실패. 이메일 또는 비밀번호를 확인하세요!')
@@ -34,7 +62,8 @@ const handleLogin = async () => {
 }
 </script>
 
-<style scoped>
+
+<!-- <style scoped>
 .login-wrapper {
   max-width: 400px;
   margin: 3rem auto;
@@ -89,4 +118,4 @@ button {
 button:hover {
   background-color: #c2ae96;
 }
-</style>
+</style> -->

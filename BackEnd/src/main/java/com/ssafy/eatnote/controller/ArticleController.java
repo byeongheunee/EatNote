@@ -76,7 +76,7 @@ public class ArticleController {
     
     @Operation(summary = "게시글 작성", description = "게시글을 작성합니다. 대표 이미지를 포함한 첨부 파일들을 업로드할 수 있습니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MyApiResponse<Void>> createArticle(
+    public ResponseEntity<MyApiResponse<Long>> createArticle(
         @RequestPart("article") String articleJson,
         @RequestPart(value = "files", required = false) MultipartFile[] files,
         @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -101,7 +101,7 @@ public class ArticleController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MyApiResponse.success(null, "ARTICLE_CREATE_SUCCESS", "게시글 작성 완료"));
+                .body(MyApiResponse.success(articleId, "ARTICLE_CREATE_SUCCESS", "게시글 작성 완료"));
     }
 
     @PutMapping(value = "/{articleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

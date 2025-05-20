@@ -11,6 +11,7 @@ import MealList from '@/views/MealListPage.vue'
 import MealStats from '@/views/MyMealStatsPage.vue'
 import FollowerMeals from '@/views/FollowerMealView.vue'
 import MyPage from '@/views/MyPageView.vue'
+import EditProfileView from '@/views/EditProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -78,7 +79,11 @@ const router = createRouter({
       component: MyPage,
       meta: { requiresAuth: true }, // 해당 라우트가 로그인한 사용자만 접근 가능하도록 제한하겠다는 의미
     },
-    
+    {
+      path: '/profile/edit',
+      name: 'EditProfile',
+      component: EditProfileView
+    },    
   ],
 })
 

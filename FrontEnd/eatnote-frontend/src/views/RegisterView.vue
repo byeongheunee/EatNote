@@ -1,69 +1,87 @@
 <template>
-  <div class="register-wrapper">
-    <h2>EatNote 회원가입 📘</h2>
+  <div class="max-w-xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-xl">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">EatNote 회원가입 📘</h2>
 
-    <!-- 1단계: 회원 유형 선택 -->
-    <div v-if="step === 1">
-      <label>회원 유형을 선택하세요</label>
-      <div class="user-type-buttons">
-        <button @click="selectUserType(1)">트레이너</button>
-        <button @click="selectUserType(2)">일반 회원</button>
+    <!-- Step 1: User Type -->
+    <div v-if="step === 1" class="space-y-4">
+      <label class="block text-lg font-medium text-gray-700">회원 유형을 선택하세요</label>
+      <div class="flex justify-center gap-4">
+        <button @click="selectUserType(1)" class="px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200">트레이너</button>
+        <button @click="selectUserType(2)" class="px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200">일반 회원</button>
       </div>
     </div>
 
-    <!-- 2단계: 공통 정보 입력 -->
-    <div v-else-if="step === 2">
-      <label>이메일</label>
-      <input v-model="form.email" type="email" />
-      <p v-if="errors.email" style="color: red; font-size: 0.9rem;">이메일은 필수 입력 항목입니다.</p>
-
-      <label>비밀번호</label>
-      <input v-model="form.password" type="password" />
-      <p v-if="errors.password" style="color: red; font-size: 0.9rem;">비밀번호는 필수 입력 항목입니다.</p>
-
-      <label>비밀번호 확인</label>
-      <input v-model="form.passwordConfirm" type="password" />
-      <p v-if="errors.passwordConfirm" style="color: red; font-size: 0.9rem;">비밀번호 확인은 필수입니다.</p>
-      <p v-if="passwordMismatch" style="color: red; font-size: 0.9rem;">비밀번호가 일치하지 않습니다.</p>
-
-      <label>이름</label>
-      <input v-model="form.name" type="text" />
-      <p v-if="errors.name" style="color: red; font-size: 0.9rem;">이름은 필수 입력 항목입니다.</p>
-
-      <label>닉네임</label>
-      <div class="nickname-check">
-        <input v-model="form.nickname" type="text" />
-        <button type="button" @click="checkNickname">중복 확인</button>
+    <!-- Step 2: Common Info -->
+    <div v-else-if="step === 2" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">이메일</label>
+        <input v-model="form.email" type="email" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <p v-if="errors.email" class="text-red-500 text-sm mt-1">이메일은 필수 입력 항목입니다.</p>
       </div>
-      <p v-if="errors.nickname" style="color: red; font-size: 0.9rem;">닉네임은 필수 입력 항목입니다.</p>
-      <p v-if="nicknameMessage" :style="{ color: nicknameAvailable ? 'green' : 'red' }">
-        {{ nicknameMessage }}
-      </p>
 
-      <label>성별</label>
-      <select v-model="form.gender">
-        <option value="M">남성</option>
-        <option value="F">여성</option>
-      </select>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">비밀번호</label>
+        <input v-model="form.password" type="password" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <p v-if="errors.password" class="text-red-500 text-sm mt-1">비밀번호는 필수 입력 항목입니다.</p>
+      </div>
 
-      <label>나이</label>
-      <input v-model="form.age" type="number" />
-      <p v-if="errors.age" style="color: red; font-size: 0.9rem;">나이는 필수 입력 항목입니다.</p>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
+        <input v-model="form.passwordConfirm" type="password" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <p v-if="errors.passwordConfirm" class="text-red-500 text-sm mt-1">비밀번호 확인은 필수입니다.</p>
+        <p v-if="passwordMismatch" class="text-red-500 text-sm mt-1">비밀번호가 일치하지 않습니다.</p>
+      </div>
 
-      <label>프로필 사진</label>
-      <input type="file" @change="handleFileChange" />
+      <div>
+        <label class="block text-sm font-medium text-gray-700">이름</label>
+        <input v-model="form.name" type="text" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <p v-if="errors.name" class="text-red-500 text-sm mt-1">이름은 필수 입력 항목입니다.</p>
+      </div>
 
-      <button @click="goToNextStep">다음</button>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">닉네임</label>
+        <div class="flex gap-2 mt-1">
+          <input v-model="form.nickname" type="text" class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          <button type="button" @click="checkNickname" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md">중복 확인</button>
+        </div>
+        <p v-if="errors.nickname" class="text-red-500 text-sm mt-1">닉네임은 필수 입력 항목입니다.</p>
+        <p v-if="nicknameMessage" :class="nicknameAvailable ? 'text-green-600' : 'text-red-500'" class="text-sm mt-1">{{ nicknameMessage }}</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">성별</label>
+        <select v-model="form.gender" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option value="M">남성</option>
+          <option value="F">여성</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">나이</label>
+        <input v-model="form.age" type="number" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <p v-if="errors.age" class="text-red-500 text-sm mt-1">나이는 필수 입력 항목입니다.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">프로필 사진</label>
+        <input type="file" @change="handleFileChange" class="mt-1 w-full" />
+      </div>
+
+      <button @click="goToNextStep" class="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">다음</button>
     </div>
 
-    <!-- 3단계: 상세 정보 입력 -->
-    <div v-else-if="step === 3">
-      <component :is="detailComponent" v-model="formDetail" />
-      <button @click="submitForm">회원가입 완료</button>
+    <!-- Step 3: 상세 정보 입력 -->
+    <div v-else-if="step === 3" class="space-y-6">
+      <component
+        :is="detailComponent"
+        v-model="formDetail"
+        @goBack="step = 2"
+      />
+      <button @click="submitForm" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">회원가입 완료</button>
     </div>
   </div>
-
 </template>
+
 
 
 
@@ -223,7 +241,7 @@
 
 
 
-<style scoped>
+<!-- <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
 
 .register-wrapper {
@@ -326,4 +344,4 @@ button:hover {
   font-size: 1rem;
 }
 
-</style>
+</style> -->
