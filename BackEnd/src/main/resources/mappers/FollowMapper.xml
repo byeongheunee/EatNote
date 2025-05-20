@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.ssafy.eatnote.model.dao.FollowDao">
+
+    <!-- 중복 확인 -->
+    <select id="existsByFromAndTo" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM user_follow
+            WHERE from_user_id = #{fromUserId}
+              AND to_user_id = #{toUserId}
+              AND status != 'REJECTED'
+        )
+    </select>
+
+    <!-- 팔로우 요청 등록 -->
+    <insert id="insertFollow">
+        INSERT INTO user_follow (from_user_id, to_user_id, status, requested_at)
+        VALUES (#{fromUserId}, #{toUserId}, 'PENDING', NOW())
+    </insert>
+
+	<!-- 팔로우 취소 -->
+	<delete id="deleteFollow">
+	    DELETE 
+	      FROM user_follow
+	     WHERE from_user_id = #{fromUserId}
+	       AND to_user_id = #{toUserId}
+	</delete>
+
+	<!-- 회원가입 시 팔로우 자동 등록 -->
+	<insert id="insertFollowObject" parameterType="UserFollow">
+	    INSERT INTO user_follow (from_user_id, to_user_id, status, requested_at)
+	    VALUES (#{fromUserId}, #{toUserId}, #{status}, #{requestedAt})
+	</insert>
+
+	<!-- 내가 팔로우한 사람들 -->
+	<select id="selectFollowing" resultType="User">
+	    SELECT u.*
+	      FROM user_follow f
+	      JOIN users u ON f.to_user_id = u.user_id
+	     WHERE f.from_user_id = #{userId}
+	       AND f.status = 'ACCEPTED'
+	</select>
+	
+	<!-- 나를 팔로우한 사람들 -->
+	<select id="selectFollowers" resultType="User">
+	    SELECT u.*
+	      FROM user_follow f
+	      JOIN users u ON f.from_user_id = u.user_id
+	     WHERE f.to_user_id = #{userId}
+	       AND f.status = 'ACCEPTED'
+	</select>
+	
+	
+	<!-- 단일 팔로우 요청 조회 -->
+    <select id="findById" resultType="UserFollow">
+        SELECT *
+          FROM user_follow
+         WHERE follow_id = #{followId}
+    </select>
+
+    <!-- 팔로우 요청 상태 업데이트 (수락/거절) -->
+    <update id="updateFollowStatus">
+        UPDATE user_follow
+           SET status = #{status},
+               responded_at = NOW()
+         WHERE follow_id = #{followId}
+    </update>
+	
+	<!-- 내가 팔로우하고 있는 트레이너 목록 -->
+	<select id="findFollowedTrainersByMember" resultType="User">
+	    SELECT u.*
+	    FROM user_follow f
+	    JOIN users u ON f.to_user_id = u.user_id
+	    WHERE f.from_user_id = #{memberId}
+	      AND u.user_type = 1
+	      AND f.status = 'ACCEPTED'
+	</select>
+	
+</mapper>

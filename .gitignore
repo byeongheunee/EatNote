@@ -1,33 +1,56 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
+# === Java / Spring Boot ===
+*.class
+*.jar
+*.war
+*.log
 *.iml
+
+# Eclipse 관련 설정 파일
+.settings/
+.classpath
+.project
+.factorypath
+
+# IntelliJ 관련 설정 파일 (혹시라도)
+.idea/
+*.iws
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# 빌드 결과물
+/target/
+/build/
 
-### VS Code ###
-.vscode/
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+
+# 가상환경 폴더 (이름에 따라 조정 가능)
+venv/
+env/
+
+# === Node / FrontEnd ===
+node_modules/
+dist/
+.DS_Store
+
+# === 환경설정 및 민감정보 ===
+.env
+*.env.local
+.env.*.local
+
+# === OS / 기타 ===
+Thumbs.db
+.DS_Store
+*.swp
+
+# 빌드/실행 산출물 무시
+/bin/
+/bin/**
+/uploads/
+/uploads/**
+/output/
+/output/**
+BackEnd/bin/

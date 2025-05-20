@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.ArticleFileDao">
+
+    <!-- 게시글 ID로 첨부파일 전체 조회 -->
+    <select id="getFilesByArticleId" parameterType="int" resultType="ArticleFile">
+        SELECT
+            file_id AS fileId,
+            article_id AS articleId,
+            original_name AS originalName,
+            saved_name AS savedName,
+            file_path AS filePath,
+            file_type AS fileType,
+            uploaded_at AS uploadedAt
+        FROM article_file
+        WHERE article_id = #{articleId}
+        ORDER BY uploaded_at ASC
+    </select>
+
+    <!-- 파일 메타데이터 삽입 -->
+    <insert id="insertArticleFile" parameterType="ArticleFile">
+        INSERT INTO article_file (
+            article_id,
+            original_name,
+            saved_name,
+            file_path,
+            file_type,
+            uploaded_at
+        )
+        VALUES (
+            #{articleId},
+            #{originalName},
+            #{savedName},
+            #{filePath},
+            #{fileType},
+            NOW()
+        )
+    </insert>
+
+    <!-- 게시글 삭제 시 전체 첨부파일 삭제 -->
+    <delete id="deleteFilesByArticleId" parameterType="int">
+        DELETE FROM article_file WHERE article_id = #{articleId}
+    </delete>
+
+	<!-- 파일 ID로 개별 삭제 -->
+	<delete id="deleteById" parameterType="long">
+	    DELETE FROM article_file WHERE file_id = #{fileId}
+	</delete>
+</mapper>

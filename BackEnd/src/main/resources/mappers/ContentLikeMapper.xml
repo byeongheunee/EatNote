@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.ContentLikeDao">
+
+    <!-- 좋아요/싫어요 기록 조회 (단건) -->
+    <select id="selectByUserAndContent" resultType="ContentLike">
+        SELECT *
+          FROM content_like
+         WHERE user_id = #{userId}
+           AND content_type = #{contentType}
+           AND content_id = #{contentId}
+    </select>
+
+    <!-- 좋아요/싫어요 INSERT -->
+    <insert id="insert">
+        INSERT INTO content_like (
+            user_id, content_type, content_id, like_type
+        )
+        VALUES (
+            #{userId}, #{contentType}, #{contentId}, #{likeType}
+        )
+    </insert>
+
+    <!-- 좋아요/싫어요 UPDATE (LIKE → DISLIKE 등) -->
+    <update id="updateLikeType">
+        UPDATE content_like
+           SET like_type = #{likeType}, created_at = NOW()
+         WHERE content_like_id = #{id}
+    </update>
+
+    <!-- 좋아요/싫어요 삭제 (토글 해제) -->
+    <delete id="deleteById">
+        DELETE 
+          FROM content_like
+         WHERE content_like_id = #{id}
+    </delete>
+	
+	<update id="incrementCount">
+	    <choose>
+	        <when test="contentType == 'ARTICLE'">
+	            <choose>
+	                <when test="likeType == 'LIKE'">
+	                    UPDATE article SET like_count = like_count + 1 WHERE article_id = #{contentId}
+	                </when>
+	                <otherwise>
+	                    UPDATE article SET dislike_count = dislike_count + 1 WHERE article_id = #{contentId}
+	                </otherwise>
+	            </choose>
+	        </when>
+	        <when test="contentType == 'MEAL'">
+	            <choose>
+	                <when test="likeType == 'LIKE'">
+	                    UPDATE meal SET like_count = like_count + 1 WHERE meal_id = #{contentId}
+	                </when>
+	                <otherwise>
+	                    UPDATE meal SET dislike_count = dislike_count + 1 WHERE meal_id = #{contentId}
+	                </otherwise>
+	            </choose>
+	        </when>
+	        <when test="contentType == 'COMMENT'">
+	            <choose>
+	                <when test="likeType == 'LIKE'">
+	                    UPDATE comment SET like_count = like_count + 1 WHERE comment_id = #{contentId}
+	                </when>
+	                <otherwise>
+	                    UPDATE comment SET dislike_count = dislike_count + 1 WHERE comment_id = #{contentId}
+	                </otherwise>
+	            </choose>
+	        </when>
+	    </choose>
+	</update>
+	
+	<update id="decrementCount">
+	    <choose>
+	        <when test="contentType == 'ARTICLE'">
+	            <choose>
+	                <when test="likeType == 'LIKE'">
+	                    UPDATE article SET like_count = GREATEST(like_count - 1, 0) WHERE article_id = #{contentId}
+	                </when>
+	                <otherwise>
+	                    UPDATE article SET dislike_count = GREATEST(dislike_count - 1, 0) WHERE article_id = #{contentId}
+	                </otherwise>
+	            </choose>
+	        </when>
+	        <when test="contentType == 'MEAL'">
+	            <choose>
+	                <when test="likeType == 'LIKE'">
+	                    UPDATE meal SET like_count = GREATEST(like_count - 1, 0) WHERE meal_id = #{contentId}
+	                </when>
+	                <otherwise>
+	                    UPDATE meal SET dislike_count = GREATEST(dislike_count - 1, 0) WHERE meal_id = #{contentId}
+	                </otherwise>
+	            </choose>
+	        </when>
+	        <when test="contentType == 'COMMENT'">
+	            <choose>
+	                <when test="likeType == 'LIKE'">
+	                    UPDATE comment SET like_count = GREATEST(like_count - 1, 0) WHERE comment_id = #{contentId}
+	                </when>
+	                <otherwise>
+	                    UPDATE comment SET dislike_count = GREATEST(dislike_count - 1, 0) WHERE comment_id = #{contentId}
+	                </otherwise>
+	            </choose>
+	        </when>
+	    </choose>
+	</update>
+</mapper>

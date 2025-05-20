@@ -1,0 +1,16 @@
+package com.ssafy.eatnote.model.dao;
+
+import com.ssafy.eatnote.model.dto.response.AllergyResponse;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AllergyDao {
+	
+	// 알레르기 전체 목록 조회
+    List<AllergyResponse> findAllAllergies();
+    
+    // 회원 알레르기 종류 조회
+    List<AllergyResponse> findByUserId(Long userId);
+}

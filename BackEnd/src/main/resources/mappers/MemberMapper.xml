@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.ssafy.eatnote.model.dao.MemberDao">
+
+	<!-- 회원 정보 삽입 -->
+    <insert id="insertMemberDetails" parameterType="MemberDetails">
+        INSERT INTO member_details (
+            user_id, 
+            height, 
+            weight, 
+            body_water, 
+            protein, 
+            mineral,
+            body_fat, 
+            skeletal_muscle, 
+            body_fat_mass, 
+            bmi, 
+            body_fat_percentage,
+            goal, 
+            trainer_id
+        ) VALUES (
+            #{userId}, 
+            #{height}, 
+            #{weight}, 
+            #{bodyWater}, 
+            #{protein}, 
+            #{mineral},
+            #{bodyFat}, 
+            #{skeletalMuscle}, 
+            #{bodyFatMass}, 
+            #{bmi}, 
+            #{bodyFatPercentage},
+            #{goal}, 
+            #{trainerId}
+        )
+    </insert>
+
+	<!-- 회원 상세 정보 조회 -->
+	<select id="findByUserId" parameterType="long" resultType="MemberDetails">
+        SELECT
+            user_id,
+            height,
+            weight,
+            body_water,
+            protein,
+            mineral,
+            body_fat,
+            skeletal_muscle,
+            body_fat_mass,
+            bmi,
+            body_fat_percentage,
+            goal,
+            trainer_id
+        FROM member_details
+        WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 알레르기 정보 입력 (단건 입력) -->
+    <insert id="insertUserAllergy">
+	    INSERT INTO user_allergy (user_id, allergy_id)
+	    VALUES (#{userId}, #{allergyId})
+	</insert>
+    
+    <!-- 회원 상세 정보 수정 -->
+    <update id="updateMemberDetails" parameterType="MemberDetails">
+	    UPDATE member_details
+	    SET
+	        height = #{height},
+	        weight = #{weight},
+	        body_water = #{bodyWater},
+	        protein = #{protein},
+	        mineral = #{mineral},
+	        body_fat = #{bodyFat},
+	        skeletal_muscle = #{skeletalMuscle},
+	        body_fat_mass = #{bodyFatMass},
+	        bmi = #{bmi},
+	        body_fat_percentage = #{bodyFatPercentage},
+	        goal = #{goal}
+	    WHERE user_id = #{userId}
+	</update>
+
+	<!-- 알레르기 정보 삭제 (userId 해당 아이디에 있는 알레르기 정보 모두 삭제) -->
+	<delete id="deleteUserAllergies">
+	    DELETE FROM user_allergy WHERE user_id = #{userId}
+	</delete>
+	
+	<!-- 알레르기 정보 입력 (다중 입력) -->
+	<insert id="insertUserAllergies">
+	    INSERT INTO user_allergy (user_id, allergy_id)
+	    VALUES
+	    <foreach collection="allergyIds" item="allergyId" separator=",">
+	        (#{userId}, #{allergyId})
+	    </foreach>
+	</insert>
+	
+	<!-- 회원 목표 조회 -->
+	<select id="findGoalByUserId" resultType="string">
+        SELECT goal
+          FROM member_details
+         WHERE user_id = #{userId}
+    </select>
+    
+    
+</mapper>

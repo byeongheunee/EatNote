@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.ssafy.eatnote.model.dao.TrainerDao">
+
+	<!-- 트레이너 정보 삽입 -->
+    <insert id="insertTrainerDetails" parameterType="TrainerDetails">
+        INSERT INTO trainer_details (
+            user_id, 
+            phone, 
+            address, 
+            gym_name, 
+            gym_website, 
+            certification_number,
+            certification_image, 
+            business_number, 
+            introduction, 
+            career,
+            instagram_url, 
+            is_verified
+        ) VALUES (
+            #{userId}, 
+            #{phone}, 
+            #{address}, 
+            #{gymName}, 
+            #{gymWebsite}, 
+            #{certificationNumber},
+            #{certificationImage}, 
+            #{businessNumber}, 
+            #{introduction}, 
+            #{career},
+            #{instagramUrl}, 
+            #{isVerified}
+        )
+    </insert>
+    
+    <!-- 트레이너 상세 정보 조회 -->
+	<select id="findByUserId" parameterType="long" resultType="TrainerDetails">
+        SELECT
+            user_id,
+            phone,
+            address,
+            gym_name,
+            gym_website,
+            certification_number,
+            certification_image,
+            business_number,
+            introduction,
+            career,
+            instagram_url,
+            is_verified
+        FROM trainer_details
+        WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 트레이너 상세 정보 수정 -->
+    <update id="updateTrainerDetails" parameterType="TrainerDetails">
+	    UPDATE trainer_details
+	    SET
+	        phone = #{phone},
+	        address = #{address},
+	        gym_name = #{gymName},
+	        gym_website = #{gymWebsite},
+	        certification_number = #{certificationNumber},
+	        certification_image = #{certificationImage},
+	        business_number = #{businessNumber},
+	        introduction = #{introduction},
+	        career = #{career},
+	        instagram_url = #{instagramUrl}
+	    WHERE user_id = #{userId}
+	</update>
+    
+    
+</mapper>

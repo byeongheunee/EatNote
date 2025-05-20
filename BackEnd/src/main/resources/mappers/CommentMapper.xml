@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.CommentDao">
+
+    <!-- 댓글 전체 조회 (트리 정렬: lft ASC) -->
+    <select id="getCommentsByTarget" resultType="Comment">
+	    SELECT
+	        c.comment_id AS commentId,
+	        c.content,
+	        c.user_id AS userId,
+	        u.nickname AS userNickname,
+	        c.target_type AS targetType,
+	        c.target_id AS targetId,
+	        c.lft,
+	        c.rgt,
+	        c.depth,
+	        c.created_at AS createdAt,
+	        c.updated_at AS updatedAt,
+	        c.like_count AS likeCount,
+	        c.dislike_count AS dislikeCount
+	    FROM comment c
+	    JOIN users u ON c.user_id = u.user_id
+	    WHERE c.target_type = #{targetType}
+	      AND c.target_id = #{targetId}
+	    ORDER BY c.lft ASC
+	</select>
+
+    <!-- 댓글 단건 조회 -->
+    <select id="getCommentById" parameterType="int" resultType="Comment">
+	    SELECT
+	        comment_id AS commentId,
+	        content,
+	        user_id AS userId,
+	        target_type AS targetType,
+	        target_id AS targetId,
+	        lft,
+	        rgt,
+	        depth,
+	        like_count AS likeCount,
+	        dislike_count AS dislikeCount,
+	        created_at AS createdAt,
+	        updated_at AS updatedAt
+	    FROM comment
+	    WHERE comment_id = #{commentId}
+	</select>
+
+    <!-- 댓글 삽입 -->
+    <insert id="insertComment" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId">
+        INSERT INTO comment (
+            content, user_id, target_type, target_id, lft, rgt, depth, created_at, updated_at
+        ) VALUES (
+            #{content}, #{userId}, #{targetType}, #{targetId}, #{lft}, #{rgt}, #{depth},
+            NOW(), NOW()
+        )
+    </insert>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment" parameterType="Comment">
+        UPDATE comment
+           SET content = #{content},
+               updated_at = NOW()
+         WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 삭제 (단건) -->
+    <delete id="deleteComment" parameterType="int">
+        DELETE FROM comment
+         WHERE comment_id = #{commentId}
+    </delete>
+
+    <!-- 오른쪽 값들 rgt 밀기 -->
+    <update id="shiftRightRgt">
+        UPDATE comment
+           SET rgt = rgt + 2
+         WHERE target_type = #{targetType}
+           AND target_id = #{targetId}
+           AND rgt >= #{insertRgt}
+    </update>
+
+    <!-- 왼쪽 값들 lft 밀기 -->
+    <update id="shiftRightLft">
+        UPDATE comment
+           SET lft = lft + 2
+         WHERE target_type = #{targetType}
+           AND target_id = #{targetId}
+           AND lft >= #{insertLft}
+    </update>
+
+    <!-- 트리 구조 범위 삭제 -->
+    <delete id="deleteCommentRange">
+        DELETE FROM comment
+         WHERE target_type = #{targetType}
+           AND target_id = #{targetId}
+           AND lft &gt;= #{lft}
+           AND rgt &lt;= #{rgt}
+    </delete>
+
+</mapper>

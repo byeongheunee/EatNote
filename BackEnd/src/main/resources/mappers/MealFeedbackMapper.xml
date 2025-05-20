@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.MealFeedbackDao">
+
+  <insert id="insertFeedback" parameterType="MealFeedback" useGeneratedKeys="true" keyProperty="feedbackId">
+    INSERT INTO meal_feedback (
+      meal_id, trainer_id, content, trainer_score, created_at
+    ) VALUES (
+      #{mealId}, #{trainerId}, #{content}, #{trainerScore}, #{createdAt}
+    )
+  </insert>
+	
+
+	<!-- 특정 식단의 모든 트레이너 피드백 조회 -->
+  <select id="findAllByMealId" parameterType="long" resultType="MealFeedback">
+    SELECT feedback_id,
+           meal_id,
+           trainer_id,
+           content,
+           trainer_score,
+           created_at
+    FROM meal_feedback
+    WHERE meal_id = #{mealId}
+    ORDER BY created_at ASC
+  </select>
+  
+  <!-- 해당 식단에 로그인한 트레이너가 피드백 했는지 확인  -->
+  <select id="existsByTrainerAndMeal" resultType="boolean">
+    SELECT EXISTS (
+        SELECT 1
+        FROM meal_feedback
+        WHERE trainer_id = #{trainerId}
+          AND meal_id = #{mealId}
+    	)
+	</select>
+
+	<select id="findByMealId" resultType="MealFeedback">
+    	SELECT * FROM meal_feedback WHERE meal_id = #{mealId}
+	</select>
+	
+	
+	<!-- 피드백 아이디로 피드백 찾기  -->
+	<select id="findById" parameterType="long" resultType="MealFeedback">
+ 	 SELECT * FROM meal_feedback
+  	 WHERE feedback_id = #{feedbackId}
+	</select>
+	
+	<update id="updateFeedback" parameterType="MealFeedback">
+  	UPDATE meal_feedback
+  		SET content = #{content},
+     		 trainer_score = #{trainerScore}
+  	WHERE feedback_id = #{feedbackId}
+	</update>
+	
+	<delete id="deleteFeedback" parameterType="long">
+  		DELETE FROM meal_feedback
+  		WHERE feedback_id = #{feedbackId}
+	</delete>
+	
+	
+
+  
+	
+</mapper>

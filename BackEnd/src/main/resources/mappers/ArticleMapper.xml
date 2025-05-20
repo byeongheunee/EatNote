@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.ArticleDao">
+
+    <!-- 게시글 작성 -->
+    <insert id="createArticle" parameterType="Article" useGeneratedKeys="true" keyProperty="articleId">
+        INSERT INTO article (
+            title,
+            content,
+            board_id,
+            user_id,
+            image_url,
+            view_cnt,
+            created_at,
+            modified_at
+        )
+        VALUES (
+            #{title},
+            #{content},
+            #{boardId},
+            #{userId},
+            #{imageUrl},
+            0,
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 게시글 수정 -->
+    <update id="updateArticle" parameterType="Article">
+        UPDATE article
+        SET
+            title = #{title},
+            content = #{content},
+            image_url = #{imageUrl},
+            modified_at = NOW()
+        WHERE article_id = #{articleId}
+    </update>
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteArticle" parameterType="int">
+        DELETE FROM article WHERE article_id = #{articleId}
+    </delete>
+
+    <!-- 게시글 단건 조회 -->
+    <select id="getArticleById" parameterType="int" resultType="Article">
+		SELECT
+		    a.article_id AS articleId,
+		    a.title,
+		    a.content,
+		    a.board_id AS boardId,
+		    a.user_id AS userId,
+		    u.nickname AS userNickname,
+		    a.image_url AS imageUrl,
+		    a.view_cnt AS viewCnt,
+		    a.like_count AS likeCount,
+		    a.dislike_count AS dislikeCount,
+		    a.created_at AS createdAt,
+		    a.modified_at AS modifiedAt
+		FROM article a
+		JOIN users u ON a.user_id = u.user_id
+		WHERE a.article_id = #{articleId}
+	</select>
+
+	<!-- 필터/검색 조건 기반 목록 조회 -->
+	<select id="getArticlesWithFilters" resultType="Article">
+	    SELECT
+		    a.article_id AS articleId,
+		    a.title,
+		    a.content,
+		    a.board_id AS boardId,
+		    a.user_id AS userId,
+		    u.nickname AS userNickname,
+		    a.image_url AS imageUrl,
+		    a.view_cnt AS viewCnt,
+		    a.like_count AS likeCount,
+		    a.dislike_count AS dislikeCount,
+		    a.created_at AS createdAt,
+		    a.modified_at AS modifiedAt
+	    FROM article a
+	    JOIN users u ON a.user_id = u.user_id
+	    <where>
+	        <if test="boardId != null">
+	            a.board_id = #{boardId}
+	        </if>
+	        <if test="keyword != null and keyword != ''">
+	            AND (
+	                a.title LIKE CONCAT('%', #{keyword}, '%')
+	                OR a.content LIKE CONCAT('%', #{keyword}, '%')
+	                OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+	            )
+	        </if>
+	    </where>
+	    <choose>
+	        <when test="sort == 'createdAt'">
+	            ORDER BY a.created_at DESC
+	        </when>
+	        <when test="sort == 'viewCnt'">
+	            ORDER BY a.view_cnt DESC
+	        </when>
+	        <otherwise>
+	            ORDER BY a.created_at DESC
+	        </otherwise>
+	    </choose>
+	</select>
+
+    <!-- 게시판별 게시글 목록 조회 -->
+	<select id="getArticlesByBoardId" parameterType="int" resultType="Article">
+	    SELECT
+	        a.article_id AS articleId,
+	        a.title,
+	        a.content,
+	        a.board_id AS boardId,
+	        a.user_id AS userId,
+	        u.nickname AS userNickname,
+	        a.image_url AS imageUrl,
+	        a.view_cnt AS viewCnt,
+	        a.created_at AS createdAt,
+	        a.modified_at AS modifiedAt
+	    FROM article a
+	    JOIN users u ON a.user_id = u.user_id
+	    WHERE a.board_id = #{boardId}
+	    ORDER BY a.created_at DESC
+	</select>
+
+    <!-- 사용자 최근 게시글 목록 (마이페이지) -->
+    <select id="getRecentArticlesByUserId" parameterType="long" resultType="Article">
+        SELECT
+            article_id AS articleId,
+            title,
+            content,
+            board_id AS boardId,
+            user_id AS userId,
+            image_url AS imageUrl,
+            view_cnt AS viewCnt,
+            created_at AS createdAt,
+            modified_at AS modifiedAt
+        FROM article
+        WHERE user_id = #{userId}
+          AND created_at >= DATE_SUB(NOW(), INTERVAL 10 DAY)
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="increaseViewCount" parameterType="int">
+        UPDATE article
+        SET view_cnt = view_cnt + 1
+        WHERE article_id = #{articleId}
+    </update>
+
+	<!-- 대표 이미지만 변경 -->
+	<update id="updateImageUrlOnly" parameterType="Article">
+	    UPDATE article
+	    SET image_url = #{imageUrl}, modified_at = NOW()
+	    WHERE article_id = #{articleId}
+	</update>
+	
+</mapper>

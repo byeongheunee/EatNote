@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.CommonCodeDao">
+
+    <resultMap id="CommonCodeResultMap" type="com.ssafy.eatnote.model.dto.CommonCode">
+        <result property="code" column="code"/>
+        <result property="label" column="label"/>
+    </resultMap>
+
+    <select id="selectGenderCodes" resultMap="CommonCodeResultMap">
+        SELECT gender_code AS code, label 
+          FROM gender_type
+    </select>
+
+    <select id="selectUserStatusCodes" resultMap="CommonCodeResultMap">
+        SELECT status_code AS code, description AS label 
+          FROM user_status
+    </select>
+
+    <select id="selectUserTypeCodes" resultMap="CommonCodeResultMap">
+        SELECT type_code AS code, label 
+          FROM user_type
+    </select>
+
+    <select id="selectGoalCodes" resultMap="CommonCodeResultMap">
+        SELECT goal_code AS code, description AS label 
+          FROM goal_type
+    </select>
+
+    <select id="selectFollowStatusCodes" resultMap="CommonCodeResultMap">
+        SELECT status_code AS code, description AS label 
+          FROM follow_status
+    </select>
+
+    <select id="selectNotificationTypeCodes" resultMap="CommonCodeResultMap">
+        SELECT type_code AS code, description AS label 
+          FROM notification_type
+    </select>
+
+    <select id="selectBoardAccessLevelCodes" resultMap="CommonCodeResultMap">
+        SELECT access_code AS code, description AS label 
+          FROM board_access_level
+    </select>
+
+    <select id="selectCommentTargetTypeCodes" resultMap="CommonCodeResultMap">
+        SELECT type_code AS code, label 
+          FROM comment_target_type
+    </select>
+
+    <select id="selectLikeTypeCodes" resultMap="CommonCodeResultMap">
+        SELECT type_code AS code, description AS label 
+          FROM like_type
+    </select>
+
+</mapper>

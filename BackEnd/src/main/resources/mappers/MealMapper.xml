@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.MealDao">
+
+	<insert id="insertMeal" parameterType="Meal"
+		useGeneratedKeys="true" keyProperty="mealId">
+		INSERT INTO meal (
+		user_id, image_url, detected_foods,
+		total_calories, carbohydrates, protein, fat,
+		sugars, sodium, meal_type, meal_time, auto_score, ai_feedback, created_at
+		) VALUES (
+		#{userId}, #{imageUrl}, #{detectedFoods},
+		#{totalCalories}, #{carbohydrates}, #{protein}, #{fat},
+		#{sugars}, #{sodium}, #{mealType}, #{mealTime}, #{autoScore}, #{aiFeedback},
+		#{createdAt}
+		)
+	</insert>
+
+	<select id="selectTrainerMealDetailById" parameterType="long"
+        resultType="TrainerMealDetailResponse">
+	    SELECT
+	        m.meal_id AS mealId,
+	        m.meal_type AS mealType,
+	        m.meal_time AS mealTime,
+	        m.detected_foods AS detectedFoods,
+	        m.auto_score AS autoScore,
+	        m.total_calories AS totalCalories,
+	        m.carbohydrates AS carbohydrates,
+	        m.protein AS protein,
+	        m.fat AS fat,
+	        m.sugars AS sugars,
+	        m.sodium AS sodium,
+	        m.image_url AS imageUrl,
+	        m.user_id AS userId,
+	        u.nickname AS nickname,
+	        u.gender AS gender,
+	        u.age AS age,
+	        md.height AS height,
+	        md.weight AS weight,
+	        md.goal AS goal,
+	        m.ai_feedback AS aiFeedback
+	    FROM meal m
+	    JOIN users u ON m.user_id = u.user_id
+	    JOIN member_details md ON m.user_id = md.user_id
+	    WHERE m.meal_id = #{mealId}
+	</select>
+
+	<select id="getWeeklyStatsByUserId"
+		resultType="WeeklyNutritionStatsResponse">
+		SELECT
+		DATE_FORMAT(m.meal_time, '%x-W%v') AS week,
+		ROUND(AVG(m.total_calories), 1) AS avgCalories,
+		ROUND(AVG(m.carbohydrates), 1) AS avgCarbohydrates,
+		ROUND(AVG(m.protein), 1) AS avgProtein,
+		ROUND(AVG(m.fat), 1) AS avgFat,
+		ROUND(SUM(m.total_calories), 1) AS totalCalories,
+  		ROUND(SUM(m.carbohydrates), 1) AS totalCarbohydrates,
+  		ROUND(SUM(m.protein), 1) AS totalProtein,
+  		ROUND(SUM(m.fat), 1) AS totalFat,
+		ROUND(AVG(m.auto_score), 1) AS autoScore,
+		ROUND(AVG(f.trainer_score), 1) AS trainerScore,
+		COUNT(*) AS mealCount
+		FROM meal m
+		LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id
+		WHERE m.user_id = #{userId}
+		GROUP BY DATE_FORMAT(m.meal_time, '%x-W%v')
+		ORDER BY week DESC
+	</select>
+
+	<select id="findById" parameterType="long" resultType="Meal">
+		SELECT * 
+		  FROM meal 
+		 WHERE meal_id = #{mealId}
+	</select>
+
+	<delete id="deleteMealById" parameterType="long">
+		DELETE 
+		  FROM meal
+		 WHERE meal_id = #{mealId}
+	</delete>
+
+	<select id="findMealsByUserId" parameterType="long" resultType="MealListViewResponse">
+	    SELECT
+	        m.meal_id AS mealId,
+	        m.user_id AS userId,
+	        u.nickname AS nickname,
+	        m.meal_type AS mealType,
+	        m.meal_time AS mealTime,
+	        m.auto_score AS autoScore,
+	        m.ai_feedback AS aiFeedback,
+	        (
+	            SELECT AVG(f.trainer_score)
+	            FROM meal_feedback f
+	            WHERE f.meal_id = m.meal_id
+	        ) AS trainerScore,
+	        m.detected_foods AS detectedFoods,
+	        m.total_calories AS totalCalories,
+	        m.image_url AS imageUrl,
+	        (
+	            SELECT COUNT(*)
+	            FROM meal_feedback f
+	            WHERE f.meal_id = m.meal_id
+	        ) AS feedbackCount,
+	        (
+	            SELECT COUNT(*)
+	            FROM content_like cl
+	            WHERE cl.content_type = 'MEAL'
+	              AND cl.content_id = m.meal_id
+	              AND cl.like_type = 'LIKE'
+	        ) AS likeCount,
+	        (
+	            SELECT COUNT(*)
+	            FROM content_like cl
+	            WHERE cl.content_type = 'MEAL'
+	              AND cl.content_id = m.meal_id
+	              AND cl.like_type = 'DISLIKE'
+	        ) AS dislikeCount
+	    FROM meal m
+	    JOIN users u ON m.user_id = u.user_id
+	    WHERE m.user_id = #{userId}
+	    ORDER BY m.meal_time DESC
+	</select>
+	
+	<select id="findDailyStatsByUserId" resultType="DailyNutritionStatsResponse">
+	    SELECT
+	        DATE(m.meal_time) AS day,
+	        ROUND(AVG(m.total_calories), 1) AS avgCalories,
+	        ROUND(AVG(m.carbohydrates), 1) AS avgCarbohydrates,
+	        ROUND(AVG(m.protein), 1) AS avgProtein,
+	        ROUND(AVG(m.fat), 1) AS avgFat,
+	        ROUND(SUM(m.total_calories), 1) AS totalCalories,
+	        ROUND(SUM(m.carbohydrates), 1) AS totalCarbohydrates,
+	        ROUND(SUM(m.protein), 1) AS totalProtein,
+	        ROUND(SUM(m.fat), 1) AS totalFat,
+	        ROUND(AVG(m.auto_score), 1) AS autoScore,
+	        ROUND(AVG(f.trainer_score), 1) AS trainerScore,
+	        COUNT(*) AS mealCount
+	    FROM meal m
+	    LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id
+	    WHERE m.user_id = #{userId}
+	    AND DATE(m.meal_time) >= CURDATE() - INTERVAL 7 DAY
+	    GROUP BY DATE(m.meal_time)
+	    ORDER BY day DESC
+	</select>
+
+    <!-- 1. 최근 식사 10개 -->
+    <select id="findPopularMealsInLast7Days" resultType="com.ssafy.eatnote.model.dto.response.MealListViewResponse">
+    SELECT
+        m.meal_id AS mealId,
+        m.user_id AS userId,
+        u.nickname,
+        m.meal_type AS mealType,
+        m.meal_time AS mealTime,
+        m.auto_score AS autoScore,
+        m.total_calories AS totalCalories,
+        m.detected_foods AS detectedFoods,
+        m.image_url AS imageUrl,
+        IFNULL(fb.avg_score, 0) AS trainerScore,
+        IFNULL(fb.feedback_count, 0) AS feedbackCount,
+        IFNULL(ml.like_count, 0) AS likeCount,
+        m.dislike_count AS dislikeCount,
+        NULL AS isFeedbackedByMe,
+        NULL AS myReaction
+    FROM meal m
+    JOIN users u ON m.user_id = u.user_id
+    LEFT JOIN (
+        SELECT meal_id, AVG(trainer_score) AS avg_score, COUNT(*) AS feedback_count
+        FROM meal_feedback
+        GROUP BY meal_id
+    ) fb ON m.meal_id = fb.meal_id
+    LEFT JOIN (
+        SELECT meal_id, COUNT(*) AS like_count
+        FROM meal_like
+        GROUP BY meal_id
+    ) ml ON m.meal_id = ml.meal_id
+    WHERE m.meal_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    ORDER BY ml.like_count DESC
+    LIMIT 10
+</select>
+
+
+    <!-- 2. 최근 7일간 좋아요 많은 식사 -->
+   <select id="findRecentMeals" resultType="com.ssafy.eatnote.model.dto.response.MealListViewResponse">
+    SELECT
+        m.meal_id AS mealId,
+        m.user_id AS userId,
+        u.nickname,
+        m.meal_type AS mealType,
+        m.meal_time AS mealTime,
+        m.auto_score AS autoScore,
+        m.total_calories AS totalCalories,
+        m.detected_foods AS detectedFoods,
+        m.image_url AS imageUrl,
+        IFNULL(fb.avg_score, 0) AS trainerScore,
+        IFNULL(fb.feedback_count, 0) AS feedbackCount,
+        IFNULL(ml.like_count, 0) AS likeCount,
+        m.dislike_count AS dislikeCount,
+        NULL AS isFeedbackedByMe,
+        NULL AS myReaction
+    FROM meal m
+    JOIN users u ON m.user_id = u.user_id
+    LEFT JOIN (
+        SELECT meal_id, AVG(trainer_score) AS avg_score, COUNT(*) AS feedback_count
+        FROM meal_feedback
+        GROUP BY meal_id
+    ) fb ON m.meal_id = fb.meal_id
+    LEFT JOIN (
+        SELECT meal_id, COUNT(*) AS like_count
+        FROM meal_like
+        GROUP BY meal_id
+    ) ml ON m.meal_id = ml.meal_id
+    ORDER BY m.meal_time DESC
+    LIMIT 10
+</select>
+	<select id="findMealsByUserIds" resultType="MealListViewResponse">
+  	SELECT
+      m.meal_id AS mealId,
+      m.user_id AS userId,
+      u.nickname AS nickname,
+      m.meal_type AS mealType,
+      m.meal_time AS mealTime,
+      m.auto_score AS autoScore,
+      m.ai_feedback AS aiFeedback,
+      (
+          SELECT AVG(f.trainer_score)
+          FROM meal_feedback f
+          WHERE f.meal_id = m.meal_id
+      ) AS trainerScore,
+      m.detected_foods AS detectedFoods,
+      m.total_calories AS totalCalories,
+      m.image_url AS imageUrl,
+      (
+          SELECT COUNT(*)
+          FROM meal_feedback f
+          WHERE f.meal_id = m.meal_id
+      ) AS feedbackCount,
+      (
+          SELECT COUNT(*)
+          FROM content_like cl
+          WHERE cl.content_type = 'MEAL'
+            AND cl.content_id = m.meal_id
+            AND cl.like_type = 'LIKE'
+      ) AS likeCount,
+      (
+          SELECT COUNT(*)
+          FROM content_like cl
+          WHERE cl.content_type = 'MEAL'
+            AND cl.content_id = m.meal_id
+            AND cl.like_type = 'DISLIKE'
+      ) AS dislikeCount
+  FROM meal m
+  JOIN users u ON m.user_id = u.user_id
+  WHERE m.user_id IN
+  <foreach item="id" collection="userIds" open="(" separator="," close=")">
+    #{id}
+  </foreach>
+  ORDER BY m.meal_time DESC
+</select>
+	
+
+</mapper>
+	

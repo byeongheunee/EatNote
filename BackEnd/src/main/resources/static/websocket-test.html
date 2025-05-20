@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket 알림 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+    <h2>WebSocket Notification Test2</h2>
+    <button onclick="connect()">연결</button>
+    <button onclick="sendNotification()">알림 보내기</button>
+
+    <script>
+        let stompClient = null;
+
+        function connect() {
+            const socket = new SockJS('/ws'); // 서버 WebSocket 연결
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/notifications/5', function (message) {
+                    alert('🔔 알림 수신: ' + JSON.parse(message.body).content);
+                });
+            });
+        }
+
+        function sendNotification() {
+            stompClient.send("/app/notify", {}, JSON.stringify({
+                receiverId: 8,
+                typeCode: "FOLLOW_REQUEST",
+                content: "팔로우 요청~!!",
+                relatedMealId: 101
+            }));
+        }
+    </script>
+</body>
+</html>

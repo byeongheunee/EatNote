@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.eatnote.model.dao.UserDao">
+
+    <!-- 사용자 등록 -->
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users (
+            email, password, name, nickname, gender, user_type, status, profile_image, created_at, updated_at, age
+        ) VALUES (
+            #{email}, #{password}, #{name}, #{nickname}, #{gender}, #{userType}, #{status},
+            #{profileImage}, #{createdAt}, #{updatedAt}, #{age}
+        )
+    </insert>
+
+    <!-- user_id(PK)로 사용자 조회 -->
+    <select id="selectUserById" parameterType="long" resultType="User">
+        SELECT *
+          FROM users
+         WHERE user_id = #{userId}
+    </select>
+
+    <!-- email로 사용자 조회 -->
+    <select id="selectUserByEmail" parameterType="string" resultType="User">
+        SELECT *
+          FROM users
+         WHERE email = #{email}
+    </select>
+
+    <!-- 전체 사용자 목록 -->
+    <select id="selectAllUsers" resultType="User">
+        SELECT *
+          FROM users
+    </select>
+
+    <!-- 유저 공통 정보 수정 -->
+    <update id="updateUserProfile">
+	    UPDATE users
+	    <set>
+	        <if test="password != null">
+	            password = #{password},
+	        </if>
+	        <if test="nickname != null">
+	            nickname = #{nickname},
+	        </if>
+	        <if test="profileImage != null">
+	            profile_image = #{profileImage}
+	        </if>
+	    </set>
+	    WHERE user_id = #{userId}
+	</update>
+
+    <!-- 회원 정보 수정 -->
+<!--     <update id="updateUser" parameterType="User">
+        UPDATE users
+        SET
+            password = #{password},
+            name = #{name},
+            nickname = #{nickname},
+            gender = #{gender},
+            profile_image = #{profileImage},
+            user_type = #{userType},
+            age = #{age},
+            status = #{status},
+            updated_at = NOW()
+        WHERE user_id = #{userId}
+    </update> -->
+
+    <!-- 사용자 삭제 -->
+    <delete id="deleteUserById" parameterType="long">
+        DELETE FROM users
+        WHERE user_id = #{userId}
+    </delete>
+    
+    <!-- email 확인 --> <!-- 1이면 true, 0이면 false -->
+    <select id="existsByEmail" parameterType="string" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM users WHERE email = #{email}
+        )
+    </select>
+    
+    <!-- 닉네임 중복 체크 -->
+    <select id="countByNickname" parameterType="string" resultType="int">
+	    SELECT COUNT(*) 
+	      FROM users
+	     WHERE nickname = #{nickname}
+	</select>
+	
+	<!-- 닉네임 찾기 -->
+	<select id="findNicknameByUserId" resultType="string">
+	    SELECT nickname 
+	      FROM users 
+	     WHERE user_id = #{userId}
+	</select>
+    
+    <!-- 닉네임으로 유저 조회 -->
+    <select id="findByNickname" parameterType="string" resultType="User">
+        SELECT *
+          FROM users
+         WHERE nickname = #{nickname}
+         LIMIT 1
+    </select>
+
+    <!-- 트레이너 여부 확인 -->
+    <select id="isTrainer" parameterType="long" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+              FROM trainer_details
+             WHERE user_id = #{userId}
+        )
+    </select>
+    
+    <!-- 회원 유형 조회 -->
+    <select id="selectUserTypeByUserId" parameterType="long" resultType="int">
+        SELECT user_type
+          FROM users
+         WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 회원 탈퇴 -->
+    <update id="updateUserStatus">
+        UPDATE users
+        SET status = #{status},
+            updated_at = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>
