@@ -42,7 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     throws ServletException, IOException {
 
         String token = extractToken(request); // Authorization: Bearer xxx 형식의 헤더에서 "xxx"만 잘라낸다.
-        log.info("✅ JWT 필터 실행됨. 토큰 유무: " + token);
         if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) { // 토큰이 비어있지 않고, 서명 + 만료 시간 등 유효성 검사를 통과했는지 확인
         	
         	

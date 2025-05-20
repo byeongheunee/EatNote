@@ -7,7 +7,19 @@
     <div v-else-if="meal">
       <img :src="getImageUrl(meal.imageUrl)" alt="식단 이미지" class="w-96 mb-4" />
 
-      <p><strong>식사 유형:</strong> {{ meal.mealType }}</p>
+      <p><strong>식사 유형</strong>: {{
+      {
+      breakfast: '아침',
+      lunch: '점심',
+      dinner: '저녁',
+      extra: '간식'
+    }[meal.mealType]
+      }}</p>
+      <p>
+      <strong>작성자</strong>:
+      <router-link :to="`/profile/${meal.userId}`">{{ meal.userNickname }}</router-link>
+      </p>
+
       <p><strong>감지된 음식:</strong> {{ meal.detectedFoods }}</p>
       <p><strong>총 칼로리:</strong> {{ meal.totalCalories }} kcal</p>
       <p><strong>탄수화물:</strong> {{ meal.carbohydrates }} g</p>

@@ -19,6 +19,9 @@ public class MealPublicDetailResponse {
     
     @Schema(description = "식단 작성자 사용자 ID", example = "9")
     private Long userId;
+    
+    @Schema(description = "사용자 닉네임", example ="이벼이")
+    private String userNickname;
 
     @Schema(description = "식사 종류", example = "점심")
     private String mealType;
