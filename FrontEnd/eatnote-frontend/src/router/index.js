@@ -7,12 +7,11 @@ import RegisterView from '@/views/RegisterView.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ArticleWriteView from '@/views/ArticleWriteView.vue'
 import VideoRecommendView from '@/views/VideoRecommendView.vue'
-import MealDetail from '@/views/MealDetailPage.vue'
-import MyPage from '@/views/MyPageView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import MealUploadPage from '@/views/MealUploadPage.vue'
 import MealDetailPage from '@/views/MealDetailPage.vue'
 import MyPageView from '@/views/MyPageView.vue'
+import ArticleDetailView from '@/views/ArticleDetailView.vue'
 
 // 탭 통합 메인 뷰
 import MealView from '@/views/MealView.vue'
@@ -30,26 +29,12 @@ const router = createRouter({
     { path: '/meal/upload', name: 'MealUpload', component: MealUploadPage },
     { path: '/meal/:id', name: 'MealDetail', component: MealDetailPage },
     { path: '/profile', name: 'MyPage', component: MyPageView, meta: { requiresAuth: true } },
-    { path: '/trainer', name: 'TrainerDashboard', component: TrainerDashboardView, meta: { requiresAuth: true }
-    },
-
-    {
-      path: '/meal/:id',
-      name: 'MealDetail',
-      component: MealDetail,
-    },
-    {
-      path: '/profile',
-      name: 'MyPage',
-      component: MyPage,
-      meta: { requiresAuth: true }, // 해당 라우트가 로그인한 사용자만 접근 가능하도록 제한하겠다는 의미
-    },
-    {
-      path: '/profile/edit',
-      name: 'EditProfile',
-      component: EditProfileView
-    },
+    { path: '/trainer', name: 'TrainerDashboard', component: TrainerDashboardView, meta: { requiresAuth: true } },
+    { path: '/profile/edit', name: 'EditProfile', component: EditProfileView },
     { path: '/meals', name: 'MealView', component: MealView },
+    { path: '/community/:boardId/article/:articleId', name: 'ArticleDetail', component: ArticleDetailView },
+    { path: '/community/:boardId', name: 'CommunityBoard', component: CommunityView },
+    { path: '/articles/:articleId/edit', name: 'ArticleEdit', component: ArticleWriteView, meta: { requiresAuth: true } },
   ],
 })
 
@@ -64,4 +49,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-0

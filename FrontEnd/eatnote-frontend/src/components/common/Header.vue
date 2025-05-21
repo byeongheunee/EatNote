@@ -10,14 +10,14 @@
       <nav class="flex space-x-6 text-lg">
         <!-- ✨ 로그인 안한 경우 -->
         <template v-if="!isLogin">
-          <RouterLink to="/community" class="cursor-pointer hover:font-bold">커뮤니티</RouterLink>
+          <RouterLink :to="`/community/${defaultBoardId}`" class="cursor-pointer hover:font-bold">커뮤니티</RouterLink>
           <span class="cursor-pointer hover:font-bold" @click="$emit('go-feature')">주요기능</span>
           <span class="cursor-pointer hover:font-bold" @click="$emit('go-usage')">이용방법</span>
         </template>
 
         <!-- ✨ 로그인 한 경우 -->
         <template v-else>
-          <RouterLink to="/community" class="cursor-pointer hover:font-bold">커뮤니티</RouterLink>
+          <RouterLink :to="`/community/${defaultBoardId}`" class="cursor-pointer hover:font-bold">커뮤니티</RouterLink>
           <RouterLink to="/meals" class="cursor-pointer hover:font-bold">식단</RouterLink>
           <RouterLink to="/videos" class="cursor-pointer hover:font-bold">추천 영상</RouterLink>
         </template>
@@ -53,6 +53,8 @@ const router = useRouter()
 
 const isLogin = computed(() => auth.isLoggedIn)
 const user = computed(() => auth.user)
+
+const defaultBoardId = 1
 
 const handleLogout = async () => {
   try {

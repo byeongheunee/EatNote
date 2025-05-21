@@ -4,7 +4,7 @@
     <div class="text-right mb-4">
       <button
         class="px-4 py-1 text-sm text-gray-600 hover:underline"
-        @click="$emit('close')"
+        @click="goBackToBoard"
       >
         ← 목록으로 돌아가기
       </button>
@@ -15,6 +15,22 @@
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-2xl font-bold">{{ article.title }}</h2>
         <span class="text-gray-500 text-sm">작성자 : {{ article.userNickname }}</span>
+      </div>
+
+      <!-- ✨ 수정/삭제 버튼 -->
+      <div v-if="isMyArticle" class="flex justify-end gap-2 mb-2">
+        <button
+          @click="goToEdit"
+          class="px-4 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
+        >
+          수정
+        </button>
+        <button
+          @click="deleteArticle"
+          class="px-4 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
+        >
+          삭제
+        </button>
       </div>
 
       <!-- 내용 + 대표 이미지 -->
@@ -48,7 +64,7 @@
       <div class="flex items-center gap-3 text-gray-500 text-sm mt-4">
         <LikeDislikeButtons
           contentType="ARTICLE"
-          :contentId="props.articleId"
+          :contentId="articleId"
           :likeCount="article.likeCount"
           :dislikeCount="article.dislikeCount"
           :myReaction="article.myReaction"
@@ -63,7 +79,7 @@
         :parentCommentId="null"
         :onSubmit="loadComments"
         targetType="ARTICLE"
-        :targetId="props.articleId"
+        :targetId="articleId"
       />
 
       <!-- 댓글 목록 -->
@@ -74,7 +90,7 @@
           :comment="comment"
           :onReload="loadComments"
           targetType="ARTICLE"
-          :targetId="props.articleId"
+          :targetId="articleId"
         />
       </div>
       <div v-else>
@@ -85,52 +101,79 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
-import { useRoute } from 'vue-router'
 import CommentItem from '@/components/CommentItem.vue'
 import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
 
-const props = defineProps({
-  articleId: Number
-})
-const emit = defineEmits(['close'])
+// 📌 라우터에서 articleId와 boardId 추출
+const route = useRoute()
+const router = useRouter()
+
+const articleId = Number(route.params.articleId)
+const boardId = Number(route.params.boardId)
 
 const article = ref(null)
 const additionalImages = ref([])
 const comments = ref([])
 
+const auth = useAuthStore()
+const currentUser = computed(() => auth.user)
+
+
+// 권한 확인
+const isMyArticle = computed(() => {
+  return article.value?.userId === currentUser.value?.userId
+})
+const hasMyComment = computed(() => {
+  return comments.value.some(c => c.userId === currentUser.value?.userId)
+})
+
+// 게시글 삭제
+const deleteArticle = async () => {
+  if (!confirm('정말 삭제하시겠습니까?')) return
+  try {
+    const token = localStorage.getItem('accessToken')
+    await axios.delete(`/api/articles/${articleId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    alert('게시글이 삭제되었습니다.')
+    router.push(`/community/${boardId}`)
+  } catch (e) {
+    console.error('게시글 삭제 실패:', e)
+    alert('삭제 중 오류가 발생했습니다.')
+  }
+}
+
+// 수정 페이지로 이동 <- 이 부분 이따가 수정.....
+const goToEdit = () => {
+  router.push(`/articles/${articleId}/edit`)
+}
+
+// 게시글 조회
 const fetchArticle = async () => {
   try {
-    const token = localStorage.getItem('accessToken') // ✅ 여기 추가해야 함
-    const res = await axios.get(`/api/articles/${props.articleId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const token = localStorage.getItem('accessToken')
+    const res = await axios.get(`/api/articles/${articleId}`, {
+      headers: { Authorization: `Bearer ${token}` }
     })
     article.value = res.data.data
-    if (article.value.attachments?.length > 1) {
-      additionalImages.value = article.value.attachments.slice(1)
-    } else {
-      additionalImages.value = []
-    }
+    additionalImages.value = article.value.attachments?.slice(1) || []
   } catch (err) {
     console.error('게시글 조회 실패:', err)
   }
 }
 
+// 댓글 조회
 const loadComments = async () => {
   try {
     const token = localStorage.getItem('accessToken')
     const res = await axios.get('/api/comments', {
-      params: {
-        targetType: 'ARTICLE',
-        targetId: props.articleId
-      },
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      params: { targetType: 'ARTICLE', targetId: articleId },
+      headers: { Authorization: `Bearer ${token}` }
     })
     comments.value = res.data.data
   } catch (e) {
@@ -138,23 +181,25 @@ const loadComments = async () => {
   }
 }
 
-const getImageUrl = (path) => `http://localhost:8080${path}`
-
+// 조회수 증가
 const increaseViewCount = async () => {
   try {
     const token = localStorage.getItem('accessToken')
-    await axios.patch(`/api/articles/${props.articleId}/view-count`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    await axios.patch(`/api/articles/${articleId}/view-count`, null, {
+      headers: { Authorization: `Bearer ${token}` }
     })
-    console.log('✅ 조회수 증가 API 호출 완료')
   } catch (e) {
-    console.error('❌ 조회수 증가 실패:', e)
+    console.error('조회수 증가 실패:', e)
   }
 }
 
-watch(() => props.articleId, async () => {
+const getImageUrl = (path) => `http://localhost:8080${path}`
+
+const goBackToBoard = () => {
+  router.push(`/community/${boardId}`)
+}
+
+watch(() => articleId, async () => {
   await fetchArticle()
   await loadComments()
 })
@@ -167,5 +212,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 필요시 스타일 추가 */
+/* 필요 시 스타일 추가 */
 </style>

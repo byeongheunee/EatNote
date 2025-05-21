@@ -39,7 +39,7 @@ public class ArticleController {
             @RequestParam(required = false) Integer boardId,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "createdAt") String sort,
-            @AuthenticationPrincipal UserDetailsImpl userDetails  // ✅ 로그인 사용자 주입
+            @AuthenticationPrincipal UserDetailsImpl userDetails  // 로그인 사용자 주입
     ) {
         Long loginUserId = userDetails != null ? userDetails.getUserId() : null;
 
@@ -51,11 +51,11 @@ public class ArticleController {
     @GetMapping("/{id}")
     public ResponseEntity<MyApiResponse<ArticleResponse>> getArticle(
             @PathVariable int id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails // ✅ 로그인 사용자 주입
+            @AuthenticationPrincipal UserDetailsImpl userDetails // 로그인 사용자 주입
     ) {
         Long loginUserId = userDetails != null ? userDetails.getUserId() : null;
 
-        ArticleResponse article = articleService.getArticleResponseById(id, loginUserId); // ✅ 사용자 ID 함께 전달
+        ArticleResponse article = articleService.getArticleResponseById(id, loginUserId); // 사용자 ID 함께 전달
 
         if (article == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
