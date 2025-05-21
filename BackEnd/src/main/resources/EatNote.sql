@@ -67,49 +67,49 @@ CREATE TABLE users (
 
 -- 회원
 INSERT INTO users (email, password, name, nickname, age, gender, profile_image, user_type, status, created_at, updated_at, last_login) VALUES
-('member1@eatnote.com', 'hashed_pw_1', '홍회원1', '건강한하늘', 35, 'F', '/images/profile1.png', 2, 'ACTIVE', '2024-01-01 00:00:00', '2024-03-01 00:00:00', '2024-02-29 19:00:00'),
-('member2@eatnote.com', 'hashed_pw_2', '홍회원2', '운동하는민수', 20, 'M', '/images/profile2.png', 2, 'ACTIVE', '2024-01-02 00:00:00', '2024-03-02 00:00:00', '2024-03-01 19:00:00'),
-('member3@eatnote.com', 'hashed_pw_3', '홍회원3', '슬기로운생활', 32, 'M', '/images/profile3.png', 2, 'ACTIVE', '2024-01-03 00:00:00', '2024-03-03 00:00:00', '2024-03-02 19:00:00'),
-('member4@eatnote.com', 'hashed_pw_4', '홍회원4', '식단요정', 34, 'M', '/images/profile4.png', 2, 'ACTIVE', '2024-01-04 00:00:00', '2024-03-04 00:00:00', '2024-03-03 19:00:00'),
-('member5@eatnote.com', 'hashed_pw_5', '홍회원5', '다이어터지은', 38, 'M', '/images/profile5.png', 2, 'ACTIVE', '2024-01-05 00:00:00', '2024-03-05 00:00:00', '2024-03-04 19:00:00'),
-('member6@eatnote.com', 'hashed_pw_6', '홍회원6', '단백질충전', 27, 'M', '/images/profile6.png', 2, 'ACTIVE', '2024-01-06 00:00:00', '2024-03-06 00:00:00', '2024-03-05 19:00:00'),
-('member7@eatnote.com', 'hashed_pw_7', '홍회원7', '오늘도운동', 22, 'F', '/images/profile7.png', 2, 'ACTIVE', '2024-01-07 00:00:00', '2024-03-07 00:00:00', '2024-03-06 19:00:00'),
-('member8@eatnote.com', 'hashed_pw_8', '홍회원8', '칼로리헌터', 26, 'M', '/images/profile8.png', 2, 'ACTIVE', '2024-01-08 00:00:00', '2024-03-08 00:00:00', '2024-03-07 19:00:00'),
-('member9@eatnote.com', 'hashed_pw_9', '홍회원9', '헬스왕철수', 36, 'F', '/images/profile9.png', 2, 'ACTIVE', '2024-01-09 00:00:00', '2024-03-09 00:00:00', '2024-03-08 19:00:00'),
-('member10@eatnote.com', 'hashed_pw_10', '홍회원10', '런닝맨진수', 35, 'F', '/images/profile10.png', 2, 'ACTIVE', '2024-01-10 00:00:00', '2024-03-10 00:00:00', '2024-03-09 19:00:00'),
-('member11@eatnote.com', 'hashed_pw_11', '홍회원11', '홈트민정', 33, 'M', '/images/profile11.png', 2, 'ACTIVE', '2024-01-11 00:00:00', '2024-03-11 00:00:00', '2024-03-10 19:00:00'),
-('member12@eatnote.com', 'hashed_pw_12', '홍회원12', '지방파괴자', 20, 'F', '/images/profile12.png', 2, 'ACTIVE', '2024-01-12 00:00:00', '2024-03-12 00:00:00', '2024-03-11 19:00:00'),
-('member13@eatnote.com', 'hashed_pw_13', '홍회원13', '근손실방지', 22, 'M', '/images/profile13.png', 2, 'ACTIVE', '2024-01-13 00:00:00', '2024-03-13 00:00:00', '2024-03-12 19:00:00'),
-('member14@eatnote.com', 'hashed_pw_14', '홍회원14', '매일걷기', 40, 'M', '/images/profile14.png', 2, 'ACTIVE', '2024-01-14 00:00:00', '2024-03-14 00:00:00', '2024-03-13 19:00:00'),
-('member15@eatnote.com', 'hashed_pw_15', '홍회원15', '탄수화물러버', 25, 'M', '/images/profile15.png', 2, 'ACTIVE', '2024-01-15 00:00:00', '2024-03-15 00:00:00', '2024-03-14 19:00:00'),
-('member16@eatnote.com', 'hashed_pw_16', '홍회원16', '스트레칭중독', 34, 'M', '/images/profile16.png', 2, 'ACTIVE', '2024-01-16 00:00:00', '2024-03-16 00:00:00', '2024-03-15 19:00:00'),
-('member17@eatnote.com', 'hashed_pw_17', '홍회원17', '다이어트시작', 23, 'M', '/images/profile17.png', 2, 'ACTIVE', '2024-01-17 00:00:00', '2024-03-17 00:00:00', '2024-03-16 19:00:00'),
-('member18@eatnote.com', 'hashed_pw_18', '홍회원18', '바디프로필꿈나무', 34, 'F', '/images/profile18.png', 2, 'ACTIVE', '2024-01-18 00:00:00', '2024-03-18 00:00:00', '2024-03-17 19:00:00'),
-('member19@eatnote.com', 'hashed_pw_19', '홍회원19', '식단지킴이', 39, 'F', '/images/profile19.png', 2, 'ACTIVE', '2024-01-19 00:00:00', '2024-03-19 00:00:00', '2024-03-18 19:00:00'),
-('member20@eatnote.com', 'hashed_pw_20', '홍회원20', '운동인증러', 30, 'F', '/images/profile20.png', 2, 'ACTIVE', '2024-01-20 00:00:00', '2024-03-20 00:00:00', '2024-03-19 19:00:00'),
-('member21@eatnote.com', 'hashed_pw_21', '홍회원21', '물많이마셔요', 21, 'F', '/images/profile21.png', 2, 'ACTIVE', '2024-01-21 00:00:00', '2024-03-21 00:00:00', '2024-03-20 19:00:00'),
-('member22@eatnote.com', 'hashed_pw_22', '홍회원22', '조깅매니아', 33, 'M', '/images/profile22.png', 2, 'ACTIVE', '2024-01-22 00:00:00', '2024-03-22 00:00:00', '2024-03-21 19:00:00'),
-('member23@eatnote.com', 'hashed_pw_23', '홍회원23', '탄단지전사', 34, 'M', '/images/profile23.png', 2, 'ACTIVE', '2024-01-23 00:00:00', '2024-03-23 00:00:00', '2024-03-22 19:00:00'),
-('member24@eatnote.com', 'hashed_pw_24', '홍회원24', '유산소마스터', 34, 'M', '/images/profile24.png', 2, 'ACTIVE', '2024-01-24 00:00:00', '2024-03-24 00:00:00', '2024-03-23 19:00:00'),
-('member25@eatnote.com', 'hashed_pw_25', '홍회원25', '체중계와친구', 39, 'M', '/images/profile25.png', 2, 'ACTIVE', '2024-01-25 00:00:00', '2024-03-25 00:00:00', '2024-03-24 19:00:00'),
-('member26@eatnote.com', 'hashed_pw_26', '홍회원26', '매일기록러', 24, 'M', '/images/profile26.png', 2, 'ACTIVE', '2024-01-26 00:00:00', '2024-03-26 00:00:00', '2024-03-25 19:00:00'),
-('member27@eatnote.com', 'hashed_pw_27', '홍회원27', '헬창꿈나무', 27, 'M', '/images/profile27.png', 2, 'ACTIVE', '2024-01-27 00:00:00', '2024-03-27 00:00:00', '2024-03-26 19:00:00'),
-('member28@eatnote.com', 'hashed_pw_28', '홍회원28', '식단일기장', 38, 'F', '/images/profile28.png', 2, 'ACTIVE', '2024-01-28 00:00:00', '2024-03-28 00:00:00', '2024-03-27 19:00:00'),
-('member29@eatnote.com', 'hashed_pw_29', '홍회원29', '헬스장가는길', 31, 'M', '/images/profile29.png', 2, 'ACTIVE', '2024-01-29 00:00:00', '2024-03-29 00:00:00', '2024-03-28 19:00:00'),
-('member30@eatnote.com', 'hashed_pw_30', '홍회원30', '몸짱될거야', 28, 'M', '/images/profile30.png', 2, 'ACTIVE', '2024-01-30 00:00:00', '2024-03-30 00:00:00', '2024-03-29 19:00:00');
+('member1@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원1', '건강한하늘', 35, 'F', '/images/profile1.png', 2, 'ACTIVE', '2024-01-01 00:00:00', '2024-03-01 00:00:00', '2024-02-29 19:00:00'),
+('member2@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원2', '운동하는민수', 20, 'M', '/images/profile2.png', 2, 'ACTIVE', '2024-01-02 00:00:00', '2024-03-02 00:00:00', '2024-03-01 19:00:00'),
+('member3@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원3', '슬기로운생활', 32, 'M', '/images/profile3.png', 2, 'ACTIVE', '2024-01-03 00:00:00', '2024-03-03 00:00:00', '2024-03-02 19:00:00'),
+('member4@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원4', '식단요정', 34, 'M', '/images/profile4.png', 2, 'ACTIVE', '2024-01-04 00:00:00', '2024-03-04 00:00:00', '2024-03-03 19:00:00'),
+('member5@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원5', '다이어터지은', 38, 'M', '/images/profile5.png', 2, 'ACTIVE', '2024-01-05 00:00:00', '2024-03-05 00:00:00', '2024-03-04 19:00:00'),
+('member6@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원6', '단백질충전', 27, 'M', '/images/profile6.png', 2, 'ACTIVE', '2024-01-06 00:00:00', '2024-03-06 00:00:00', '2024-03-05 19:00:00'),
+('member7@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원7', '오늘도운동', 22, 'F', '/images/profile7.png', 2, 'ACTIVE', '2024-01-07 00:00:00', '2024-03-07 00:00:00', '2024-03-06 19:00:00'),
+('member8@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원8', '칼로리헌터', 26, 'M', '/images/profile8.png', 2, 'ACTIVE', '2024-01-08 00:00:00', '2024-03-08 00:00:00', '2024-03-07 19:00:00'),
+('member9@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원9', '헬스왕철수', 36, 'F', '/images/profile9.png', 2, 'ACTIVE', '2024-01-09 00:00:00', '2024-03-09 00:00:00', '2024-03-08 19:00:00'),
+('member10@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원10', '런닝맨진수', 35, 'F', '/images/profile10.png', 2, 'ACTIVE', '2024-01-10 00:00:00', '2024-03-10 00:00:00', '2024-03-09 19:00:00'),
+('member11@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원11', '홈트민정', 33, 'M', '/images/profile11.png', 2, 'ACTIVE', '2024-01-11 00:00:00', '2024-03-11 00:00:00', '2024-03-10 19:00:00'),
+('member12@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원12', '지방파괴자', 20, 'F', '/images/profile12.png', 2, 'ACTIVE', '2024-01-12 00:00:00', '2024-03-12 00:00:00', '2024-03-11 19:00:00'),
+('member13@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원13', '근손실방지', 22, 'M', '/images/profile13.png', 2, 'ACTIVE', '2024-01-13 00:00:00', '2024-03-13 00:00:00', '2024-03-12 19:00:00'),
+('member14@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원14', '매일걷기', 40, 'M', '/images/profile14.png', 2, 'ACTIVE', '2024-01-14 00:00:00', '2024-03-14 00:00:00', '2024-03-13 19:00:00'),
+('member15@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원15', '탄수화물러버', 25, 'M', '/images/profile15.png', 2, 'ACTIVE', '2024-01-15 00:00:00', '2024-03-15 00:00:00', '2024-03-14 19:00:00'),
+('member16@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원16', '스트레칭중독', 34, 'M', '/images/profile16.png', 2, 'ACTIVE', '2024-01-16 00:00:00', '2024-03-16 00:00:00', '2024-03-15 19:00:00'),
+('member17@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원17', '다이어트시작', 23, 'M', '/images/profile17.png', 2, 'ACTIVE', '2024-01-17 00:00:00', '2024-03-17 00:00:00', '2024-03-16 19:00:00'),
+('member18@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원18', '바디프로필꿈나무', 34, 'F', '/images/profile18.png', 2, 'ACTIVE', '2024-01-18 00:00:00', '2024-03-18 00:00:00', '2024-03-17 19:00:00'),
+('member19@eatnote.com', 'hashed_p$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8Kw_19', '홍회원19', '식단지킴이', 39, 'F', '/images/profile19.png', 2, 'ACTIVE', '2024-01-19 00:00:00', '2024-03-19 00:00:00', '2024-03-18 19:00:00'),
+('member20@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원20', '운동인증러', 30, 'F', '/images/profile20.png', 2, 'ACTIVE', '2024-01-20 00:00:00', '2024-03-20 00:00:00', '2024-03-19 19:00:00'),
+('member21@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원21', '물많이마셔요', 21, 'F', '/images/profile21.png', 2, 'ACTIVE', '2024-01-21 00:00:00', '2024-03-21 00:00:00', '2024-03-20 19:00:00'),
+('member22@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원22', '조깅매니아', 33, 'M', '/images/profile22.png', 2, 'ACTIVE', '2024-01-22 00:00:00', '2024-03-22 00:00:00', '2024-03-21 19:00:00'),
+('member23@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원23', '탄단지전사', 34, 'M', '/images/profile23.png', 2, 'ACTIVE', '2024-01-23 00:00:00', '2024-03-23 00:00:00', '2024-03-22 19:00:00'),
+('member24@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원24', '유산소마스터', 34, 'M', '/images/profile24.png', 2, 'ACTIVE', '2024-01-24 00:00:00', '2024-03-24 00:00:00', '2024-03-23 19:00:00'),
+('member25@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원25', '체중계와친구', 39, 'M', '/images/profile25.png', 2, 'ACTIVE', '2024-01-25 00:00:00', '2024-03-25 00:00:00', '2024-03-24 19:00:00'),
+('member26@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원26', '매일기록러', 24, 'M', '/images/profile26.png', 2, 'ACTIVE', '2024-01-26 00:00:00', '2024-03-26 00:00:00', '2024-03-25 19:00:00'),
+('member27@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원27', '헬창꿈나무', 27, 'M', '/images/profile27.png', 2, 'ACTIVE', '2024-01-27 00:00:00', '2024-03-27 00:00:00', '2024-03-26 19:00:00'),
+('member28@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원28', '식단일기장', 38, 'F', '/images/profile28.png', 2, 'ACTIVE', '2024-01-28 00:00:00', '2024-03-28 00:00:00', '2024-03-27 19:00:00'),
+('member29@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원29', '헬스장가는길', 31, 'M', '/images/profile29.png', 2, 'ACTIVE', '2024-01-29 00:00:00', '2024-03-29 00:00:00', '2024-03-28 19:00:00'),
+('member30@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '홍회원30', '몸짱될거야', 28, 'M', '/images/profile30.png', 2, 'ACTIVE', '2024-01-30 00:00:00', '2024-03-30 00:00:00', '2024-03-29 19:00:00');
 
 -- 트레이너
 INSERT INTO users (email, password, name, nickname, age, gender, profile_image, user_type, status, created_at, updated_at, last_login) VALUES
-('trainer1@eatnote.com', 'hashed_pw_1', '김강민', '강철트레이너', 29, 'M', '/images/profile1.png', 1, 'ACTIVE', '2024-01-05 09:00:00', '2024-04-20 08:30:00', '2024-04-19 21:50:00'),
-('trainer2@eatnote.com', 'hashed_pw_2', '이서연', '핏여신서연', 26, 'F', '/images/profile2.png', 1, 'ACTIVE', '2024-02-10 10:30:00', '2024-04-20 08:35:00', '2024-04-19 20:45:00'),
-('trainer3@eatnote.com', 'hashed_pw_3', '박진우', '코어진우', 32, 'M', '/images/profile3.png', 1, 'ACTIVE', '2024-03-15 08:40:00', '2024-04-20 08:40:00', '2024-04-19 19:40:00'),
-('trainer4@eatnote.com', 'hashed_pw_4', '최민지', '민지노핏', 30, 'F', '/images/profile4.png', 1, 'ACTIVE', '2024-04-01 09:15:00', '2024-04-20 08:45:00', '2024-04-19 18:30:00'),
-('trainer5@eatnote.com', 'hashed_pw_5', '정우성', '운동하는정쌤', 35, 'M', '/images/profile5.png', 1, 'ACTIVE', '2024-04-05 07:20:00', '2024-04-20 08:50:00', '2024-04-19 17:20:00'),
-('trainer6@eatnote.com', 'hashed_pw_6', '한유리', '트레이너유리', 28, 'F', '/images/profile6.png', 1, 'ACTIVE', '2024-04-10 12:00:00', '2024-04-20 08:55:00', '2024-04-19 16:10:00'),
-('trainer7@eatnote.com', 'hashed_pw_7', '윤도현', '윤핏', 31, 'M', '/images/profile7.png', 1, 'ACTIVE', '2024-04-13 11:00:00', '2024-04-20 09:00:00', '2024-04-19 15:05:00'),
-('trainer8@eatnote.com', 'hashed_pw_8', '장하늘', '하늘트레이너', 27, 'F', '/images/profile8.png', 1, 'ACTIVE', '2024-04-15 14:10:00', '2024-04-20 09:05:00', '2024-04-19 14:55:00'),
-('trainer9@eatnote.com', 'hashed_pw_9', '오상민', '상민코치', 33, 'M', '/images/profile9.png', 1, 'ACTIVE', '2024-04-17 15:20:00', '2024-04-20 09:10:00', '2024-04-19 13:50:00'),
-('trainer10@eatnote.com', 'hashed_pw_10', '서지현', '지현쌤', 25, 'F', '/images/profile10.png', 1, 'ACTIVE', '2024-04-18 16:30:00', '2024-04-20 09:15:00', '2024-04-19 12:40:00');
+('trainer1@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '김강민', '강철트레이너', 29, 'M', '/images/profile1.png', 1, 'ACTIVE', '2024-01-05 09:00:00', '2024-04-20 08:30:00', '2024-04-19 21:50:00'),
+('trainer2@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '이서연', '핏여신서연', 26, 'F', '/images/profile2.png', 1, 'ACTIVE', '2024-02-10 10:30:00', '2024-04-20 08:35:00', '2024-04-19 20:45:00'),
+('trainer3@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '박진우', '코어진우', 32, 'M', '/images/profile3.png', 1, 'ACTIVE', '2024-03-15 08:40:00', '2024-04-20 08:40:00', '2024-04-19 19:40:00'),
+('trainer4@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '최민지', '민지노핏', 30, 'F', '/images/profile4.png', 1, 'ACTIVE', '2024-04-01 09:15:00', '2024-04-20 08:45:00', '2024-04-19 18:30:00'),
+('trainer5@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '정우성', '운동하는정쌤', 35, 'M', '/images/profile5.png', 1, 'ACTIVE', '2024-04-05 07:20:00', '2024-04-20 08:50:00', '2024-04-19 17:20:00'),
+('trainer6@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '한유리', '트레이너유리', 28, 'F', '/images/profile6.png', 1, 'ACTIVE', '2024-04-10 12:00:00', '2024-04-20 08:55:00', '2024-04-19 16:10:00'),
+('trainer7@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '윤도현', '윤핏', 31, 'M', '/images/profile7.png', 1, 'ACTIVE', '2024-04-13 11:00:00', '2024-04-20 09:00:00', '2024-04-19 15:05:00'),
+('trainer8@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '장하늘', '하늘트레이너', 27, 'F', '/images/profile8.png', 1, 'ACTIVE', '2024-04-15 14:10:00', '2024-04-20 09:05:00', '2024-04-19 14:55:00'),
+('trainer9@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '오상민', '상민코치', 33, 'M', '/images/profile9.png', 1, 'ACTIVE', '2024-04-17 15:20:00', '2024-04-20 09:10:00', '2024-04-19 13:50:00'),
+('trainer10@eatnote.com', '$2a$10$K7u3K6Hf8yEaq1bJLC6neOxXn1KMPXGOGYQzjvshPH3DlZAzEGC8K', '서지현', '지현쌤', 25, 'F', '/images/profile10.png', 1, 'ACTIVE', '2024-04-18 16:30:00', '2024-04-20 09:15:00', '2024-04-19 12:40:00');
 
 -- 관리자 
 INSERT INTO users (email, password, name, nickname, age, gender, user_type, status)
@@ -317,28 +317,16 @@ VALUES
 (5, 29, 'PENDING', '2024-04-01 12:00:00', NULL),
 (5, 1, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (5, 3, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-(6, 38, 'PENDING', '2024-04-01 12:00:00', NULL),
-(6, 33, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-(6, 40, 'PENDING', '2024-04-01 12:00:00', NULL),
-(6, 39, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-(6, 32, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (6, 8, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (6, 12, 'PENDING', '2024-04-01 12:00:00', NULL),
 (6, 13, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (6, 16, 'PENDING', '2024-04-01 12:00:00', NULL),
 (6, 25, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-
-
 (6, 38, 'PENDING', '2024-04-01 12:00:00', NULL),
 (6, 33, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (6, 40, 'PENDING', '2024-04-01 12:00:00', NULL),
 (6, 39, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (6, 32, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-(6, 8, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-(6, 12, 'PENDING', '2024-04-01 12:00:00', NULL),
-(6, 13, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
-(6, 16, 'PENDING', '2024-04-01 12:00:00', NULL),
-(6, 25, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (7, 33, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (7, 32, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
 (7, 35, 'ACCEPTED', '2024-04-01 12:00:00', '2024-04-01 12:00:00'),
@@ -726,8 +714,6 @@ INSERT INTO allergy (name, category) VALUES
 
 
 
-
-
 -- ---------------------------------------------------------------------
 -- Table `user_allergy` <<< 사용자가 가지고 있는 알레르기 정보 
 -- ---------------------------------------------------------------------
@@ -742,7 +728,7 @@ CREATE TABLE user_allergy (
 -- 예: user_id = 1번 사용자가 땅콩(1), 새우(13), 유당불내성(21)을 선택한 경우
 INSERT INTO user_allergy (user_id, allergy_id) VALUES
 (1, 11),
-(1, 62),
+
 (2, 46),
 (2, 30),
 (2, 26),
@@ -751,7 +737,6 @@ INSERT INTO user_allergy (user_id, allergy_id) VALUES
 (3, 20),
 (3, 42),
 (4, 33),
-(4, 63),
 (4, 16),
 (4, 17),
 (5, 12),
@@ -773,12 +758,10 @@ INSERT INTO user_allergy (user_id, allergy_id) VALUES
 (10, 50),
 (10, 8),
 (11, 44),
-(11, 62),
 (11, 33),
 (11, 2),
 (11, 11),
 (12, 27),
-(12, 63),
 (12, 26),
 (12, 58),
 (12, 35),
@@ -795,16 +778,13 @@ INSERT INTO user_allergy (user_id, allergy_id) VALUES
 (15, 6),
 (16, 50),
 (16, 57),
-(17, 61),
 (17, 46),
-(17, 62),
 (17, 34),
 (18, 34),
 (18, 44),
 (18, 39),
 (18, 14),
 (19, 1),
-(19, 61),
 (19, 9),
 (20, 40),
 (20, 13),
@@ -825,7 +805,6 @@ INSERT INTO user_allergy (user_id, allergy_id) VALUES
 (24, 3),
 (25, 41),
 (25, 34),
-(25, 62),
 (26, 22),
 (27, 20),
 (27, 29),
@@ -868,39 +847,6 @@ CREATE TABLE meal (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-INSERT INTO meal (
-    meal_id,
-    user_id,
-    image_url,
-    detected_foods,
-    total_calories,
-    carbohydrates,
-    protein,
-    fat,
-    sugars,
-    sodium,
-    meal_time,
-    created_at,
-    auto_score,
-    ai_feedback,
-    meal_type
-) VALUES (
-    101,
-    1,
-    '/uploads/meal/sample_image.jpg',
-    '닭가슴살, 고구마',
-    350,
-    30,
-    40,
-    10,
-    5,
-    500,
-    NOW(),
-    NOW(),
-    8.5,
-    '균형잡힌 좋은 식단입니다.',
-    '점심'
-);
 
 
 
@@ -1226,8 +1172,8 @@ CREATE TABLE meal_feedback (
 
 INSERT INTO meal_feedback (meal_id, trainer_id, content, trainer_score, created_at)
 VALUES
-(101, 3, '단백질 섭취가 좋아요. 채소를 조금 더 추가해보세요.', 8.5, '2025-05-13 21:10:00'),
-(101, 4, '균형 잡힌 식단입니다. 다음엔 과일도 추가해보세요.', 9.0, '2025-05-13 21:15:00');
+(1, 3, '단백질 섭취가 좋아요. 채소를 조금 더 추가해보세요.', 8.5, '2025-05-13 21:10:00'),
+(2, 4, '균형 잡힌 식단입니다. 다음엔 과일도 추가해보세요.', 9.0, '2025-05-13 21:15:00');
 
 
 
@@ -2081,5 +2027,3 @@ CREATE TABLE food_info (
     sugars FLOAT,
     sodium FLOAT
 );
-
-
