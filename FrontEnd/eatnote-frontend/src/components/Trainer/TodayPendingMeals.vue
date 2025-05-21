@@ -45,7 +45,7 @@ onMounted(async () => {
     const res = await axios.get('/api/trainer/feedback/pending', {
       headers: { Authorization: `Bearer ${token}` }
     })
-    meals.value = res.data.data
+    meals.value = res.data.data || []
   } catch (e) {
     console.error('피드백 식단 불러오기 실패', e)
   } finally {

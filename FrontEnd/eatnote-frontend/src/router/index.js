@@ -8,9 +8,6 @@ import CommunityView from '@/views/CommunityView.vue'
 import ArticleWriteView from '@/views/ArticleWriteView.vue'
 import VideoRecommendView from '@/views/VideoRecommendView.vue'
 import MealDetail from '@/views/MealDetailPage.vue'
-import MealList from '@/views/MealListPage.vue'
-import MealStats from '@/views/MyMealStatsPage.vue'
-import FollowerMeals from '@/views/FollowerMealView.vue'
 import MyPage from '@/views/MyPageView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import MealUploadPage from '@/views/MealUploadPage.vue'
@@ -40,22 +37,6 @@ const router = createRouter({
       path: '/meal/:id',
       name: 'MealDetail',
       component: MealDetail,
-    },
-    {
-      path: '/meals/followings',
-      name: 'FollowerMeals',
-      component: FollowerMeals,
-    },
-
-    {
-      path: '/meals/:userId',
-      name: 'MealList',
-      component: MealList,
-    },
-    {
-      path: '/meal/:Id/stats',
-      name: 'MealStats',
-      component: MealStats,
     },
     {
       path: '/profile',

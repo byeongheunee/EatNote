@@ -40,7 +40,7 @@ onMounted(async () => {
     const res = await axios.get('/api/trainer/feedback/followings', {
       headers: { Authorization: `Bearer ${token}` }
     })
-    users.value = res.data.data
+    users.value = res.data.data || []
   } catch (e) {
     console.error('팔로우 회원 조회 실패', e)
   } finally {
