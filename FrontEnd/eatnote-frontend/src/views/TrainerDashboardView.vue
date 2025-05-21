@@ -1,18 +1,18 @@
 <template>
   <div class="p-6 space-y-10">
+    <Header />
     <h1 class="text-2xl font-bold text-gray-800">트레이너 대시보드</h1>
-
     <TodayPendingMeals />
-    <FolloweeList />
+    <PendingFollowRequests />
     <FeedbackCalendar />
   </div>
 </template>
 
 <script setup>
 import TodayPendingMeals from '@/components/Trainer/TodayPendingMeals.vue'
-import FolloweeList from '@/components/Trainer/FolloweeList.vue'
+import PendingFollowRequests from '@/components/Trainer/PendingFollowRequests.vue'
 import FeedbackCalendar from '@/components/Trainer/FeedbackCalendar.vue'
-
+import Header from '@/components/common/Header.vue'
 
 </script>
 

@@ -38,25 +38,16 @@
         <div class="flex-1 whitespace-pre-line text-gray-800">
           내용 : {{ article.content }}
         </div>
-        <img
-          v-if="article.imageUrl"
-          :src="getImageUrl(article.imageUrl)"
-          alt="대표 이미지"
-          class="w-full md:w-80 h-auto rounded object-cover shadow"
-        />
+        <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="대표 이미지"
+          class="w-full md:w-80 h-auto rounded object-cover shadow" />
       </div>
 
       <!-- 추가 첨부 이미지 -->
       <div v-if="additionalImages.length" class="mt-6">
         <h4 class="font-semibold mb-2">첨부 이미지</h4>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <img
-            v-for="(img, index) in additionalImages"
-            :key="index"
-            :src="getImageUrl(img.filePath)"
-            :alt="img.originalName"
-            class="w-full h-40 object-cover rounded shadow"
-          />
+          <img v-for="(img, index) in additionalImages" :key="index" :src="getImageUrl(img.filePath)"
+            :alt="img.originalName" class="w-full h-40 object-cover rounded shadow" />
         </div>
       </div>
 
@@ -75,6 +66,7 @@
 
       <!-- 댓글 입력 -->
       <h3 class="mt-8 text-lg font-semibold">댓글</h3>
+
       <CommentInput
         :parentCommentId="null"
         :onSubmit="loadComments"

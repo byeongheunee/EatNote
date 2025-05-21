@@ -32,14 +32,8 @@
     />
 
     <div v-if="comment.replies && comment.replies.length" class="ml-4 mt-2 border-l pl-3">
-      <CommentItem
-        v-for="reply in comment.replies"
-        :key="reply.commentId"
-        :comment="reply"
-        :onReload="onReload"
-        :targetType="targetType"
-        :targetId="targetId"
-      />
+      <CommentItem v-for="reply in comment.replies" :key="reply.commentId" :comment="reply" :onReload="onReload"
+        :targetType="targetType" :targetId="targetId" />
     </div>
   </div>
 </template>

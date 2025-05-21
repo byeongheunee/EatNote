@@ -17,8 +17,8 @@ public class FeedbackCalendarStat {
     private LocalDate date;
 
     @Schema(description = "요청된 식단 수", example = "3")
-    private int total;
+    private int pendingCount;
 
     @Schema(description = "작성된 피드백 수", example = "2")
-    private int written;
+    private int completedCount;
 } 

@@ -12,6 +12,9 @@ import MealUploadPage from '@/views/MealUploadPage.vue'
 import MealDetailPage from '@/views/MealDetailPage.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import ArticleDetailView from '@/views/ArticleDetailView.vue'
+import TrainerFeedbackForm from '@/views/TrainerFeedbackForm.vue'
+import TrainerFeedbackPage from '@/views/TrainerFeedbackPage.vue'
+
 
 // 탭 통합 메인 뷰
 import MealView from '@/views/MealView.vue'
@@ -35,6 +38,8 @@ const router = createRouter({
     { path: '/community/:boardId/article/:articleId', name: 'ArticleDetail', component: ArticleDetailView },
     { path: '/community/:boardId', name: 'CommunityBoard', component: CommunityView },
     { path: '/articles/:articleId/edit', name: 'ArticleEdit', component: ArticleWriteView, meta: { requiresAuth: true } },
+    { path: '/trainer/feedback/:mealId', name: 'TrainerFeedbackForm', component: TrainerFeedbackForm, meta: { requiresAuth: true } },
+    { path: '/trainer/feedback', name: 'TrainerFeedbackPage', component: TrainerFeedbackPage, meta: { requiresAuth: true } },
   ],
 })
 

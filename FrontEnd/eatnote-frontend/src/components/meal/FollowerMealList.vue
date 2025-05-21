@@ -5,30 +5,19 @@
 
     <!-- 상단 프로필 목록 -->
     <div class="flex overflow-x-auto mb-6 gap-4">
-      <div
-        v-for="user in followings"
-        :key="user.userId"
-        class="text-center cursor-pointer"
-        @click="selectUser(user.userId)"
-      >
-        <img
-          :src="getImageUrl(user.profileImage)"
-          alt="profile"
+      <div v-for="user in filteredFollowings" :key="user.userId" class="text-center cursor-pointer"
+        @click="selectUser(user.userId)">
+        <img :src="getImageUrl(user.profileImage)" alt="profile"
           class="w-16 h-16 object-cover rounded-full mx-auto border-2"
-          :class="{ 'border-orange-400': selectedUserId === user.userId }"
-        />
+          :class="{ 'border-orange-400': selectedUserId === user.userId }" />
         <p class="mt-1 text-sm">{{ user.nickname }}</p>
       </div>
     </div>
 
     <!-- 식단 목록 -->
     <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-      <div
-        v-for="meal in meals"
-        :key="meal.mealId"
-        class="bg-white rounded shadow p-4 cursor-pointer"
-        @click="goToDetail(meal.mealId)"
-      >
+      <div v-for="meal in meals" :key="meal.mealId" class="bg-white rounded shadow p-4 cursor-pointer"
+        @click="goToDetail(meal.mealId)">
         <img :src="getImageUrl(meal.imageUrl)" alt="meal" class="w-full h-40 object-cover rounded" />
         <div class="mt-2">
           <h3 class="font-semibold">{{ meal.detectedFoods }}</h3>
@@ -45,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
@@ -53,7 +42,7 @@ const meals = ref([])
 const followings = ref([])
 const selectedUserId = ref(null)
 const router = useRouter()
-
+const filteredFollowings = computed(() => followings.value.filter(user => user.userType === 0))
 const getImageUrl = (path) => `http://localhost:8080${path}`
 const formatDate = (datetime) => new Date(datetime).toLocaleDateString('ko-KR')
 const mealTypeKor = (type) => {

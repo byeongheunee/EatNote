@@ -4,12 +4,15 @@ import com.ssafy.eatnote.model.dto.MemberDetails;
 import com.ssafy.eatnote.model.dto.response.AllergyResponse;
 import com.ssafy.eatnote.model.dto.response.MemberDetailsResponse;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
+import com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerMealDetailResponse;
 import com.ssafy.eatnote.model.security.UserDetailsImpl;
 import com.ssafy.eatnote.model.service.AllergyService;
 import com.ssafy.eatnote.model.service.MealService;
 import com.ssafy.eatnote.model.service.MemberService;
 import com.ssafy.eatnote.model.service.TrainerMealService;
+import com.ssafy.eatnote.model.service.TrainerService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +37,7 @@ public class TrainerMealController {
     private final TrainerMealService trainerMealService;
     private final MemberService memberService;
     private final AllergyService allergyService;
+    
     
     
     @GetMapping("/meals/{mealId}")
@@ -75,5 +79,5 @@ public class TrainerMealController {
 
         return ResponseEntity.ok(MyApiResponse.success(response, "TRAINER_MEAL_CONTEXT_SUCCESS", "피드백 위한 트레이너 식단 상세 조회 성공"));
     }
-
+    
 }
