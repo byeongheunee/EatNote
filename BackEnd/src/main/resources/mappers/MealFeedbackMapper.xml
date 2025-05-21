@@ -5,69 +5,99 @@
 
 <mapper namespace="com.ssafy.eatnote.model.dao.MealFeedbackDao">
 
-  <insert id="insertFeedback" parameterType="MealFeedback" useGeneratedKeys="true" keyProperty="feedbackId">
-    INSERT INTO meal_feedback (
-      meal_id, trainer_id, content, trainer_score, created_at
-    ) VALUES (
-      #{mealId}, #{trainerId}, #{content}, #{trainerScore}, #{createdAt}
-    )
-  </insert>
+	<insert id="insertFeedback" parameterType="MealFeedback" useGeneratedKeys="true" keyProperty="feedbackId">
+	    INSERT INTO meal_feedback (
+	      meal_id, trainer_id, content, trainer_score, created_at
+	    ) VALUES (
+	      #{mealId}, #{trainerId}, #{content}, #{trainerScore}, #{createdAt}
+	    )
+	</insert>
 	
 
 	<!-- 특정 식단의 모든 트레이너 피드백 조회 -->
-  <select id="findAllByMealId" parameterType="long" resultType="MealFeedback">
-    SELECT feedback_id,
-           meal_id,
-           trainer_id,
-           content,
-           trainer_score,
-           created_at
-    FROM meal_feedback
-    WHERE meal_id = #{mealId}
-    ORDER BY created_at ASC
-  </select>
+	<select id="findAllByMealId" parameterType="long" resultType="MealFeedback">
+	    SELECT feedback_id,
+	           meal_id,
+	           trainer_id,
+	           content,
+	           trainer_score,
+	           created_at
+	    FROM meal_feedback
+	    WHERE meal_id = #{mealId}
+	    ORDER BY created_at ASC
+	</select>
   
-  <!-- 해당 식단에 로그인한 트레이너가 피드백 했는지 확인  -->
-  <select id="existsByTrainerAndMeal" resultType="boolean">
-    SELECT EXISTS (
-        SELECT 1
-        FROM meal_feedback
-        WHERE trainer_id = #{trainerId}
-          AND meal_id = #{mealId}
-    	)
+	<!-- 해당 식단에 로그인한 트레이너가 피드백 했는지 확인  -->
+	<select id="existsByTrainerAndMeal" resultType="boolean">
+	    SELECT EXISTS (
+	        SELECT 1
+	        FROM meal_feedback
+	        WHERE trainer_id = #{trainerId}
+	          AND meal_id = #{mealId}
+	    	)
 	</select>
 
 	<select id="findByMealId" resultType="MealFeedback">
-    	SELECT * FROM meal_feedback WHERE meal_id = #{mealId}
+    	SELECT * 
+    	  FROM meal_feedback 
+    	 WHERE meal_id = #{mealId}
 	</select>
-	
 	
 	<!-- 피드백 아이디로 피드백 찾기  -->
 	<select id="findById" parameterType="long" resultType="MealFeedback">
- 	 SELECT * FROM meal_feedback
-  	 WHERE feedback_id = #{feedbackId}
+	 	SELECT * 
+	 	  FROM meal_feedback
+	  	 WHERE feedback_id = #{feedbackId}
 	</select>
 	
 	<update id="updateFeedback" parameterType="MealFeedback">
-  	UPDATE meal_feedback
-  		SET content = #{content},
-     		 trainer_score = #{trainerScore}
-  	WHERE feedback_id = #{feedbackId}
+	  	UPDATE meal_feedback
+	  	   SET content = #{content},
+	     	   trainer_score = #{trainerScore}
+	  	 WHERE feedback_id = #{feedbackId}
 	</update>
 	
 	<delete id="deleteFeedback" parameterType="long">
-  		DELETE FROM meal_feedback
-  		WHERE feedback_id = #{feedbackId}
+  		DELETE 
+  		  FROM meal_feedback
+  		 WHERE feedback_id = #{feedbackId}
 	</delete>
 	
 	<select id="findLatestFeedbackByMealId" resultType="MealFeedback">
-    SELECT *
-    FROM meal_feedback
-    WHERE meal_id = #{mealId}
-    ORDER BY created_at DESC
-    LIMIT 1
-</select>
+	    SELECT *
+	      FROM meal_feedback
+	     WHERE meal_id = #{mealId}
+	     ORDER BY created_at DESC
+	     LIMIT 1
+	</select>
 
-  
+  	<select id="countByUserMeals" resultType="int">
+		SELECT COUNT(DISTINCT m.meal_id)
+		  FROM meal_feedback mf
+		  JOIN meal m ON mf.meal_id = m.meal_id
+		 WHERE m.user_id = #{userId}
+	</select>
 	
+	<select id="findRecentFeedbacksByUserId" resultType="MealFeedbackListViewResponse">
+	  SELECT
+	    m.meal_id,
+	    m.detected_foods,
+	    m.meal_type,
+	    mf.feedback_id,
+	    mf.trainer_id,
+	    mf.content,
+	    mf.trainer_score,
+	    u.nickname AS user_nickname,
+	    t.nickname AS trainer_nickname,
+	    t.profile_image AS profile_image,
+	    td.gym_name AS gym_name
+	  FROM meal_feedback mf
+	  JOIN meal m ON mf.meal_id = m.meal_id
+	  JOIN users u ON m.user_id = u.user_id
+	  JOIN users t ON mf.trainer_id = t.user_id
+	  LEFT JOIN trainer_details td ON t.user_id = td.user_id
+	  WHERE m.user_id = #{userId}
+	  ORDER BY mf.created_at DESC
+	  LIMIT 5
+	</select>
 </mapper>

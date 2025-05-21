@@ -14,7 +14,7 @@ import MyPageView from '@/views/MyPageView.vue'
 import ArticleDetailView from '@/views/ArticleDetailView.vue'
 import TrainerFeedbackForm from '@/views/TrainerFeedbackForm.vue'
 import TrainerFeedbackPage from '@/views/TrainerFeedbackPage.vue'
-
+import MemberDashboardView from '@/views/MemberDashboardView.vue'
 
 // 탭 통합 메인 뷰
 import MealView from '@/views/MealView.vue'
@@ -40,6 +40,7 @@ const router = createRouter({
     { path: '/articles/:articleId/edit', name: 'ArticleEdit', component: ArticleWriteView, meta: { requiresAuth: true } },
     { path: '/trainer/feedback/:mealId', name: 'TrainerFeedbackForm', component: TrainerFeedbackForm, meta: { requiresAuth: true } },
     { path: '/trainer/feedback', name: 'TrainerFeedbackPage', component: TrainerFeedbackPage, meta: { requiresAuth: true } },
+    { path: '/member', name: 'MemberDashboard', component: MemberDashboardView },
   ],
 })
 

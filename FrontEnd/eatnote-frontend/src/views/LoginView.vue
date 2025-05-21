@@ -57,8 +57,10 @@ const handleLogin = async () => {
     connectWebSocket(auth.user.id) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
     if (auth.user.userType === 1) {
       router.push('/trainer')
+    } else if (auth.user.userType === 2) {
+      router.push('/member')
     } else {
-      router.push('/')
+      router.push('/') // 예외 상황 대비
     }
   } else {
     alert('로그인 실패. 이메일 또는 비밀번호를 확인하세요!')

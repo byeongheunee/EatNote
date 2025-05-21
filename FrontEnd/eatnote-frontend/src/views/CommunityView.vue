@@ -9,7 +9,7 @@
 
     <!-- 게시판 슬라이더 -->
     <BoardSlider
-      :boards="boards"
+      :boards="filteredBoards"
       :selectedBoardId="selectedBoardId"
       @selectBoard="selectBoard"
     />
@@ -113,6 +113,18 @@ const fetchArticles = async (boardId) => {
 
   articles.value = res.data.data
 }
+
+const filteredBoards = computed(() => {
+  const type = userType.value
+
+  return boards.value.filter(b => {
+    if (b.accessCode === 'TRAINER_ONLY') {
+      return type === 0 || type === 1 // 관리자 or 트레이너만 허용
+    }
+    return true // 나머지는 모두 허용
+  })
+})
+
 
 const selectBoard = (id) => {
   router.push(`/community/${id}`)

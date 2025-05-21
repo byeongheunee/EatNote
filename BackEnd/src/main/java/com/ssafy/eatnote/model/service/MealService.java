@@ -1,8 +1,10 @@
 package com.ssafy.eatnote.model.service;
 
 import com.ssafy.eatnote.model.dto.Meal;
+import com.ssafy.eatnote.model.dto.response.MealFeedbackListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MealPublicDetailResponse;
+import com.ssafy.eatnote.model.dto.response.MealStatsResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerFeedbackResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerMealDetailResponse;
 
@@ -38,4 +40,13 @@ public interface MealService {
     
     // 팔로우하는 사람 식단 조회
     List<MealListViewResponse> getMealsOfMyFollowings(Long userId);
+    
+    // 식단 통계 수치
+    MealStatsResponse getMealStatistics(Long userId);
+    
+    // 특정 회원의 최근 식단 정보 20개 조회
+    List<MealListViewResponse> getRecentMealsByUserId(Long userId);
+    
+    List<MealFeedbackListViewResponse> getRecentFeedbacksByUserId(Long userId);
+    
 }

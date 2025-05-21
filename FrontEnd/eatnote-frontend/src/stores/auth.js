@@ -39,20 +39,11 @@ export const useAuthStore = defineStore('auth', {
         return false
       }
     },
-    async logout() {
-      try {
-        await axios.post('/api/auth/logout', {}, {
-          headers: { Authorization: `Bearer ${this.accessToken}` }
-        })
-      } catch (e) {
-        console.warn('서버 로그아웃 실패 (무시)', e)
-      } finally {
-        // 클라이언트 상태 정리
-        this.accessToken = null
-        this.user = null
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('user')
-      }
+    logout() {
+      this.accessToken = null
+      this.user = null
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('user')
     },
   },
 

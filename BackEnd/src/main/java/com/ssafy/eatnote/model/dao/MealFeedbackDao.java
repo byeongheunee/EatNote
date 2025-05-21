@@ -1,6 +1,7 @@
 package com.ssafy.eatnote.model.dao;
 
 import com.ssafy.eatnote.model.dto.MealFeedback;
+import com.ssafy.eatnote.model.dto.response.MealFeedbackListViewResponse;
 
 import java.util.List;
 
@@ -25,5 +26,8 @@ public interface MealFeedbackDao {
 	void updateFeedback(MealFeedback existing);
 	
 	MealFeedback findLatestFeedbackByMealId(Long mealId);
+	
+	int countByUserMeals(@Param("userId") Long userId);
 
+	List<MealFeedbackListViewResponse> findRecentFeedbacksByUserId(@Param("userId") Long userId);
 }

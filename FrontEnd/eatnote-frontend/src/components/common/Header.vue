@@ -2,7 +2,7 @@
   <header class="flex justify-between items-center px-6 py-3 bg-gray-100 shadow">
     <!-- 1. 왼쪽: 로고/이름 -->
     <div class="flex items-center space-x-8">
-      <div class="flex items-center cursor-pointer" @click="$router.push('/')">
+      <div class="flex items-center cursor-pointer" @click="goHome">
         <span class="text-green-600 text-xl font-bold">EatNote</span>
       </div>
 
@@ -18,8 +18,17 @@
         <!-- ✨ 로그인 한 경우 -->
         <template v-else>
           <RouterLink :to="`/community/${defaultBoardId}`" class="cursor-pointer hover:font-bold">커뮤니티</RouterLink>
-          <RouterLink to="/meals" class="cursor-pointer hover:font-bold">식단</RouterLink>
-          <RouterLink to="/videos" class="cursor-pointer hover:font-bold">추천 영상</RouterLink>
+          
+          <!-- 👤 일반회원 메뉴 -->
+          <template v-if="user.userType === 2">
+            <RouterLink to="/meals" class="cursor-pointer hover:font-bold">식단</RouterLink>
+            <RouterLink to="/videos" class="cursor-pointer hover:font-bold">추천 영상</RouterLink>
+          </template>
+
+          <!-- 🏋️ 트레이너 메뉴 -->
+          <template v-else-if="user.userType === 1">
+            <RouterLink to="/trainer/feedback" class="cursor-pointer hover:font-bold">나의 피드백</RouterLink>
+          </template>
         </template>
       </nav>
     </div>
@@ -47,6 +56,7 @@
 import { RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { computed } from 'vue'
+import axios from 'axios'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -68,6 +78,16 @@ const handleLogout = async () => {
   } finally {
     auth.logout()
     router.replace('/')
+  }
+}
+
+const goHome = () => {
+  if (auth.user?.userType === 1) {
+    router.push('/trainer')
+  } else if (auth.user?.userType === 2) {
+    router.push('/member')
+  } else {
+    router.push('/')
   }
 }
 

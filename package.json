@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "chart.js": "^4.4.9"
+    "chart.js": "^4.4.9",
+    "v-calendar": "^2.4.2"
   }
 }

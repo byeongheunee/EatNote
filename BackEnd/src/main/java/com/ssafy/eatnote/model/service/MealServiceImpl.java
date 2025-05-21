@@ -3,8 +3,10 @@ package com.ssafy.eatnote.model.service;
 import com.ssafy.eatnote.model.dao.*;
 import com.ssafy.eatnote.model.dto.*;
 import com.ssafy.eatnote.model.dto.response.CommentResponse;
+import com.ssafy.eatnote.model.dto.response.MealFeedbackListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MealPublicDetailResponse;
+import com.ssafy.eatnote.model.dto.response.MealStatsResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerFeedbackResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerMealDetailResponse;
 import com.ssafy.eatnote.model.scorer.NutritionScorer;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,6 +31,7 @@ public class MealServiceImpl implements MealService {
 	private final NotificationService notificationService;
 	private final FoodInfoDao foodInfoDao;
 	private final MealDao mealDao;
+	private final MealFeedbackDao mealFeedbackDao;
 	private final UserDao userDao;
 	private final MemberDao memberDao;
 	private final CommentDao commentDao;
@@ -399,6 +403,55 @@ public class MealServiceImpl implements MealService {
         return mealDao.findMealsByUserIds(userIds);
     }
 
+    @Override
+    public MealStatsResponse getMealStatistics(Long userId) {
+    	// 연속 기록일
+    	List<LocalDate> mealDates = mealDao.findMealDatesByUserId(userId);
+    	int consecutiveDays = calculateConsecutiveDays(mealDates);
+    	// 총 식단 기록
+    	int totalMeals = mealDao.countByUserId(userId);
+    	// 피드백 받은 식단 수
+        int feedbackReceived = mealFeedbackDao.countByUserMeals(userId);
+        // 평균 칼로리
+        int averageCalories = mealDao.calculateAverageCalories(userId);
+        
+        return MealStatsResponse.builder()
+                .totalMeals(totalMeals)
+                .feedbackReceived(feedbackReceived)
+                .averageCalories(averageCalories)
+                .consecutiveDays(consecutiveDays)
+                .build();
+    }
     
+    public int calculateConsecutiveDays(List<LocalDate> mealDates) {
+        Set<LocalDate> dateSet = new HashSet<>(mealDates);
 
+        // 오늘 식단이 있는지 확인
+        LocalDate today = LocalDate.now();
+        boolean hasToday = dateSet.contains(today);
+
+        // 시작일: 오늘 포함 여부에 따라 다르게 설정
+        LocalDate startDay = hasToday ? today : today.minusDays(1);
+
+        int count = 0;
+        LocalDate current = startDay;
+
+        // 연속되는 날짜를 역순으로 체크
+        while (dateSet.contains(current)) {
+            count++;
+            current = current.minusDays(1);
+        }
+
+        return count;
+    }
+    
+    @Override
+    public List<MealListViewResponse> getRecentMealsByUserId(Long userId) {
+        return mealDao.findRecentMealsByUserId(userId);
+    }
+
+    @Override
+    public List<MealFeedbackListViewResponse> getRecentFeedbacksByUserId(Long userId) {
+        return mealFeedbackDao.findRecentFeedbacksByUserId(userId);
+    }
 }

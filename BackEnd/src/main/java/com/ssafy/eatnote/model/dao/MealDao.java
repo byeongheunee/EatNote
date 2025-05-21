@@ -40,4 +40,12 @@ public interface MealDao {
     
     List<FeedbackCalendarStat> getFeedbackCalendarStat(@Param("trainerId") Long trainerId, @Param("month") String month);
 
+    List<LocalDate> findMealDatesByUserId(@Param("userId") Long userId);
+    
+    int countByUserId(@Param("userId") Long userId);
+    
+    int calculateAverageCalories(@Param("userId") Long userId);
+    
+    List<MealListViewResponse> findRecentMealsByUserId(@Param("userId") Long userId);
+    
 }

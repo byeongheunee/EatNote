@@ -4,8 +4,10 @@ import com.ssafy.eatnote.model.dto.Meal;
 import com.ssafy.eatnote.model.dto.MealFeedback;
 import com.ssafy.eatnote.model.dto.request.MealFeedbackRequest;
 import com.ssafy.eatnote.model.dto.response.FollowerMealResponse;
+import com.ssafy.eatnote.model.dto.response.MealFeedbackListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MealPublicDetailResponse;
+import com.ssafy.eatnote.model.dto.response.MealStatsResponse;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerFeedbackResponse;
 import com.ssafy.eatnote.model.security.UserDetailsImpl;
@@ -40,6 +42,7 @@ public class MealController {
         @ApiResponse(responseCode = "200", description = "정상적으로 식단 상세 정보를 반환했습니다."),
         @ApiResponse(responseCode = "404", description = "해당 식단을 찾을 수 없습니다.")
     })
+    
     @GetMapping("/{mealId}")
     public MyApiResponse<MealPublicDetailResponse> getPublicMealDetail(
             @PathVariable Long mealId,
@@ -91,6 +94,7 @@ public class MealController {
             return MyApiResponse.failure("MEAL_DELETE_FAILED", "식단 삭제 실패: " + e.getMessage());
         }
     }
+    
     @Operation(summary = "최근 등록된 식단 10개 조회", description = "모든 회원이 최근에 등록한 식단 중 최신순 10개를 조회합니다. 로그인 여부와 관계없이 누구나 접근할 수 있습니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "최근 식단 조회 성공")
@@ -105,6 +109,7 @@ public class MealController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "인기 식단 조회 성공")
     })
+    
     @GetMapping("/home/popular-meals")
     public MyApiResponse<List<MealListViewResponse>> getPopularMealsThisWeek() {
     	List<MealListViewResponse> meals = mealService.getPopularMealsThisWeek();
@@ -120,4 +125,32 @@ public class MealController {
         return ResponseEntity.ok(MyApiResponse.success(meals, "FOLLOWING_MEALS_SUCCESS", "팔로잉 식단 조회 성공"));
     }
 
+    @Operation(summary = "사용자 식단 통계 조회", description = "연속 식단 기록일, 총 식단 수, 피드백 받은 식단 수, 평균 칼로리를 반환합니다.")
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "식단 통계 조회 성공"),
+	    @ApiResponse(responseCode = "401", description = "인증 실패 또는 토큰 없음")
+	})
+	@GetMapping("/stats")
+	public MyApiResponse<MealStatsResponse> getMealStats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+	    Long userId = userDetails.getUserId();
+	    MealStatsResponse stats = mealService.getMealStatistics(userId);
+	    return MyApiResponse.success(stats, "MEAL_STATS_SUCCESS", "식단 통계 조회 성공");
+	}
+    
+    @Operation(summary = "로그인한 회원의 최근 식단 조회", description = "로그인한 회원의 최근 20개 식단 정보를 조회합니다.")
+    @GetMapping("/my/recent")
+    public MyApiResponse<List<MealListViewResponse>> getMyRecentMeals(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getUserId();
+        List<MealListViewResponse> meals = mealService.getRecentMealsByUserId(userId);
+        return MyApiResponse.success(meals, "MY_RECENT_MEALS_SUCCESS", "최근 식단 조회 성공");
+    }
+    
+    @Operation(summary = "내가 받은 최근 피드백 5개 조회", description = "로그인한 사용자가 받은 최근 피드백 5개를 조회합니다.")
+    @GetMapping("/my/recent-feedbacks")
+    public MyApiResponse<List<MealFeedbackListViewResponse>> getMyRecentFeedbacks(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getUserId();
+        List<MealFeedbackListViewResponse> feedbacks = mealService.getRecentFeedbacksByUserId(userId);
+        return MyApiResponse.success(feedbacks, "MY_RECENT_FEEDBACKS_SUCCESS", "최근 피드백 조회 성공");
+    }
+    
 } 
