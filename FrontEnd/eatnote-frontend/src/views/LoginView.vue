@@ -5,17 +5,17 @@
     <div>
       <label class="block text-sm font-medium text-gray-700">이메일</label>
       <input v-model="email" type="email" placeholder="이메일 입력"
-             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">비밀번호</label>
       <input v-model="password" type="password" placeholder="비밀번호 입력"
-             class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
     </div>
 
     <button @click="handleLogin"
-            class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300">
+      class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300">
       로그인
     </button>
   </div>
@@ -55,7 +55,11 @@ const handleLogin = async () => {
   if (success) {
     alert('로그인 성공!')
     connectWebSocket(auth.user.id) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
-    router.push('/')
+    if (auth.user.userType === 1) {
+      router.push('/trainer')
+    } else {
+      router.push('/')
+    }
   } else {
     alert('로그인 실패. 이메일 또는 비밀번호를 확인하세요!')
   }

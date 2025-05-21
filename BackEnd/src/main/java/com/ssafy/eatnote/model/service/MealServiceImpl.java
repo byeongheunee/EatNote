@@ -237,6 +237,10 @@ public class MealServiceImpl implements MealService {
 	            myReaction = like.getLikeType(); // LIKE / DISLIKE
 	        }
 	    }
+	    
+	    MealFeedback latestFeedback = feedbackDao.findLatestFeedbackByMealId(mealId);
+	    String trainerFeedback = (latestFeedback != null) ? latestFeedback.getContent() : null;
+	    Float trainerScore = (latestFeedback != null) ? latestFeedback.getTrainerScore() : null;
 
 	    return MealPublicDetailResponse.builder()
 	            .mealId(meal.getMealId())
@@ -256,6 +260,8 @@ public class MealServiceImpl implements MealService {
 	            .dislikeCount(meal.getDislikeCount())
 	            .autoScore(meal.getAutoScore())
 	            .aiFeedback(meal.getAiFeedback())
+	            .trainerFeedback(trainerFeedback)      
+	            .trainerScore(trainerScore)
 	            .myReaction(myReaction)
 	            .comments(commentTree)
 	            .build();

@@ -73,21 +73,35 @@
     <select id="getFolloweeFeedbackSummary"
         parameterType="long"
         resultType="com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary">
-  SELECT
-    u.user_id AS userId,
-    u.nickname AS nickname,
-    u.gender AS gender,
-    u.profile_image AS profileImage,
-    COUNT(CASE WHEN f.content IS NULL THEN 1 END) AS pendingCount,
-    COUNT(CASE WHEN f.content IS NOT NULL THEN 1 END) AS writtenCount
-  FROM user_follow fo
-  JOIN users u ON fo.from_user_id = u.user_id
-  LEFT JOIN meal m ON m.user_id = u.user_id
-  LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id AND f.trainer_id = #{trainerId}
-  WHERE fo.to_user_id = #{trainerId}
-    AND fo.status = 'ACCEPTED'
-  GROUP BY u.user_id
+  	SELECT
+    	u.user_id AS userId,
+    	u.nickname AS nickname,
+    	u.gender AS gender,
+    	u.profile_image AS profileImage,
+    	COUNT(CASE WHEN f.content IS NULL THEN 1 END) AS pendingCount,
+    	COUNT(CASE WHEN f.content IS NOT NULL THEN 1 END) AS writtenCount
+  	FROM user_follow fo
+  	JOIN users u ON fo.from_user_id = u.user_id
+  	LEFT JOIN meal m ON m.user_id = u.user_id
+  	LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id AND f.trainer_id = #{trainerId}
+  	WHERE fo.to_user_id = #{trainerId}
+    	AND fo.status = 'ACCEPTED'
+  	GROUP BY u.user_id
 </select>
 
+	<select id="findPendingFollowRequests" resultType="com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse">
+    SELECT
+        u.user_id AS userId,
+        u.nickname,
+        u.gender,
+        u.profile_image AS profileImage,
+        uf.requested_at AS requestedAt
+        uf.follow_id AS followId
+    FROM user_follow uf
+    JOIN users u ON uf.from_user_id = u.user_id
+    WHERE uf.to_user_id = #{trainerId}
+      AND uf.status = 'PENDING'
+</select>
+	
     
 </mapper>

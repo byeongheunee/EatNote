@@ -6,6 +6,7 @@ import com.ssafy.eatnote.model.dto.request.MealFeedbackRequest;
 import com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
+import com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse;
 import com.ssafy.eatnote.model.security.UserDetailsImpl;
 import com.ssafy.eatnote.model.service.MealFeedbackService;
 import com.ssafy.eatnote.model.service.TrainerService;
@@ -31,7 +32,22 @@ public class TrainerFeedbackController {
     private final MealFeedbackService feedbackService;
     private final MealFeedbackService mealFeedbackService;
     private final TrainerService trainerService;
-
+    
+    @Operation(summary = "트레이너 피드백 등록", description = "트레이너가 식단에 대한 피드백을 입력합니다.")
+    @PostMapping("/meal/{mealId}")
+    public MyApiResponse<?> giveFeedback(@PathVariable Long mealId,
+                                         @RequestBody MealFeedbackRequest request,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            Long trainerId = userDetails.getUser().getUserId();
+            request.setMealId(mealId);
+            MealFeedback feedback = mealFeedbackService.saveFeedback(request, trainerId);
+            return MyApiResponse.success(feedback, "FEEDBACK_CREATE_SUCCESS", "피드백 등록 성공");
+        } catch (Exception e) {
+            return MyApiResponse.failure("FEEDBACK_CREATE_FAILED", "피드백 등록 중 오류 발생: " + e.getMessage());
+        }
+    }
+    
     @Operation(summary = "트레이너 피드백 수정", description = "피드백 ID로 해당 피드백을 수정합니다.")
     @PutMapping("/{feedbackId}")
     public MyApiResponse<?> updateFeedback(@PathVariable Long feedbackId,
@@ -86,20 +102,7 @@ public class TrainerFeedbackController {
         }
     }
 
-    @Operation(summary = "트레이너 피드백 등록", description = "트레이너가 식단에 대한 피드백을 입력합니다.")
-    @PostMapping("/meal/{mealId}")
-    public MyApiResponse<?> giveFeedback(@PathVariable Long mealId,
-                                         @RequestBody MealFeedbackRequest request,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
-            Long trainerId = userDetails.getUser().getUserId();
-            request.setMealId(mealId);
-            MealFeedback feedback = mealFeedbackService.saveFeedback(request, trainerId);
-            return MyApiResponse.success(feedback, "FEEDBACK_CREATE_SUCCESS", "피드백 등록 성공");
-        } catch (Exception e) {
-            return MyApiResponse.failure("FEEDBACK_CREATE_FAILED", "피드백 등록 중 오류 발생: " + e.getMessage());
-        }
-    }
+   
 
     @Operation(summary = "피드백 미작성 식단 목록 조회", description = "트레이너가 피드백하지 않은 식단 목록을 조회합니다.")
     @GetMapping("/pending")
@@ -117,20 +120,19 @@ public class TrainerFeedbackController {
     }
     
     @Operation(summary = "피드백 달력 통계 조회", description = "트레이너의 특정 월 피드백 작성/요청 통계를 반환합니다.")
-    @GetMapping("/calendar")
-    public MyApiResponse<?> getFeedbackCalendarStats(@RequestParam String month,
-                                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @GetMapping("/statistics")
+    public MyApiResponse<?> getFeedbackCalendarStats(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestParam("month") String month
+    ) {
         try {
             if (userDetails.getUser().getUserType() != 1) {
-                return MyApiResponse.failure("CALENDAR_ACCESS_FORBIDDEN", "트레이너만 접근할 수 있습니다.");
+                return MyApiResponse.failure("CALENDAR_STATS_FORBIDDEN", "트레이너만 접근 가능합니다.");
             }
-            Long trainerId = userDetails.getUser().getUserId();
-            YearMonth ym = YearMonth.parse(month);
-            LocalDate start = ym.atDay(1);
-            LocalDate end = ym.atEndOfMonth();
 
-            Map<String, FeedbackCalendarStat> stats = trainerService.getFeedbackCalendarStats(trainerId, start, end);
-            return MyApiResponse.success(stats, "CALENDAR_STATS_SUCCESS", "달력 피드백 통계 조회 성공");
+            Long trainerId = userDetails.getUser().getUserId();
+            List<FeedbackCalendarStat> result = trainerService.getFeedbackCalendarStats(trainerId, month);
+            return MyApiResponse.success(result, "CALENDAR_STATS_SUCCESS", "달력 통계 조회 성공");
         } catch (Exception e) {
             return MyApiResponse.failure("CALENDAR_STATS_FAILED", "통계 조회 실패: " + e.getMessage());
         }
@@ -139,7 +141,7 @@ public class TrainerFeedbackController {
     @Operation(summary = "팔로우 회원별 피드백 요약 조회", description = "트레이너가 팔로우한 회원별 요청/작성 피드백 수를 조회합니다.")
     @GetMapping("/followings")
     public MyApiResponse<?> getFolloweeFeedbackSummary(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
+        try { 
             if (userDetails.getUser().getUserType() != 1) {
                 return MyApiResponse.failure("FOLLOWEE_SUMMARY_FORBIDDEN", "트레이너만 접근할 수 있습니다.");
             }
@@ -152,7 +154,5 @@ public class TrainerFeedbackController {
             return MyApiResponse.failure("FOLLOWEE_SUMMARY_FAILED", "회원 피드백 요약 조회 실패: " + e.getMessage());
         }
     }
-    
-    
     
 }

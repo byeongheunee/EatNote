@@ -23,4 +23,7 @@ public interface MealFeedbackDao {
 	void deleteFeedback(Long feedbackId);
 
 	void updateFeedback(MealFeedback existing);
+	
+	MealFeedback findLatestFeedbackByMealId(Long mealId);
+
 }

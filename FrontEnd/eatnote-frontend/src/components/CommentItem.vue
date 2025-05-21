@@ -12,29 +12,18 @@
     <button @click="showReply = !showReply" class="text-blue-500 text-xs mt-1">
       답글 달기
     </button>
-    <CommentInput
-      v-if="showReply"
-      :parentCommentId="comment.commentId"
-      :onSubmit="onReload"
-      :targetType="targetType"
-      :targetId="targetId"
-    />
+    <CommentInput v-if="showReply" :parentCommentId="comment.commentId" :onSubmit="onReload" :targetType="targetType"
+      :targetId="targetId" />
 
     <div v-if="comment.replies && comment.replies.length" class="ml-4 mt-2 border-l pl-3">
-      <CommentItem
-        v-for="reply in comment.replies"
-        :key="reply.commentId"
-        :comment="reply"
-        :onReload="onReload"
-        :targetType="targetType"
-        :targetId="targetId"
-      />
+      <CommentItem v-for="reply in comment.replies" :key="reply.commentId" :comment="reply" :onReload="onReload"
+        :targetType="targetType" :targetId="targetId" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import CommentInput from './CommentInput.vue'
 import CommentItem from './CommentItem.vue'

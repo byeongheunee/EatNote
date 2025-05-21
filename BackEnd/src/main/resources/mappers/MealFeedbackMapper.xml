@@ -60,7 +60,13 @@
   		WHERE feedback_id = #{feedbackId}
 	</delete>
 	
-	
+	<select id="findLatestFeedbackByMealId" resultType="MealFeedback">
+    SELECT *
+    FROM meal_feedback
+    WHERE meal_id = #{mealId}
+    ORDER BY created_at DESC
+    LIMIT 1
+</select>
 
   
 	

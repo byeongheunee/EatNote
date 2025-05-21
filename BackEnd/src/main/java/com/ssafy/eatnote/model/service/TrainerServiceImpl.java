@@ -13,6 +13,7 @@ import com.ssafy.eatnote.model.dto.FeedbackCalendarStat;
 import com.ssafy.eatnote.model.dto.TrainerDetails;
 import com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
+import com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,16 +34,19 @@ public class TrainerServiceImpl implements TrainerService {
     }
     
     @Override
-    public Map<String, FeedbackCalendarStat> getFeedbackCalendarStats(Long trainerId, LocalDate startDate, LocalDate endDate) {
-        List<FeedbackCalendarStat> stats = mealDao.getFeedbackCalendarStat(trainerId, startDate, endDate);
-        return stats.stream().collect(Collectors.toMap(
-            stat -> stat.getDate().toString(),
-            stat -> stat
-        ));
+    public List<FeedbackCalendarStat> getFeedbackCalendarStats(Long trainerId, String month) {
+        return mealDao.getFeedbackCalendarStat(trainerId, month);
     }
     
     @Override
     public List<FolloweeFeedbackSummary> getFolloweeFeedbackSummaries(Long trainerId) {
         return trainerDao.getFolloweeFeedbackSummary(trainerId);
     }
+    
+    
+    @Override
+    public List<PendingFollowRequestResponse> getPendingFollowRequests(Long trainerId) {
+        return trainerDao.findPendingFollowRequests(trainerId);
+    }
+
 }

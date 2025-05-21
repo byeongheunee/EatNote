@@ -68,6 +68,13 @@ public class MealPublicDetailResponse {
     @Schema(description = "chatGPT생성 피드백", example = "나트륨과 지방이 다소 높은 편입니다. 채소나 과일을 함께 섭취하는 것을 권장합니다.")
     private String aiFeedback;
     
+    @Schema(description = "트레이너 피드백 내용")
+    private String trainerFeedback;
+
+    @Schema(description = "트레이너 점수")
+    private Float trainerScore;
+
+    
     @Schema(description = "댓글 목록 (트리 구조)")
     private List<CommentResponse> comments;
 } 

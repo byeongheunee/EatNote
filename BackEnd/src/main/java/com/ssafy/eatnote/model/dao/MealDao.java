@@ -38,7 +38,6 @@ public interface MealDao {
     
     List<MealListViewResponse> findMealsWithoutFeedback(@Param("trainerId") Long trainerId);
     
-    List<FeedbackCalendarStat> getFeedbackCalendarStat(@Param("trainerId") Long trainerId,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+    List<FeedbackCalendarStat> getFeedbackCalendarStat(@Param("trainerId") Long trainerId, @Param("month") String month);
+
 }

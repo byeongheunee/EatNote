@@ -2,10 +2,7 @@
   <div>
     <!-- 닫기 버튼 -->
     <div class="text-right mb-4">
-      <button
-        class="px-4 py-1 text-sm text-gray-600 hover:underline"
-        @click="$emit('close')"
-      >
+      <button class="px-4 py-1 text-sm text-gray-600 hover:underline" @click="$emit('close')">
         ← 목록으로 돌아가기
       </button>
     </div>
@@ -22,60 +19,34 @@
         <div class="flex-1 whitespace-pre-line text-gray-800">
           내용 : {{ article.content }}
         </div>
-        <img
-          v-if="article.imageUrl"
-          :src="getImageUrl(article.imageUrl)"
-          alt="대표 이미지"
-          class="w-full md:w-80 h-auto rounded object-cover shadow"
-        />
+        <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="대표 이미지"
+          class="w-full md:w-80 h-auto rounded object-cover shadow" />
       </div>
 
       <!-- 추가 첨부 이미지 -->
       <div v-if="additionalImages.length" class="mt-6">
         <h4 class="font-semibold mb-2">첨부 이미지</h4>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <img
-            v-for="(img, index) in additionalImages"
-            :key="index"
-            :src="getImageUrl(img.filePath)"
-            :alt="img.originalName"
-            class="w-full h-40 object-cover rounded shadow"
-          />
+          <img v-for="(img, index) in additionalImages" :key="index" :src="getImageUrl(img.filePath)"
+            :alt="img.originalName" class="w-full h-40 object-cover rounded shadow" />
         </div>
       </div>
 
       <!-- 좋아요/싫어요/조회수 -->
       <div class="flex items-center gap-3 text-gray-500 text-sm mt-4">
-        <LikeDislikeButtons
-          contentType="ARTICLE"
-          :contentId="props.articleId"
-          :likeCount="article.likeCount"
-          :dislikeCount="article.dislikeCount"
-          :myReaction="article.myReaction"
-          :onUpdated="fetchArticle"
-        />
+        <LikeDislikeButtons contentType="ARTICLE" :contentId="props.articleId" :likeCount="article.likeCount"
+          :dislikeCount="article.dislikeCount" :myReaction="article.myReaction" :onUpdated="fetchArticle" />
         <span class="flex items-center gap-1"> 👁️ 조회수 {{ article.viewCnt }} </span>
       </div>
 
       <!-- 댓글 입력 -->
       <h3 class="mt-8 text-lg font-semibold">댓글</h3>
-      <CommentInput
-        :parentCommentId="null"
-        :onSubmit="loadComments"
-        targetType="ARTICLE"
-        :targetId="props.articleId"
-      />
+      <CommentInput :parentCommentId="null" :onSubmit="loadComments" targetType="ARTICLE" :targetId="props.articleId" />
 
       <!-- 댓글 목록 -->
       <div v-if="comments.length">
-        <CommentItem
-          v-for="comment in comments"
-          :key="comment.commentId"
-          :comment="comment"
-          :onReload="loadComments"
-          targetType="ARTICLE"
-          :targetId="props.articleId"
-        />
+        <CommentItem v-for="comment in comments" :key="comment.commentId" :comment="comment" :onReload="loadComments"
+          targetType="ARTICLE" :targetId="props.articleId" />
       </div>
       <div v-else>
         <p class="text-sm text-gray-500 mt-2">아직 댓글이 없습니다.</p>

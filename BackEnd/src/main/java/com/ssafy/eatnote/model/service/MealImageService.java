@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
+import java.util.UUID;
 @Service
 public class MealImageService {
 
@@ -31,27 +31,42 @@ public class MealImageService {
 	private String mealUploadDir;
 
 	public Map<String, String> saveMealImage(MultipartFile file, Long userId) throws IOException {
-	    String mealType = classifyMealTimeByNow(); // 아침 / 점심 / 저녁 
-	    String today = LocalDate.now().toString(); // 오늘 날짜 
-	    String extension = getExtension(file.getOriginalFilename()); // 확장자명 .jpg 
-	    String fileName = today + "_" + userId + "_" + mealType + extension; // 최종 파일명 
+	    String mealType = classifyMealTimeByNow(); // 아침 / 점심 / 저녁
+	    String today = LocalDate.now().toString(); // 오늘 날짜
 
+	    // 원래 파일명에서 확장자 분리
+	    String originalFilename = Paths.get(file.getOriginalFilename()).getFileName().toString(); 
+	    String extension = getExtension(originalFilename);
+
+	    // 한글/특수문자 제거 (영문자, 숫자, 언더스코어만 허용)
+	    String baseOriginalName = originalFilename.substring(0, originalFilename.lastIndexOf(extension))
+	                                               .replaceAll("[^a-zA-Z0-9_]", "");
+
+	    // 랜덤 문자열 (짧게 5자리만)
+	    String randomSuffix = UUID.randomUUID().toString().substring(0, 5);
+
+	    // 최종 파일명
+	    String fileName = String.format("%s_%d_%s_%s_%s%s", today, userId, mealType, baseOriginalName, randomSuffix, extension);
+
+	    // 저장 디렉토리
 	    Path userDir = Paths.get(mealUploadDir, userId.toString());
 	    Files.createDirectories(userDir);
 
+	    // 저장 경로
 	    Path targetPath = userDir.resolve(fileName);
 	    file.transferTo(targetPath.toFile());
+
 	    String absolutePath = targetPath.toAbsolutePath().toString();
-	    
 	    String relativePath = "/uploads/meals/" + userId + "/" + fileName;
 
-	    // 이미지 경로, tag가 붙어있는 결과 반환 
+	    // 반환
 	    Map<String, String> result = new HashMap<>();
 	    result.put("imagePath", relativePath);
 	    result.put("absolutePath", absolutePath);
 	    result.put("mealType", mealType);
 	    return result;
 	}
+
 
 
 	private String classifyMealTimeByNow() {

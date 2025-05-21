@@ -6,12 +6,8 @@
     <div v-if="loading">불러오는 중...</div>
     <div v-else-if="meals.length === 0">오늘 요청된 식단이 없습니다.</div>
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      <div
-        v-for="meal in meals"
-        :key="meal.mealId"
-        class="border rounded-lg p-3 shadow hover:bg-gray-50 cursor-pointer"
-        @click="goToMeal(meal.mealId)"
-      >
+      <div v-for="meal in meals" :key="meal.mealId" class="border rounded-lg p-3 shadow hover:bg-gray-50 cursor-pointer"
+        @click="goToMeal(meal.mealId)">
         <img :src="getImageUrl(meal.imageUrl)" class="w-full h-40 object-cover rounded" />
         <div class="mt-2">
           <p class="font-semibold text-lg">{{ meal.nickname }}</p>
@@ -37,7 +33,7 @@ const formatDate = (datetime) => {
   const date = new Date(datetime)
   return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
 }
-const goToMeal = (mealId) => router.push(`/meal/${mealId}`)
+const goToMeal = (mealId) => router.push(`/trainer/feedback/${mealId}`)
 
 onMounted(async () => {
   try {

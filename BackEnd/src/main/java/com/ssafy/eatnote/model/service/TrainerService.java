@@ -8,6 +8,7 @@ import com.ssafy.eatnote.model.dto.FeedbackCalendarStat;
 import com.ssafy.eatnote.model.dto.TrainerDetails;
 import com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
+import com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse;
 
 public interface TrainerService {
 	
@@ -15,8 +16,11 @@ public interface TrainerService {
     TrainerDetails getDetailsByUserId(Long userId);
     
     List<MealListViewResponse> getPendingFeedbackMeals(Long trainerId);
-    
-    Map<String, FeedbackCalendarStat> getFeedbackCalendarStats(Long trainerId, LocalDate startDate, LocalDate endDate);
 
    List<FolloweeFeedbackSummary> getFolloweeFeedbackSummaries(Long trainerId);
+   
+   List<PendingFollowRequestResponse> getPendingFollowRequests(Long trainerId);
+   
+   List<FeedbackCalendarStat> getFeedbackCalendarStats(Long trainerId, String month);
+
 }

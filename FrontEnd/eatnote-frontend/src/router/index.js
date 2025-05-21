@@ -7,12 +7,13 @@ import RegisterView from '@/views/RegisterView.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ArticleWriteView from '@/views/ArticleWriteView.vue'
 import VideoRecommendView from '@/views/VideoRecommendView.vue'
-import MealDetail from '@/views/MealDetailPage.vue'
 import MyPage from '@/views/MyPageView.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import MealUploadPage from '@/views/MealUploadPage.vue'
 import MealDetailPage from '@/views/MealDetailPage.vue'
 import MyPageView from '@/views/MyPageView.vue'
+import TrainerFeedbackForm from '@/views/TrainerFeedbackForm.vue'
+import TrainerFeedbackPage from '@/views/TrainerFeedbackPage.vue'
 
 // 탭 통합 메인 뷰
 import MealView from '@/views/MealView.vue'
@@ -30,13 +31,11 @@ const router = createRouter({
     { path: '/meal/upload', name: 'MealUpload', component: MealUploadPage },
     { path: '/meal/:id', name: 'MealDetail', component: MealDetailPage },
     { path: '/profile', name: 'MyPage', component: MyPageView, meta: { requiresAuth: true } },
-    { path: '/trainer', name: 'TrainerDashboard', component: TrainerDashboardView, meta: { requiresAuth: true }
-    },
-
     {
-      path: '/meal/:id',
-      name: 'MealDetail',
-      component: MealDetail,
+      path: '/trainer',
+      name: 'TrainerDashboard',
+      component: TrainerDashboardView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/profile',
@@ -47,9 +46,22 @@ const router = createRouter({
     {
       path: '/profile/edit',
       name: 'EditProfile',
-      component: EditProfileView
+      component: EditProfileView,
     },
     { path: '/meals', name: 'MealView', component: MealView },
+
+    {
+      path: '/trainer/feedback/:mealId',
+      name: 'TrainerFeedbackForm',
+      component: TrainerFeedbackForm,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/trainer/feedback',
+      name: 'TrainerFeedbackPage',
+      component: TrainerFeedbackPage,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 

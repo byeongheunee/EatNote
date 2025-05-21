@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.ssafy.eatnote.model.dto.TrainerDetails;
 import com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary;
+import com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -23,4 +24,5 @@ public interface TrainerDao {
 	
 	List<FolloweeFeedbackSummary> getFolloweeFeedbackSummary(@Param("trainerId") Long trainerId);
 	
+	List<PendingFollowRequestResponse> findPendingFollowRequests(Long trainerId);
 }

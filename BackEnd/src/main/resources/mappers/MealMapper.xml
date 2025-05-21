@@ -213,6 +213,7 @@
     ) ml ON m.meal_id = ml.meal_id
     ORDER BY m.meal_time DESC
     LIMIT 10
+    
 </select>
 	<select id="findMealsByUserIds" resultType="MealListViewResponse">
   	SELECT
@@ -306,6 +307,20 @@
   )
   ORDER BY m.meal_time DESC
 </select>
+
+<select id="getFeedbackCalendarStat" resultType="com.ssafy.eatnote.model.dto.FeedbackCalendarStat">
+  SELECT
+    DATE_FORMAT(m.meal_time, '%Y-%m-%d') AS date,
+    COUNT(*) AS pendingCount,
+    SUM(CASE WHEN f.feedback_id IS NOT NULL THEN 1 ELSE 0 END) AS completedCount
+  FROM meal m
+  LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id AND f.trainer_id = #{trainerId}
+  WHERE DATE_FORMAT(m.meal_time, '%Y-%m') = #{month}
+  GROUP BY DATE_FORMAT(m.meal_time, '%Y-%m-%d')
+  ORDER BY date
+</select>
+
+
 
 	
 
