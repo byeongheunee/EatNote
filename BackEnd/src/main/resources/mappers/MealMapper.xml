@@ -259,7 +259,7 @@
   ORDER BY m.meal_time DESC
 </select>
 
-<select id="findMealsWithoutFeedback" resultType="MealListViewResponse">
+<select id="findMealsWithoutFeedback" parameterType="long" resultType="MealListViewResponse">
   SELECT
     m.meal_id AS mealId,
     m.user_id AS userId,
@@ -298,12 +298,12 @@
     NULL AS myReaction
   FROM meal m
   JOIN users u ON m.user_id = u.user_id
-  WHERE m.trainer_id = #{trainerId}
-    AND NOT EXISTS (
-      SELECT 1 FROM meal_feedback f
-      WHERE f.meal_id = m.meal_id
-      AND f.trainer_id = #{trainerId}
-    )
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM meal_feedback f
+    WHERE f.meal_id = m.meal_id
+    AND f.trainer_id = #{trainerId}
+  )
   ORDER BY m.meal_time DESC
 </select>
 

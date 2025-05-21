@@ -70,6 +70,24 @@
 	        instagram_url = #{instagramUrl}
 	    WHERE user_id = #{userId}
 	</update>
-    
+    <select id="getFolloweeFeedbackSummary"
+        parameterType="long"
+        resultType="com.ssafy.eatnote.model.dto.response.FolloweeFeedbackSummary">
+  SELECT
+    u.user_id AS userId,
+    u.nickname AS nickname,
+    u.gender AS gender,
+    u.profile_image AS profileImage,
+    COUNT(CASE WHEN f.content IS NULL THEN 1 END) AS pendingCount,
+    COUNT(CASE WHEN f.content IS NOT NULL THEN 1 END) AS writtenCount
+  FROM user_follow fo
+  JOIN users u ON fo.from_user_id = u.user_id
+  LEFT JOIN meal m ON m.user_id = u.user_id
+  LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id AND f.trainer_id = #{trainerId}
+  WHERE fo.to_user_id = #{trainerId}
+    AND fo.status = 'ACCEPTED'
+  GROUP BY u.user_id
+</select>
+
     
 </mapper>
