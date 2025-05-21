@@ -955,7 +955,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    19, '/uploads/meals/19/hangwa.jpg', 'Hangwa', 222.0,
+    19, '/uploads/meals/19/hangwa.jpg', '한과', 222.0,
     51.4, 37.0, 24.6, 7.7, 531.0,
     '2025-05-20 18:47:52', '2025-05-20 18:47:52', 1.5, 'Too much fat',
     '저녁', 15, 1
@@ -965,7 +965,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    3, '/uploads/meals/3/jajangmyeon.jpg', 'Jajangmyeon', 292.9,
+    3, '/uploads/meals/3/jajangmyeon.jpg', '짜장면', 292.9,
     87.8, 36.5, 10.2, 14.1, 269.8,
     '2025-04-26 09:47:52', '2025-04-26 09:47:52', 26.5, 'Too much fat',
     '저녁', 16, 5
@@ -975,7 +975,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    7, '/uploads/meals/7/jjimdak.jpg', 'Jjimdak', 694.0,
+    7, '/uploads/meals/7/jjimdak.jpg', '찜닭', 694.0,
     48.7, 20.1, 29.3, 2.3, 962.2,
     '2025-05-12 23:47:52', '2025-05-12 23:47:52', 77.9, 'Lacking protein',
     '점심', 10, 0
@@ -985,7 +985,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    23, '/uploads/meals/23/jokbal.jpg', 'Jokbal', 638.5,
+    23, '/uploads/meals/23/jokbal.jpg', '족발', 638.5,
     67.6, 15.2, 6.8, 18.7, 996.5,
     '2025-04-29 04:47:52', '2025-04-29 04:47:52', 53.7, 'Too much fat',
     '점심', 1, 2
@@ -1005,7 +1005,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    21, '/uploads/meals/21/napa_kimchi.jpg', 'Napa Kimchi', 745.3,
+    21, '/uploads/meals/21/napa_kimchi.jpg', '김치나베', 745.3,
     86.2, 22.3, 20.7, 18.3, 283.0,
     '2025-04-27 08:47:52', '2025-04-27 08:47:52', 47.3, 'Balanced meal',
     '점심', 4, 3
@@ -1015,7 +1015,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    7, '/uploads/meals/7/pickled_perilla.jpg', 'Pickled Perilla', 389.2,
+    7, '/uploads/meals/7/pickled_perilla.jpg', '깻잎무침', 389.2,
     37.9, 45.2, 15.9, 4.1, 102.5,
     '2025-05-01 12:47:52', '2025-05-01 12:47:52', 65.7, 'Balanced meal',
     '아침', 18, 0
@@ -1027,7 +1027,7 @@ INSERT INTO meal (
 ) VALUES (
     11, '/uploads/meals/11/pizza.jpg', 'Pizza', 268.7,
     69.3, 11.6, 14.9, 14.9, 685.8,
-    '2025-05-15 07:47:52', '2025-05-15 07:47:52', 22.3, 'Lacking protein',
+    '2025-05-15 07:47:52', '2025-05-15 07:47:52', 22.3, '피자',
     '점심', 17, 4
 );
 INSERT INTO meal (
@@ -1035,7 +1035,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    25, '/uploads/meals/25/samgyetang.jpg', 'Samgyetang', 511.4,
+    25, '/uploads/meals/25/samgyetang.jpg', '삼계탕', 511.4,
     56.2, 33.0, 26.2, 8.9, 112.3,
     '2025-04-23 05:47:52', '2025-04-23 05:47:52', 19.9, 'Balanced meal',
     '저녁', 1, 2
@@ -1045,7 +1045,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    27, '/uploads/meals/27/soy_braised_beans.jpg', 'Soy Braised Beans', 795.2,
+    27, '/uploads/meals/27/soy_braised_beans.jpg', '콩자반', 795.2,
     84.8, 47.8, 15.7, 11.0, 542.4,
     '2025-05-05 10:47:52', '2025-05-05 10:47:52', 92.4, 'Balanced meal',
     '아침', 5, 5
@@ -1055,7 +1055,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    27, '/uploads/meals/27/steamed_cockles.jpg', 'Steamed Cockles', 696.7,
+    27, '/uploads/meals/27/steamed_cockles.jpg', '꼬막찜', 696.7,
     83.1, 39.8, 5.9, 16.7, 114.1,
     '2025-05-16 05:47:52', '2025-05-16 05:47:52', 37.6, 'Balanced meal',
     '저녁', 20, 0
@@ -1065,7 +1065,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    17, '/uploads/meals/17/steamed_egg.jpg', 'Steamed Egg', 477.3,
+    17, '/uploads/meals/17/steamed_egg.jpg', '삶은 계란', 477.3,
     89.7, 45.7, 7.1, 6.9, 356.8,
     '2025-04-28 23:47:52', '2025-04-28 23:47:52', 10.0, 'Lacking protein',
     '점심', 3, 5
@@ -1075,7 +1075,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    24, '/uploads/meals/24/steamed_seafood.jpg', 'Steamed Seafood', 771.9,
+    24, '/uploads/meals/24/steamed_seafood.jpg', '해물찜', 771.9,
     66.8, 43.1, 27.9, 12.2, 522.7,
     '2025-05-06 00:47:52', '2025-05-06 00:47:52', 11.8, 'Lacking protein',
     '점심', 15, 4
@@ -1085,7 +1085,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    26, '/uploads/meals/26/stirfried_potato_strips.jpg', 'Stirfried Potato Strips', 248.4,
+    26, '/uploads/meals/26/stirfried_potato_strips.jpg', '감자볶음', 248.4,
     84.5, 46.8, 5.3, 19.6, 537.5,
     '2025-05-03 04:47:52', '2025-05-03 04:47:52', 28.7, 'Too much fat',
     '점심', 0, 1
@@ -1095,7 +1095,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    30, '/uploads/meals/30/stirfried_sausage.jpg', 'Stirfried Sausage', 392.3,
+    30, '/uploads/meals/30/stirfried_sausage.jpg', '소세지구이', 392.3,
     38.6, 33.4, 29.7, 8.6, 771.4,
     '2025-05-16 10:47:52', '2025-05-16 10:47:52', 73.5, 'Too much fat',
     '저녁', 0, 5
@@ -1105,7 +1105,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    23, '/uploads/meals/23/sundae_sausage.jpg', 'Sundae Sausage', 259.1,
+    23, '/uploads/meals/23/sundae_sausage.jpg', '순대', 259.1,
     43.5, 31.0, 14.0, 15.8, 250.7,
     '2025-05-12 20:47:52', '2025-05-12 20:47:52', 65.7, 'Balanced meal',
     '아침', 14, 0
@@ -1115,7 +1115,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    3, '/uploads/meals/3/sweet_rice_drink.jpg', 'Sweet Rice Drink', 217.7,
+    3, '/uploads/meals/3/sweet_rice_drink.jpg', '식혜', 217.7,
     30.3, 11.4, 22.8, 14.4, 618.7,
     '2025-05-10 03:47:52', '2025-05-10 03:47:52', 67.2, 'Too much fat',
     '저녁', 2, 4
@@ -1135,7 +1135,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    7, '/uploads/meals/7/yakgwa.jpg', 'Yakgwa', 523.7,
+    7, '/uploads/meals/7/yakgwa.jpg', '약과', 523.7,
     70.2, 18.4, 16.3, 12.7, 627.1,
     '2025-05-18 20:47:52', '2025-05-18 20:47:52', 13.4, 'Lacking protein',
     '저녁', 15, 2
@@ -1145,7 +1145,7 @@ INSERT INTO meal (
     protein, fat, sugars, sodium, meal_time, created_at,
     auto_score, ai_feedback, meal_type, like_count, dislike_count
 ) VALUES (
-    2, '/uploads/meals/2/yukhoe.jpg', 'Yukhoe', 359.7,
+    2, '/uploads/meals/2/yukhoe.jpg', '육회', 359.7,
     49.7, 13.5, 10.8, 7.0, 380.6,
     '2025-05-12 23:47:52', '2025-05-12 23:47:52', 3.2, 'Balanced meal',
     '저녁', 16, 4

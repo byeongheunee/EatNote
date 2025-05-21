@@ -19,7 +19,7 @@ public class ContentLike {
     @Schema(description = "사용자 ID", example = "3")
     private Long userId;
 
-    @Schema(description = "콘텐츠 타입 (ARTICLE or COMMENT or Meal)", example = "ARTICLE")
+    @Schema(description = "콘텐츠 타입 (ARTICLE or COMMENT or MEAL)", example = "ARTICLE")
     private String contentType;
 
     @Schema(description = "콘텐츠 ID (게시글 ID 또는 댓글 ID)", example = "101")
