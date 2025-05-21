@@ -171,10 +171,11 @@
         GROUP BY meal_id
     ) fb ON m.meal_id = fb.meal_id
     LEFT JOIN (
-        SELECT meal_id, COUNT(*) AS like_count
-        FROM meal_like
-        GROUP BY meal_id
-    ) ml ON m.meal_id = ml.meal_id
+    SELECT content_id, COUNT(*) AS like_count
+    FROM content_like
+    WHERE content_type = 'MEAL' AND like_type = 'LIKE'
+    GROUP BY content_id
+	) ml ON m.meal_id = ml.content_id
     WHERE m.meal_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     ORDER BY ml.like_count DESC
     LIMIT 10
@@ -207,10 +208,11 @@
         GROUP BY meal_id
     ) fb ON m.meal_id = fb.meal_id
     LEFT JOIN (
-        SELECT meal_id, COUNT(*) AS like_count
-        FROM meal_like
-        GROUP BY meal_id
-    ) ml ON m.meal_id = ml.meal_id
+    SELECT content_id, COUNT(*) AS like_count
+    FROM content_like
+    WHERE content_type = 'MEAL' AND like_type = 'LIKE'
+    GROUP BY content_id
+	) ml ON m.meal_id = ml.content_id
     ORDER BY m.meal_time DESC
     LIMIT 10
     
