@@ -8,16 +8,16 @@
       <img :src="getImageUrl(meal.imageUrl)" alt="식단 이미지" class="w-96 mb-4" />
 
       <p><strong>식사 유형</strong>: {{
-      {
-      breakfast: '아침',
-      lunch: '점심',
-      dinner: '저녁',
-      extra: '간식'
-    }[meal.mealType]
+        {
+          breakfast: '아침',
+          lunch: '점심',
+          dinner: '저녁',
+          extra: '간식'
+        }[meal.mealType]
       }}</p>
       <p>
-      <strong>작성자</strong>:
-      <router-link :to="`/profile/${meal.userId}`">{{ meal.userNickname }}</router-link>
+        <strong>작성자</strong>:
+        <router-link :to="`/profile/${meal.userId}`">{{ meal.userNickname }}</router-link>
       </p>
 
       <p><strong>감지된 음식:</strong> {{ meal.detectedFoods }}</p>
@@ -34,31 +34,14 @@
 
       <h3 class="mt-4 font-semibold">좋아요</h3>
       <!-- 좋아요/싫어요 영역 -->
-      <LikeDislikeButtons
-        contentType="MEAL"
-        :contentId="meal.mealId"
-        :likeCount="meal.likeCount"
-        :dislikeCount="meal.dislikeCount"
-        :myReaction="meal.myReaction"
-        :onUpdated="loadMeal"
-      />
+      <LikeDislikeButtons contentType="MEAL" :contentId="meal.mealId" :likeCount="meal.likeCount"
+        :dislikeCount="meal.dislikeCount" :myReaction="meal.myReaction" :onUpdated="loadMeal" />
 
       <h3 class="mt-4 font-semibold">댓글</h3>
-      <CommentInput
-        :parentCommentId="null"
-        :onSubmit="loadComments"
-        :targetType="targetType"
-        :targetId="mealId"
-      />
+      <CommentInput :parentCommentId="null" :onSubmit="loadComments" :targetType="targetType" :targetId="mealId" />
       <div v-if="comments.length">
-        <CommentItem
-          v-for="comment in comments"
-          :key="comment.commentId"
-          :comment="comment"
-          :onReload="loadComments"
-          :targetType="targetType"
-          :targetId="mealId"
-        />
+        <CommentItem v-for="comment in comments" :key="comment.commentId" :comment="comment" :onReload="loadComments"
+          :targetType="targetType" :targetId="mealId" />
       </div>
       <div v-else>
         <p>아직 댓글이 없습니다.</p>

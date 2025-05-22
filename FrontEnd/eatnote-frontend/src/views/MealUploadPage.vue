@@ -1,5 +1,6 @@
 <template>
   <div class="max-w-xl mx-auto p-6 space-y-6 bg-white shadow rounded">
+    <Header />
     <h2 class="text-2xl font-bold text-gray-800">🍽️ 식단 업로드</h2>
 
     <p class="text-gray-600">{{ suggestedMessage }}</p>

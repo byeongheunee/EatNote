@@ -1,6 +1,7 @@
 <!-- src/views/TrainerFeedbackForm.vue -->
 <template>
   <div class="p-6 max-w-4xl mx-auto space-y-8">
+    <Header />
     <h1 class="text-2xl font-bold">🍱 식단 피드백 작성</h1>
 
     <div v-if="loading">불러오는 중입니다...</div>
@@ -12,6 +13,27 @@
         <p class="mt-2"><strong>식사 시간:</strong> {{ formatDate(meal.mealTime) }}</p>
         <p><strong>감지된 음식:</strong> {{ meal.detectedFoods }}</p>
         <p><strong>자동 점수:</strong> {{ meal.autoScore }}</p>
+        <p><strong>식사 유형:</strong> {{
+          {
+            breakfast: '아침',
+            lunch: '점심',
+            dinner: '저녁',
+            extra: '간식'
+          }[meal.mealType]
+        }}</p>
+        <p><strong>감지된 음식:</strong> {{ meal.detectedFoods }}</p>
+        <p><strong>AI 피드백:</strong> {{ meal.aiFeedback }}</p>
+
+        <h3 class="mt-4 font-semibold text-base">🧪 성분 정보</h3>
+        <ul class="grid grid-cols-2 gap-2 mt-1 text-sm">
+          <li><strong>총 칼로리:</strong> {{ meal.totalCalories }} kcal</li>
+          <li><strong>탄수화물:</strong> {{ meal.carbohydrates }} g</li>
+          <li><strong>단백질:</strong> {{ meal.protein }} g</li>
+          <li><strong>지방:</strong> {{ meal.fat }} g</li>
+          <li><strong>당류:</strong> {{ meal.sugars }} g</li>
+          <li><strong>나트륨:</strong> {{ meal.sodium }} mg</li>
+          <li><strong>자동 점수:</strong> {{ meal.autoScore }} 점</li>
+        </ul>
       </div>
 
       <!-- 👤 회원 정보 -->
@@ -55,6 +77,7 @@
 </template>
 
 <script setup>
+import Header from '@/components/common/Header.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'

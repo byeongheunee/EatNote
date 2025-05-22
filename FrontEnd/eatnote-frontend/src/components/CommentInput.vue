@@ -1,11 +1,6 @@
 <template>
   <div class="mt-2">
-    <textarea
-      v-model="content"
-      rows="2"
-      class="w-full border rounded p-2 text-sm"
-      placeholder="댓글을 입력하세요"
-    ></textarea>
+    <textarea v-model="content" rows="2" class="w-full border rounded p-2 text-sm" placeholder="댓글을 입력하세요"></textarea>
     <div class="flex justify-end mt-1">
       <button @click="submitComment" class="bg-green-500 text-white px-3 py-1 rounded text-sm">등록</button>
     </div>
@@ -15,31 +10,32 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
   parentCommentId: { type: Number, default: null },
-  onSubmit: { type: Function, default: () => {} },
+  onSubmit: { type: Function, default: () => { } },
   targetType: { type: String, required: true },
   targetId: { type: [String, Number], required: true }
 })
 
 const content = ref('')
-// const route = useRoute()
-// const targetId = route.params.id
+
+const auth = useAuthStore()
+const router = useRouter()
 
 const submitComment = async () => {
-  if (!content.value.trim()) return // 공백만 입력한 경우 return (댓글 등록 방지)
+  if (!content.value.trim()) return
+
+  if (!auth.isLogin) {
+    alert('댓글을 작성하려면 로그인해야 합니다.')
+    router.push({ path: '/login', query: { redirect: `/meal/${props.targetId}` } })
+    return
+  }
 
   try {
     const token = localStorage.getItem('accessToken')
-
-    console.log('[디버깅] 보낼 데이터:', {
-      content: content.value,
-      parentCommentId: props.parentCommentId,
-      targetType: props.targetType,
-      targetId: props.targetId
-    })
 
     await axios.post('/api/comments', {
       content: content.value,
@@ -53,7 +49,7 @@ const submitComment = async () => {
     })
 
     content.value = ''
-    props.onSubmit() // 등록 후 새로고침 트리거
+    props.onSubmit()
   } catch (err) {
     console.error('댓글 등록 실패:', err)
     if (err.response) {
@@ -63,6 +59,7 @@ const submitComment = async () => {
   }
 }
 </script>
+
 
 <style scoped>
 /* 필요 시 스타일 추가 */

@@ -50,11 +50,13 @@ const connectWebSocket = (userId) => {
 }
 
 const handleLogin = async () => {
+  console.log('[디버깅] 로그인 시도 이메일:', email.value)
+  console.log('[디버깅] 로그인 시도 비밀번호:', password.value)
   await auth.logout() // 이전 세션 정리
   const success = await auth.login(email.value, password.value)
   if (success) {
     alert('로그인 성공!')
-    connectWebSocket(auth.user.id) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
+    connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
     if (auth.user.userType === 1) {
       router.push('/trainer')
     } else if (auth.user.userType === 2) {

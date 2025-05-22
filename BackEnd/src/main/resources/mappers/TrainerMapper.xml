@@ -95,7 +95,7 @@
         u.nickname,
         u.gender,
         u.profile_image AS profileImage,
-        uf.requested_at AS requestedAt
+        uf.requested_at AS requestedAt,
         uf.follow_id AS followId
     FROM user_follow uf
     JOIN users u ON uf.from_user_id = u.user_id
