@@ -5,6 +5,7 @@ import com.ssafy.eatnote.model.dao.ArticleFileDao;
 import com.ssafy.eatnote.model.dao.BoardDao;
 import com.ssafy.eatnote.model.dao.CommentDao;
 import com.ssafy.eatnote.model.dao.ContentLikeDao;
+import com.ssafy.eatnote.model.dao.FollowDao;
 import com.ssafy.eatnote.model.dao.UserDao;
 import com.ssafy.eatnote.model.dto.Article;
 import com.ssafy.eatnote.model.dto.ArticleFile;
@@ -47,6 +48,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleFileDao articleFileDao;
     private final ContentLikeDao contentLikeDao;
     private final CommentDao commentDao;
+    private final FollowDao followDao;
 
     @Value("${file.article-upload-dir}")
     private String uploadDir;
@@ -358,20 +360,24 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleResponse> getArticlesWithFilters(Integer boardId, String keyword, String sort, Long loginUserId) {
+    public List<ArticleResponse> getArticlesWithFilters(Integer boardId, String keyword, String searchField, String sort, Long loginUserId) {
         // 1. 게시글 목록 조회 (캐싱된 like_count, dislike_count 포함)
-        List<Article> articles = articleDao.getArticlesWithFilters(boardId, keyword, sort);
+        List<Article> articles = articleDao.getArticlesWithFilters(boardId, keyword, searchField,  sort);
 
         // 2. 각 게시글에 대해 ArticleResponse로 변환
         return articles.stream().map(article -> {
             String myReaction = null;
-
+            boolean isFollowing = false;
+            
             // 로그인 사용자일 경우 내 반응 조회
             if (loginUserId != null) {
                 ContentLike like = contentLikeDao.selectByUserAndContent(loginUserId, "ARTICLE", (long) article.getArticleId());
                 if (like != null) {
                     myReaction = like.getLikeType(); // 'LIKE' or 'DISLIKE'
                 }
+                
+                // 작성자 팔로우 여부
+                isFollowing = followDao.existsByFromAndTo(loginUserId, article.getUserId());
             }
 
             return ArticleResponse.builder()
@@ -388,6 +394,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .likeCount(article.getLikeCount())
                     .dislikeCount(article.getDislikeCount())
                     .myReaction(myReaction)
+                    .following(isFollowing)
                     .attachments(null)
                     .comments(null)
                     .build();

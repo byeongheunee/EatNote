@@ -28,7 +28,7 @@ const router = useRouter()
 const submitComment = async () => {
   if (!content.value.trim()) return
 
-  if (!auth.isLogin) {
+  if (!auth.isLoggedIn) {
     alert('댓글을 작성하려면 로그인해야 합니다.')
     router.push({ path: '/login', query: { redirect: `/meal/${props.targetId}` } })
     return

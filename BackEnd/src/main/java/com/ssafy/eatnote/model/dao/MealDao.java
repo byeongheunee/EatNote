@@ -48,4 +48,6 @@ public interface MealDao {
     
     List<MealListViewResponse> findRecentMealsByUserId(@Param("userId") Long userId);
     
+    Double getAverageAutoScore(@Param("userId") Long userId);
+    
 }

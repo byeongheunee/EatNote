@@ -30,4 +30,7 @@ public interface MealFeedbackDao {
 	int countByUserMeals(@Param("userId") Long userId);
 
 	List<MealFeedbackListViewResponse> findRecentFeedbacksByUserId(@Param("userId") Long userId);
+	
+	// 트레이너가 작성한 피드백 수
+	int countByTrainerId(@Param("trainerId") Long trainerId);
 }

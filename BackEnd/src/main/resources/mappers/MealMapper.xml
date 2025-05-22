@@ -377,5 +377,20 @@
 	  LIMIT 20
 	</select>
 	
+	<!-- 평균 자동 점수 조회 -->
+    <select id="getAverageAutoScore" parameterType="long" resultType="double">
+        SELECT ROUND(AVG(auto_score), 1)
+          FROM meal
+         WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 최근 식단 날짜 내림차순 조회 -->
+    <select id="findMealDatesDesc" parameterType="long" resultType="java.time.LocalDate">
+        SELECT DATE(meal_time)
+          FROM meal
+         WHERE user_id = #{userId}
+         ORDER BY meal_time DESC
+    </select>
+    
 </mapper>
 	

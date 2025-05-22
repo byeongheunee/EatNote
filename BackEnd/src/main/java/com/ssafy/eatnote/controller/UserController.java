@@ -30,7 +30,9 @@ import com.ssafy.eatnote.model.dto.request.UserRegisterRequest;
 import com.ssafy.eatnote.model.dto.request.VerifyCodeRequest;
 import com.ssafy.eatnote.model.dto.response.DailyNutritionStatsResponse;
 import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
+import com.ssafy.eatnote.model.dto.response.MemberProfileResponse;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
+import com.ssafy.eatnote.model.dto.response.TrainerProfileResponse;
 import com.ssafy.eatnote.model.dto.response.WeeklyFeedbackResponse;
 import com.ssafy.eatnote.model.security.UserDetailsImpl;
 import com.ssafy.eatnote.model.service.AuthCodeStorageService;
@@ -335,4 +337,47 @@ public class UserController {
         return ResponseEntity.ok(MyApiResponse.success(null, "USER_DELETE_SUCCESS", "회원 탈퇴가 완료되었습니다."));
     }
     
+    @Operation(summary = "상대방 프로필 조회", description = "상대방의 사용자 프로필 정보를 조회합니다 (회원/트레이너 자동 분기)")
+    @GetMapping("/{otherId}/profile")
+    public MyApiResponse<?> getUserProfile(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long otherId
+    ) {
+        if (userDetails == null || userDetails.getUser() == null) {
+            return MyApiResponse.failure("AUTH_FORBIDDEN", "로그인이 필요합니다.");
+        }
+        
+        Long viewerId = userDetails.getUser().getUserId();
+        
+        Integer userType = userService.getUserType(otherId);
+
+        if (userType == null) {
+            return MyApiResponse.failure("USER_NOT_FOUND", "해당 사용자를 찾을 수 없습니다.");
+        }
+        
+        // 관리자(0)는 조회 불가
+        if (userType == 0) {
+            return MyApiResponse.failure("FORBIDDEN_ADMIN_PROFILE", "관리자는 프로필을 조회할 수 없습니다.");
+        }
+        
+        if (userType == 1) {
+            TrainerProfileResponse trainerProfile = userService.getTrainerProfile(viewerId, otherId);
+            return MyApiResponse.success(trainerProfile, "USER_PROFILE_SUCCESS", "트레이너 프로필 조회 성공");
+        } else if (userType == 2) {
+            MemberProfileResponse memberProfile = userService.getMemberProfile(viewerId, otherId);
+            return MyApiResponse.success(memberProfile, "USER_PROFILE_SUCCESS", "회원 프로필 조회 성공");
+        } else {
+            return MyApiResponse.failure("VALIDATION_FAILED", "알 수 없는 사용자 유형입니다.");
+        }
+    }
+    
+    @GetMapping("/check-trainer-nickname")
+    public ResponseEntity<MyApiResponse<Boolean>> checkTrainerNickname(@RequestParam String nickname) {
+        boolean exists = userService.existsTrainerNickname(nickname);
+        System.out.println(exists);
+        String code = exists ? "USER_TRAINER_EXISTS" : "USER_TRAINER_NOT_FOUND";
+        String message = exists ? "존재하는 트레이너입니다." : "해당 닉네임의 트레이너가 존재하지 않습니다.";
+
+        return ResponseEntity.ok(MyApiResponse.success(exists, code, message));
+    }
 }

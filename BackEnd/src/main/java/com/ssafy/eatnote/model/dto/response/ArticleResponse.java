@@ -58,4 +58,7 @@ public class ArticleResponse {
 
     @Schema(description = "수정일시", example = "2025-05-02T14:00:00")
     private LocalDateTime modifiedAt;
+    
+    @Schema(description = "작성자 팔로우 여부 (요청 사용자가 작성자를 팔로우 중인지 여부)", example = "true")
+    private boolean following;
 } 

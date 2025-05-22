@@ -47,6 +47,13 @@
             {{ a.name }} ({{ a.category }})
           </li>
         </ul>
+
+        <!-- 팔로잉 목록 -->
+        <FollowingList @open-profile="openProfileModal" />
+
+        <!-- 최근 게시글 -->
+        <h3 class="text-xl font-semibold mt-6 mb-2">📚 내가 작성한 최근 게시글</h3>
+        <ArticleList :articles="myArticles.slice(0, 10)" @open-detail="goToDetail" />
       </div>
 
       <!-- 트레이너 정보 -->
@@ -92,6 +99,15 @@
         <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
     </div>
+
+    <!-- 프로필 모달 -->
+    <UserProfileModal
+      :visible="profileModalVisible"
+      :profile="selectedProfile"
+      :isTrainer="selectedProfile?.userType === 1"
+      @close="profileModalVisible = false"
+    />
+
   </div>
 </template>
 
@@ -101,7 +117,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
+import ArticleList from '@/components/ArticleList.vue'
+import FollowingList from '@/components/member/MemberFollowingList.vue'
+import UserProfileModal from '@/components/UserProfileModal.vue'
 
+
+const myArticles = ref([])
 const auth = useAuthStore()
 const router = useRouter()
 const user = ref({})
@@ -112,6 +133,47 @@ const allergies = ref([])
 const showModal = ref(false)
 const password = ref('')
 const errorMessage = ref('')
+
+// 프로필 모달 제어 관련
+const profileModalVisible = ref(false)
+const selectedProfile = ref(null)
+const openProfileModal = (user) => {
+  selectedProfile.value = user
+  profileModalVisible.value = true
+}
+
+const fetchMyArticles = async () => {
+  try {
+    const res = await axios.get('/api/articles', {
+      headers: {
+        Authorization: `Bearer ${auth.accessToken}`
+      },
+      params: {
+        keyword: user.value.nickname,
+        searchField: 'NICKNAME',
+        sort: 'createdAt'
+      }
+    })
+    myArticles.value = res.data.data
+  } catch (err) {
+    console.error('내 게시글 조회 실패', err)
+  }
+}
+
+// 게시글 클릭 시 상세 페이지 이동
+const goToDetail = (articleId) => {
+  // 해당 게시글을 boardId까지 포함해서 찾아야 하므로,
+  const article = myArticles.value.find(a => a.articleId === articleId)
+  if (!article) return
+
+  router.push({
+    name: 'ArticleDetail',
+    params: {
+      boardId: article.boardId,
+      articleId: article.articleId
+    }
+  })
+}
 
 const getProfileImage = (path) => path ? `http://localhost:8080${path}` : '/images/default-profile.png'
 
@@ -133,10 +195,10 @@ const fetchMyInfo = async () => {
   }
 }
 
-const handleLogout = () => {
-  localStorage.removeItem('accessToken')
-  router.push('/login')
-}
+// const handleLogout = () => {
+//   localStorage.removeItem('accessToken')
+//   router.push('/login')
+// }
 
 const closeModal = () => {
   showModal.value = false
@@ -165,5 +227,8 @@ const checkPassword = async () => {
   }
 }
 
-onMounted(fetchMyInfo)
+onMounted(async () => {
+  await fetchMyInfo()
+  await fetchMyArticles()
+})
 </script>

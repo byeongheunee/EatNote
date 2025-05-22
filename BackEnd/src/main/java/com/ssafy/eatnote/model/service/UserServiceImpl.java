@@ -2,9 +2,12 @@ package com.ssafy.eatnote.model.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.eatnote.model.dao.FollowDao;
+import com.ssafy.eatnote.model.dao.MealDao;
+import com.ssafy.eatnote.model.dao.MealFeedbackDao;
 import com.ssafy.eatnote.model.dao.MemberDao;
 import com.ssafy.eatnote.model.dao.TrainerDao;
 import com.ssafy.eatnote.model.dao.UserDao;
@@ -26,6 +31,8 @@ import com.ssafy.eatnote.model.dto.request.MemberUpdateRequest;
 import com.ssafy.eatnote.model.dto.request.TrainerDetailsRequest;
 import com.ssafy.eatnote.model.dto.request.TrainerUpdateRequest;
 import com.ssafy.eatnote.model.dto.request.UserRegisterRequest;
+import com.ssafy.eatnote.model.dto.response.MemberProfileResponse;
+import com.ssafy.eatnote.model.dto.response.TrainerProfileResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +47,8 @@ public class UserServiceImpl implements UserService {
     private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
     private final FollowDao followDao;
+    private final MealDao mealDao;
+    private final MealFeedbackDao mealFeedbackDao;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -349,4 +358,93 @@ public class UserServiceImpl implements UserService {
         }
     }
 	
+	@Override
+    @Transactional(readOnly = true)
+    public MemberProfileResponse getMemberProfile(Long viewerId, Long targetUserId) {
+        MemberProfileResponse dto = new MemberProfileResponse();
+
+        // 공통 정보
+        var user = userDao.selectUserById(targetUserId);
+        dto.setNickname(user.getNickname());
+        dto.setGender(user.getGender());
+        dto.setProfileImage(user.getProfileImage());
+
+        // 상세 정보
+        var memberDetails = memberDao.findByUserId(targetUserId);
+        dto.setGoal(memberDetails.getGoal());
+        dto.setAllergyIds(memberDetails.getAllergyIds());
+        
+        // 연속 기록일
+    	List<LocalDate> mealDates = mealDao.findMealDatesByUserId(targetUserId);
+    	int consecutiveDays = calculateConsecutiveDays(mealDates);
+        
+        
+        // 통계 정보
+        dto.setTotalMeals(mealDao.countByUserId(targetUserId));
+        dto.setAverageScore(mealDao.getAverageAutoScore(targetUserId));
+        dto.setConsecutiveDays(consecutiveDays);
+        dto.setFollowingCount(followDao.countFollowing(targetUserId));
+        
+        boolean isFollowing = followDao.existsByFromAndTo(viewerId, targetUserId);
+        dto.setFollowing(isFollowing);
+
+        return dto;
+    }
+	
+	public int calculateConsecutiveDays(List<LocalDate> mealDates) {
+        Set<LocalDate> dateSet = new HashSet<>(mealDates);
+
+        // 오늘 식단이 있는지 확인
+        LocalDate today = LocalDate.now();
+        boolean hasToday = dateSet.contains(today);
+
+        // 시작일: 오늘 포함 여부에 따라 다르게 설정
+        LocalDate startDay = hasToday ? today : today.minusDays(1);
+
+        int count = 0;
+        LocalDate current = startDay;
+
+        // 연속되는 날짜를 역순으로 체크
+        while (dateSet.contains(current)) {
+            count++;
+            current = current.minusDays(1);
+        }
+
+        return count;
+    }
+	
+	@Override
+    @Transactional(readOnly = true)
+    public TrainerProfileResponse getTrainerProfile(Long viewerId, Long targetUserId) {
+        TrainerProfileResponse dto = new TrainerProfileResponse();
+
+        var user = userDao.selectUserById(targetUserId);
+        dto.setNickname(user.getNickname());
+        dto.setGender(user.getGender());
+        dto.setProfileImage(user.getProfileImage());
+
+        var trainerDetails = trainerDao.findByUserId(targetUserId);
+        dto.setIntroduction(trainerDetails.getIntroduction());
+        dto.setInstagramUrl(trainerDetails.getInstagramUrl());
+        dto.setGymName(trainerDetails.getGymName());
+        dto.setGymWebsite(trainerDetails.getGymWebsite());
+
+        dto.setTotalFeedbacks(mealFeedbackDao.countByTrainerId(targetUserId));
+        dto.setFollowingCount(followDao.countFollowing(targetUserId));
+
+        boolean isFollowing = followDao.existsByFromAndTo(viewerId, targetUserId);
+        dto.setFollowing(isFollowing);
+        
+        return dto;
+    }
+	
+	@Override
+	public Integer getUserType(Long userId) {
+	    return userDao.selectUserTypeByUserId(userId);
+	}
+	
+	@Override
+	public boolean existsTrainerNickname(String nickname) {
+	    return userDao.existsTrainerNickname(nickname);
+	}
 }

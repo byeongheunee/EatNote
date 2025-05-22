@@ -9,6 +9,10 @@
         <button @click="selectUserType(1)" class="px-4 py-2 bg-blue-100 text-blue-700 font-semibold rounded-lg hover:bg-blue-200">트레이너</button>
         <button @click="selectUserType(2)" class="px-4 py-2 bg-green-100 text-green-700 font-semibold rounded-lg hover:bg-green-200">일반 회원</button>
       </div>
+
+      <div class="text-center mt-6">
+        <button @click="goHome" class="text-sm text-gray-600 hover:underline">🏠 홈으로 돌아가기</button>
+      </div>
     </div>
 
     <!-- Step 2: Common Info -->
@@ -67,7 +71,10 @@
         <input type="file" @change="handleFileChange" class="mt-1 w-full" />
       </div>
 
-      <button @click="goToNextStep" class="w-full mt-6 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">다음</button>
+      <div class="flex justify-between mt-6">
+        <button @click="step = 1" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">← 뒤로가기</button>
+        <button @click="goToNextStep" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">다음 →</button>
+      </div>
     </div>
 
     <!-- Step 3: 상세 정보 입력 -->
@@ -77,7 +84,11 @@
         v-model="formDetail"
         @goBack="step = 2"
       />
-      <button @click="submitForm" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">회원가입 완료</button>
+      
+      <div class="flex justify-between mt-6">
+        <button @click="step = 2" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">← 뒤로가기</button>
+        <button @click="submitForm" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">회원가입 완료 →</button>
+      </div>
     </div>
   </div>
 </template>
@@ -114,6 +125,10 @@
   const passwordMismatch = computed(() => form.value.password !== form.value.passwordConfirm)
 
   const formDetail = ref({})
+
+  const goHome = () => {
+    router.push('/')
+  }
 
   const handleFileChange = (event) => {
     profileImageFile.value = event.target.files[0]

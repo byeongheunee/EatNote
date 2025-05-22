@@ -9,6 +9,8 @@ import com.ssafy.eatnote.model.dto.request.CommonUserUpdateRequest;
 import com.ssafy.eatnote.model.dto.request.MemberUpdateRequest;
 import com.ssafy.eatnote.model.dto.request.TrainerUpdateRequest;
 import com.ssafy.eatnote.model.dto.request.UserRegisterRequest;
+import com.ssafy.eatnote.model.dto.response.MemberProfileResponse;
+import com.ssafy.eatnote.model.dto.response.TrainerProfileResponse;
 
 public interface UserService {
 	
@@ -53,4 +55,16 @@ public interface UserService {
     
     // 회원 탈퇴로 상태 변경
     void markUserAsDeleted(Long userId);
+    
+    // 회원 프로필 조회
+    MemberProfileResponse getMemberProfile(Long viewerId, Long userId);
+    
+    // 트레이너 프로필 조회
+    TrainerProfileResponse getTrainerProfile(Long viewerId, Long userId);
+    
+    // 회원의 유형 조회
+    Integer getUserType(Long userId);
+    
+    // 트레이너 이름 조회
+    boolean existsTrainerNickname(String nickname);
 }

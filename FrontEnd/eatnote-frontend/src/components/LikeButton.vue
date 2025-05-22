@@ -34,7 +34,7 @@ watch(() => props.likeCount, (val) => count.value = val)
 
 // 좋아요 토글
 const toggleLike = async () => {
-  if (!auth.isLogin) {
+  if (!auth.isLoggedIn) {
     alert('좋아요를 누르려면 로그인해야 합니다.')
     router.push({ path: '/login', query: { redirect: `/meal/${props.contentId}` } })
     return

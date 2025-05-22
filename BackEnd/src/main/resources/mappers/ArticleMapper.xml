@@ -68,32 +68,47 @@
 	<!-- 필터/검색 조건 기반 목록 조회 -->
 	<select id="getArticlesWithFilters" resultType="Article">
 	    SELECT
-		    a.article_id AS articleId,
-		    a.title,
-		    a.content,
-		    a.board_id AS boardId,
-		    a.user_id AS userId,
-		    u.nickname AS userNickname,
-		    a.image_url AS imageUrl,
-		    a.view_cnt AS viewCnt,
-		    a.like_count AS likeCount,
-		    a.dislike_count AS dislikeCount,
-		    a.created_at AS createdAt,
-		    a.modified_at AS modifiedAt
+	        a.article_id AS articleId,
+	        a.title,
+	        a.content,
+	        a.board_id AS boardId,
+	        a.user_id AS userId,
+	        u.nickname AS userNickname,
+	        a.image_url AS imageUrl,
+	        a.view_cnt AS viewCnt,
+	        a.like_count AS likeCount,
+	        a.dislike_count AS dislikeCount,
+	        a.created_at AS createdAt,
+	        a.modified_at AS modifiedAt
 	    FROM article a
 	    JOIN users u ON a.user_id = u.user_id
 	    <where>
 	        <if test="boardId != null">
 	            a.board_id = #{boardId}
 	        </if>
+	
 	        <if test="keyword != null and keyword != ''">
-	            AND (
-	                a.title LIKE CONCAT('%', #{keyword}, '%')
-	                OR a.content LIKE CONCAT('%', #{keyword}, '%')
-	                OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
-	            )
+	            <choose>
+	                <when test="searchField == 'TITLE'">
+	                    AND a.title LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="searchField == 'CONTENT'">
+	                    AND a.content LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <when test="searchField == 'NICKNAME'">
+	                    AND u.nickname LIKE CONCAT('%', #{keyword}, '%')
+	                </when>
+	                <otherwise>
+	                    AND (
+	                        a.title LIKE CONCAT('%', #{keyword}, '%')
+	                        OR a.content LIKE CONCAT('%', #{keyword}, '%')
+	                        OR u.nickname LIKE CONCAT('%', #{keyword}, '%')
+	                    )
+	                </otherwise>
+	            </choose>
 	        </if>
 	    </where>
+	
 	    <choose>
 	        <when test="sort == 'createdAt'">
 	            ORDER BY a.created_at DESC

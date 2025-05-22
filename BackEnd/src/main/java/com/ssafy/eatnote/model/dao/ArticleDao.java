@@ -19,9 +19,12 @@ public interface ArticleDao {
     Article getArticleById(int articleId);
 
     // 필터/검색 조건 기반 목록 조회
-    List<Article> getArticlesWithFilters(@Param("boardId") Integer boardId,
-            @Param("keyword") String keyword,
-            @Param("sort") String sort);
+    List<Article> getArticlesWithFilters(
+    	    @Param("boardId") Integer boardId,
+    	    @Param("keyword") String keyword,
+    	    @Param("searchField") String searchField,
+    	    @Param("sort") String sort
+    	);
     
     // 게시판별 글 목록
     List<Article> getArticlesByBoardId(int boardId);
