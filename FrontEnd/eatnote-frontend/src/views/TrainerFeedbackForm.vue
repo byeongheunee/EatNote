@@ -37,28 +37,30 @@
       </div>
 
       <!-- 👤 회원 정보 -->
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-lg font-semibold mb-2">회원 정보</h2>
-        <p><strong>닉네임:</strong> {{ memberDetails.nickname }}</p>
-        <p><strong>목표:</strong> {{ memberDetails.goal }}</p>
-        <p><strong>키:</strong> {{ memberDetails.height }} cm</p>
-        <p><strong>몸무게:</strong> {{ memberDetails.weight }} kg</p>
-        <p><strong>체지방률:</strong> {{ memberDetails.bodyFatPercentage }}%</p>
-        <p><strong>BMI:</strong> {{ memberDetails.bmi }}</p>
-        <p><strong>단백질:</strong> {{ memberDetails.protein }}%</p>
-        <p><strong>무기질:</strong> {{ memberDetails.mineral }}%</p>
-        <p><strong>체수분:</strong> {{ memberDetails.bodyWater }}%</p>
-        <p><strong>골격근량:</strong> {{ memberDetails.skeletalMuscle }}kg</p>
-        <p><strong>체지방량:</strong> {{ memberDetails.bodyFatMass }}kg</p>
-      </div>
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-2">회원 정보</h2>
+      <p v-if="memberDetails.nickname"><strong>닉네임:</strong> {{ memberDetails.nickname }}</p>
+      <p v-if="memberDetails.goal"><strong>목표:</strong> {{ memberDetails.goal }}</p>
+      <p v-if="memberDetails.height"><strong>키:</strong> {{ memberDetails.height }} cm</p>
+      <p v-if="memberDetails.weight"><strong>몸무게:</strong> {{ memberDetails.weight }} kg</p>
+      <p v-if="memberDetails.bodyFatPercentage"><strong>체지방률:</strong> {{ memberDetails.bodyFatPercentage }}%</p>
+      <p v-if="memberDetails.bmi"><strong>BMI:</strong> {{ memberDetails.bmi }}</p>
+      <p v-if="memberDetails.protein"><strong>단백질:</strong> {{ memberDetails.protein }}%</p>
+      <p v-if="memberDetails.mineral"><strong>무기질:</strong> {{ memberDetails.mineral }}%</p>
+      <p v-if="memberDetails.bodyWater"><strong>체수분:</strong> {{ memberDetails.bodyWater }}%</p>
+      <p v-if="memberDetails.skeletalMuscle"><strong>골격근량:</strong> {{ memberDetails.skeletalMuscle }}kg</p>
+      <p v-if="memberDetails.bodyFatMass"><strong>체지방량:</strong> {{ memberDetails.bodyFatMass }}kg</p>
+    </div>
+
 
       <!-- ⚠️ 알레르기 정보 -->
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="text-lg font-semibold mb-2">알레르기</h2>
-        <ul class="list-disc list-inside">
-          <li v-for="allergy in allergies" :key="allergy.name">{{ allergy.name }}</li>
-        </ul>
-      </div>
+    <div v-if="allergies.length > 0" class="bg-white p-4 rounded shadow">
+      <h2 class="text-lg font-semibold mb-2">알레르기</h2>
+      <ul class="list-disc list-inside">
+        <li v-for="allergy in allergies" :key="allergy.name">{{ allergy.name }}</li>
+      </ul>
+    </div>
+
 
       <!-- 📝 피드백 입력 -->
       <div class="bg-white p-4 rounded shadow space-y-4">

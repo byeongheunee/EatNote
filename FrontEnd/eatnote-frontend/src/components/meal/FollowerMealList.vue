@@ -43,7 +43,13 @@ const followings = ref([])
 const selectedUserId = ref(null)
 const router = useRouter()
 const filteredFollowings = computed(() => followings.value.filter(user => user.userType === 2))
-const getImageUrl = (path) => `http://localhost:8080${path}`
+const getImageUrl = (path) => {
+  if (!path) return '/images/default-profile.png'
+  return `http://localhost:8080${path.startsWith('/') ? path : '/' + path}`
+}
+
+
+
 const formatDate = (datetime) => new Date(datetime).toLocaleDateString('ko-KR')
 const mealTypeKor = (type) => {
   switch (type) {

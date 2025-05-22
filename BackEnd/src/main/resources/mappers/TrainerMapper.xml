@@ -78,8 +78,16 @@
     	u.nickname AS nickname,
     	u.gender AS gender,
     	u.profile_image AS profileImage,
-    	COUNT(CASE WHEN f.content IS NULL THEN 1 END) AS pendingCount,
-    	COUNT(CASE WHEN f.content IS NOT NULL THEN 1 END) AS writtenCount
+    	
+    	-- 전체 식단 개수
+    	COUNT(DISTINCT m.meal_id) AS totalCount,
+
+    	-- 피드백 완료된 식단 수
+    	COUNT(DISTINCT CASE WHEN f.content IS NOT NULL THEN m.meal_id END) AS writtenCount,
+
+    	-- 대기 수 = 전체 - 완료
+    	(COUNT(DISTINCT m.meal_id) - COUNT(DISTINCT CASE WHEN f.content IS NOT NULL THEN m.meal_id END)) AS pendingCount
+
   	FROM user_follow fo
   	JOIN users u ON fo.from_user_id = u.user_id
   	LEFT JOIN meal m ON m.user_id = u.user_id
@@ -88,6 +96,7 @@
     	AND fo.status = 'ACCEPTED'
   	GROUP BY u.user_id
 </select>
+
 
 	<select id="findPendingFollowRequests" resultType="com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse">
     SELECT

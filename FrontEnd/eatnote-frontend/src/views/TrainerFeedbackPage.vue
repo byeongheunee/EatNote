@@ -58,7 +58,6 @@ const goToFeedbackForm = (mealId) => {
 }
 
 const selectUser = async (userId) => {
-  // 전체 선택
   if (userId === null) {
     selectedUserId.value = null
     selectedUserNickname.value = ''
@@ -68,14 +67,30 @@ const selectUser = async (userId) => {
   selectedUserId.value = userId
   const selected = users.value.find(u => u.userId === userId)
   selectedUserNickname.value = selected?.nickname || ''
+
   try {
     const res = await axios.get(`/api/users/user/${userId}/meals`, authHeader)
-    meals.value = (res.data.data || []).filter(m => m !== null)
+
+    const sortedMeals = (res.data.data || [])
+      .filter(m => m !== null)
+      .sort((a, b) => {
+        const aPending = !(a.isFeedbackedByMe === true || a.isFeedbackedByMe === 'true')
+        const bPending = !(b.isFeedbackedByMe === true || b.isFeedbackedByMe === 'true')
+
+        if (aPending && !bPending) return -1
+        if (!aPending && bPending) return 1
+
+        return new Date(b.mealTime) - new Date(a.mealTime) // 최신순
+      })
+
+    meals.value = sortedMeals
+
   } catch (e) {
     console.error('식단 조회 실패', e)
     alert('선택한 회원의 식단을 불러올 수 없습니다.')
   }
 }
+
 
 
 const fetchCalendarStats = async () => {
@@ -97,7 +112,9 @@ onMounted(async () => {
     pendingMeals.value = pendingRes.data.data || []
 
     const userRes = await axios.get('/api/trainer/feedback/followings', authHeader)
-    users.value = (userRes.data.data || []).filter(u => u !== null)
+users.value = (userRes.data.data || [])
+  .filter(u => u !== null)
+  .sort((a, b) => (b.pendingCount || 0) - (a.pendingCount || 0)) // 🔥 대기 많은 순 정렬
 
     await fetchCalendarStats()
   } catch (e) {
