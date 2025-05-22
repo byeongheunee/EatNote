@@ -12,6 +12,12 @@ import java.util.List;
 @Data
 public class MemberProfileResponse {
 
+	@Schema(description = "회원 ID", example = "21")
+    private Long userId;
+
+    @Schema(description = "유저 타입 (2: 일반회원)", example = "2")
+    private int userType;
+    
     @Schema(description = "닉네임", example = "gildong123")
     private String nickname;
 
@@ -39,6 +45,6 @@ public class MemberProfileResponse {
     @Schema(description = "팔로잉 수", example = "15")
     private int followingCount;
     
-    @Schema(description = "요청 사용자가 이 사용자를 팔로우 중인지 여부", example = "true")
-    private boolean following;
+    @Schema(description = "팔로우 상태", example = "PENDING") // NONE, PENDING, ACCEPTED, REJECTED
+    private String followStatus;
 }

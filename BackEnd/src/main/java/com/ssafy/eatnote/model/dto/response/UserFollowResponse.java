@@ -12,6 +12,9 @@ import lombok.*;
 @Schema(description = "팔로우 목록 사용자 응답 DTO")
 public class UserFollowResponse {
 
+	@Schema(description = "회원 ID", example = "1")
+    private Long userId;
+	
     @Schema(description = "닉네임", example = "fitgirl99")
     private String nickname;
 

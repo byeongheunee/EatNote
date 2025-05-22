@@ -15,6 +15,12 @@ import com.ssafy.eatnote.model.dto.User;
 @Schema(description = "사용자 기본 응답 DTO")
 public class UserDetailResponse {
 
+    @Schema(description = "회원 ID", example = "10")
+    private Long userId;
+
+    @Schema(description = "유저 타입 (1: 트레이너, 2: 일반회원)", example = "2")
+    private Integer userType;
+
     @Schema(description = "이메일", example = "test@example.com")
     private String email;
 
@@ -29,7 +35,7 @@ public class UserDetailResponse {
 
     @Schema(description = "프로필 이미지 URL", example = "/images/profile.png")
     private String profileImage;
-    
+
     @Schema(description = "나이", example = "20")
     private Integer age;
 
@@ -39,6 +45,8 @@ public class UserDetailResponse {
     // 정적 팩토리 메서드 (Entity → Response 변환용)
     public static UserDetailResponse from(User user) {
         return UserDetailResponse.builder()
+                .userId(user.getUserId())
+                .userType(user.getUserType())
                 .email(user.getEmail())
                 .name(user.getName())
                 .nickname(user.getNickname())

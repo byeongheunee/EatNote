@@ -42,6 +42,7 @@ public class ArticleController {
             @RequestParam(defaultValue = "createdAt") String sort,
             @AuthenticationPrincipal UserDetailsImpl userDetails  // 로그인 사용자 주입
     ) {
+    	System.out.println(userDetails);
         Long loginUserId = userDetails != null ? userDetails.getUserId() : null;
 
         List<ArticleResponse> articles = articleService.getArticlesWithFilters(boardId, keyword, searchField.toUpperCase(), sort, loginUserId); // 사용자 ID 전달
