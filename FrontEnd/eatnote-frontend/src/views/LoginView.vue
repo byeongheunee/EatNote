@@ -26,23 +26,29 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { Client } from '@stomp/stompjs'
+import SockJS from 'sockjs-client'
 
 const email = ref('')
 const password = ref('')
 const auth = useAuthStore()
 const router = useRouter()
 
-let stompClient = null
+let stompClient
 
 const connectWebSocket = (userId) => {
+  const socket = new SockJS('http://localhost:8080/ws')
+
   stompClient = new Client({
-    brokerURL: 'ws://localhost:8080/ws', // 실제 서버 주소로 교체!
+    webSocketFactory: () => socket,
     reconnectDelay: 5000,
     onConnect: () => {
       stompClient.subscribe(`/topic/notifications/${userId}`, (message) => {
         const body = JSON.parse(message.body)
         alert(`🔔 알림: ${body.content}`)
       })
+    },
+    onStompError: (frame) => {
+      console.error('WebSocket STOMP 에러:', frame)
     }
   })
 
@@ -54,7 +60,7 @@ const handleLogin = async () => {
   const success = await auth.login(email.value, password.value)
   if (success) {
     alert('로그인 성공!')
-    connectWebSocket(auth.user.id) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
+    connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
     if (auth.user.userType === 1) {
       router.push('/trainer')
     } else if (auth.user.userType === 2) {
