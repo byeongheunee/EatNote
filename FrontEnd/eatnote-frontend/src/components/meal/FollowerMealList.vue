@@ -15,7 +15,7 @@
     </div>
 
     <!-- 식단 목록 -->
-    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+    <div v-if="meals.length > 0" class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
       <div v-for="meal in meals" :key="meal.mealId" class="bg-white rounded shadow p-4 cursor-pointer"
         @click="goToDetail(meal.mealId)">
         <img :src="getImageUrl(meal.imageUrl)" alt="meal" class="w-full h-40 object-cover rounded" />
@@ -29,6 +29,9 @@
           <span>💬 {{ meal.feedbackCount }} · ❤️ {{ meal.likeCount }}</span>
         </div>
       </div>
+    </div>
+    <div v-else class="text-center text-gray-500 mt-6">
+      해당 유저는 아직 식단을 올리지 않았습니다.
     </div>
   </div>
 </template>

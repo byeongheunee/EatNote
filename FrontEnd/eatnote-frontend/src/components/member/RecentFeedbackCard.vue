@@ -7,6 +7,7 @@
         v-for="feedback in feedbacks"
         :key="feedback.feedbackId"
         class="border rounded p-3 shadow-sm bg-white"
+        @click="goToMealDetail(feedback.mealId)"
       >
         <div class="flex items-center gap-3 mb-2">
           <img
@@ -29,10 +30,13 @@
 
 <script setup>
 import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   feedbacks: Array
 })
+
+const router = useRouter()
 
 const getProfileImage = (url) => {
   return url ? `http://localhost:8080${url}` : '/images/default-profile.png'
@@ -47,7 +51,12 @@ const translateMealType = (type) => {
     default: return type
   }
 }
+
+const goToMealDetail = (mealId) => {
+  router.push(`/meal/${mealId}`)
+}
 </script>
+
 
 <style scoped>
 .text-green-700 {

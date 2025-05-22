@@ -7,7 +7,7 @@
       <img :src="defaultProfile" class="w-16 h-16 rounded-full mx-auto" />
       <p class="text-sm mt-1 font-bold">전체</p>
       <p class="text-xs text-gray-600">
-        🟡 {{ totalPending || 0 }}개 대기 | 🟢 {{ totalDone || 0 }}개 완료
+        🟡 {{ totalPending || 0 }}개 대기
       </p>
     </div>
 

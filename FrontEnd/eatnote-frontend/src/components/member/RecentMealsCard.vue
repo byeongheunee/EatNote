@@ -6,7 +6,7 @@
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-      <div v-for="meal in meals" :key="meal.mealId" class="border rounded p-2 shadow-sm">
+      <div v-for="meal in meals" :key="meal.mealId" class="border rounded p-2 shadow-sm cursor-pointer hover:bg-gray-50" @click="goToMealDetail(meal.mealId)" >
         <img
           :src="getImageUrl(meal.imageUrl)"
           alt="식단 이미지"
@@ -24,11 +24,17 @@
 
 <script setup>
 import { defineProps } from 'vue'
-import { RouterLink } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 
 const props = defineProps({
   meals: Array
 })
+
+const router = useRouter()
+
+const goToMealDetail = (mealId) => {
+  router.push(`/meal/${mealId}`)
+}
 
 const getImageUrl = (url) => {
   return url ? `http://localhost:8080${url}` : '/images/default-meal.png'
