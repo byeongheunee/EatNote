@@ -138,8 +138,8 @@ INSERT INTO goal_type VALUES
 -- ---------------------------------------------------------------------
 CREATE TABLE member_details (
     user_id             BIGINT UNSIGNED PRIMARY KEY, -- 회원 ID (users 테이블 참조)
-    height              FLOAT,                       -- 키 (cm)
-    weight              FLOAT,                       -- 체중 (kg)
+    height              FLOAT NOT NULL,              -- 키 (cm)
+    weight              FLOAT NOT NULL,              -- 체중 (kg)
     body_water          FLOAT,                       -- 체수분
     protein             FLOAT,                       -- 단백질량
     mineral             FLOAT,                       -- 무기질
@@ -148,7 +148,7 @@ CREATE TABLE member_details (
     body_fat_mass       FLOAT,                       -- 체지방량
     bmi                 FLOAT,                       -- BMI 지수
     body_fat_percentage FLOAT,                       -- 체지방률
-    goal                VARCHAR(20),                 -- 목표 (감량, 증량 등)
+    goal                VARCHAR(20) NOT NULL,        -- 목표 (감량, 증량 등)
     trainer_id          BIGINT UNSIGNED,             -- 연결된 트레이너 ID (users 테이블 참조)
 													 -- 백엔드에서 user_type = 1인지 검증 로직 필요!
 
@@ -207,7 +207,7 @@ CREATE TABLE trainer_details (
     certification_number VARCHAR(100),
     certification_image  VARCHAR(300),
     business_number      VARCHAR(50),
-    introduction         TEXT,
+    introduction         TEXT NOT NULL,
     career               TEXT,
     instagram_url        VARCHAR(200),
     is_verified          BOOLEAN DEFAULT FALSE,

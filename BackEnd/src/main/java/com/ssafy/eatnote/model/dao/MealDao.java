@@ -50,4 +50,6 @@ public interface MealDao {
 
 	List<MealListViewResponse> findMealsWithoutFeedbackByTrainer(Long trainerId, List<Long> followerIds);
     
+    Double getAverageAutoScore(@Param("userId") Long userId);
+    
 }

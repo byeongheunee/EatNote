@@ -65,4 +65,7 @@ public interface UserDao {
      */
     int updateUserStatus(@Param("userId") Long userId, @Param("status") String status);
     
+    // 트레이너 이름 확인
+    boolean existsTrainerNickname(@Param("nickname") String nickname);
+    
 }

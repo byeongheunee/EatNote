@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<annotation>
+  <folder>output</folder>
+  <filename>C:\Users\SSAFY\Desktop\babinnote\eatnote\BackEnd\analyzer-python\uploads\df196536-97b9-41be-a217-aee2017f221f_2025-05-22_11_breakfast__aad69.jpg</filename>
+  <path>output\df196536-97b9-41be-a217-aee2017f221f_2025-05-22_11_breakfast__aad69.jpg</path>
+  <object>
+    <name>02011010</name>
+    <bndbox>
+      <xmin>143</xmin>
+      <ymin>175</ymin>
+      <xmax>547</xmax>
+      <ymax>392</ymax>
+    </bndbox>
+  </object>
+</annotation>

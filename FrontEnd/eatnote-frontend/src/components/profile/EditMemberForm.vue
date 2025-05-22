@@ -126,15 +126,42 @@
       </div>
     </div>
 
+    <!-- 선택된 알레르기 목록 -->
+    <div class="mt-4">
+      <label class="block font-semibold">선택된 알레르기</label>
+      <div v-if="selectedAllergyNames.length" class="flex flex-wrap gap-2 mt-2">
+        <span
+          v-for="(name, index) in selectedAllergyNames"
+          :key="index"
+          class="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-sm"
+        >
+          {{ name }}
+        </span>
+      </div>
+      <div v-else class="text-sm text-gray-500 mt-1">선택된 알레르기가 없습니다.</div>
+    </div>
+
     <!-- 제출 -->
     <button @click="submitForm" class="btn-primary mt-4">💾 저장</button>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, watchEffect, onMounted } from 'vue'
+import { ref, reactive, watchEffect, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+
+const selectedAllergyNames = computed(() => {
+  const selected = []
+  for (const category in allergyMap.value) {
+    allergyMap.value[category].forEach((a) => {
+      if (form.allergyIds.includes(a.allergyId)) {
+        selected.push(a.name)
+      }
+    })
+  }
+  return selected
+})
 
 const props = defineProps(['userData'])
 

@@ -38,12 +38,13 @@ public class ArticleController {
     public ResponseEntity<MyApiResponse<List<ArticleResponse>>> getArticles(
             @RequestParam(required = false) Integer boardId,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "ALL") String searchField, // 검색 대상: TITLE, CONTENT, NICKNAME, ALL
             @RequestParam(defaultValue = "createdAt") String sort,
             @AuthenticationPrincipal UserDetailsImpl userDetails  // 로그인 사용자 주입
     ) {
         Long loginUserId = userDetails != null ? userDetails.getUserId() : null;
 
-        List<ArticleResponse> articles = articleService.getArticlesWithFilters(boardId, keyword, sort, loginUserId); // ✅ 사용자 ID 전달
+        List<ArticleResponse> articles = articleService.getArticlesWithFilters(boardId, keyword, searchField.toUpperCase(), sort, loginUserId); // 사용자 ID 전달
         return ResponseEntity.ok(MyApiResponse.success(articles, "ARTICLE_LIST_SUCCESS", "게시글 목록 조회 성공"));
     }
 

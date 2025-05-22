@@ -127,4 +127,11 @@
         WHERE user_id = #{userId}
     </update>
 
+	<select id="existsTrainerNickname" resultType="boolean" parameterType="String">
+	    SELECT EXISTS (
+	        SELECT 1 FROM users
+	         WHERE nickname = #{nickname}
+	           AND user_type = 1
+	    )
+	</select>
 </mapper>

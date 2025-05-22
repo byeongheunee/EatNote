@@ -79,4 +79,11 @@
 	      AND f.status = 'ACCEPTED'
 	</select>
 	
+	<!-- 팔로잉 수 -->
+    <select id="countFollowing" parameterType="long" resultType="int">
+        SELECT COUNT(*)
+          FROM user_follow
+         WHERE from_user_id = #{userId}
+           AND status = 'ACCEPTED'
+    </select>
 </mapper>

@@ -31,7 +31,7 @@
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700">👨‍🏫 소개</label>
+      <label class="block text-sm font-medium text-gray-700">👨‍🏫 소개 <span class="text-red-500">*필수</span></label>
       <textarea v-model="model.introduction" rows="2" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
     </div>
 
@@ -43,10 +43,6 @@
     <div>
       <label class="block text-sm font-medium text-gray-700">📸 인스타그램</label>
       <input v-model="model.instagramUrl" type="url" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-    </div>
-
-    <div class="flex justify-between mt-6">
-      <button type="button" @click="$emit('goBack')" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">뒤로가기</button>
     </div>
   </div>
 </template>

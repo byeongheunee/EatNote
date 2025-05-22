@@ -14,6 +14,40 @@
       @selectBoard="selectBoard"
     />
 
+    <!-- 검색 조건 영역 -->
+    <div class="flex flex-wrap gap-2 mb-4 items-center">
+      <!-- 검색 기준 드롭다운 -->
+      <select v-model="searchField" class="border px-2 py-1 rounded">
+        <option value="ALL">전체</option>
+        <option value="TITLE">제목</option>
+        <option value="CONTENT">내용</option>
+        <option value="NICKNAME">작성자</option>
+      </select>
+
+      <!-- 검색어 입력 -->
+      <input
+        v-model="keyword"
+        type="text"
+        placeholder="검색어를 입력하세요"
+        class="border px-3 py-1 rounded w-48"
+        @keyup.enter="handleSearch"
+      />
+
+      <!-- 정렬 기준 드롭다운 -->
+      <select v-model="sort" class="border px-2 py-1 rounded">
+        <option value="createdAt">최신순</option>
+        <option value="viewCnt">조회순</option>
+      </select>
+
+      <!-- 검색 버튼 -->
+      <button
+        class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+        @click="handleSearch"
+      >
+        🔍 검색
+      </button>
+    </div>
+
     <!-- 게시글 목록 -->
     <div>
       <div class="text-right mb-4" v-if="canWriteArticle">
@@ -43,7 +77,27 @@ import Header from '@/components/common/Header.vue'
 import BoardSlider from '@/components/BoardSlider.vue'
 import ArticleList from '@/components/ArticleList.vue'
 
+const keyword = ref('')
+const searchField = ref('ALL')
+const sort = ref('createdAt')
 
+const handleSearch = async () => {
+  if (!selectedBoardId.value) return
+
+  const res = await axios.get('/api/articles', {
+    params: {
+      boardId: selectedBoardId.value,
+      keyword: keyword.value,
+      searchField: searchField.value,
+      sort: sort.value
+    },
+    headers: {
+      Authorization: `Bearer ${auth.accessToken}`
+    }
+  })
+
+  articles.value = res.data.data
+}
 
 const router = useRouter()
 const route = useRoute()
@@ -153,8 +207,17 @@ watch(
     const validBoard = boards.value.find(b => b.boardId === boardId)
 
     selectedBoardId.value = validBoard ? validBoard.boardId : boards.value[0]?.boardId
+
+    // 검색 조건 초기화
+    keyword.value = ''
+    searchField.value = 'ALL'
+    sort.value = 'createdAt'
   }
 )
+
+watch(selectedBoardId, (newVal) => {
+  if (newVal !== null) handleSearch()
+})
 
 onMounted(fetchBoards)
 </script>

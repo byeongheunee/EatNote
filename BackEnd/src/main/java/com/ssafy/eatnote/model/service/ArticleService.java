@@ -22,7 +22,7 @@ public interface ArticleService {
     public ArticleResponse getArticleResponseById(int articleId, Long loginUserId);
 
     // 필터/검색 조건 기반 목록 조회
-    public List<ArticleResponse> getArticlesWithFilters(Integer boardId, String keyword, String sort, Long loginUserId);
+    public List<ArticleResponse> getArticlesWithFilters(Integer boardId, String keyword, String searchField, String sort, Long loginUserId);
 
     // 게시판별 게시글 목록 조회 (필요 시 유지)
     List<ArticleResponse> getArticlesByBoardId(int boardId);
@@ -32,4 +32,5 @@ public interface ArticleService {
 
     // 조회수 증가
     boolean increaseViewCount(int articleId);
+
 }

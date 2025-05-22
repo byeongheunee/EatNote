@@ -100,4 +100,12 @@
 	  ORDER BY mf.created_at DESC
 	  LIMIT 5
 	</select>
+	
+	<!-- 트레이너가 작성한 피드백 수 -->
+    <select id="countByTrainerId" parameterType="long" resultType="int">
+        SELECT COUNT(*)
+          FROM meal_feedback
+         WHERE trainer_id = #{trainerId}
+    </select>
+    
 </mapper>

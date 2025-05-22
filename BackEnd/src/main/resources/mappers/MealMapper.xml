@@ -326,67 +326,7 @@
 		ORDER BY m.meal_time DESC
 	</select>
 
-	<select id="findMealsWithoutFeedback" parameterType="long"
-		resultType="MealListViewResponse">
-		SELECT
-		m.meal_id AS mealId,
-		m.user_id AS userId,
-		u.nickname AS
-		nickname,
-		m.meal_type AS mealType,
-		m.meal_time AS mealTime,
-		m.auto_score
-		AS autoScore,
-		(
-		SELECT AVG(f.trainer_score)
-		FROM meal_feedback f
-		WHERE
-		f.meal_id = m.meal_id
-		) AS trainerScore,
-		m.detected_foods AS
-		detectedFoods,
-		m.total_calories AS totalCalories,
-		m.image_url AS
-		imageUrl,
-		(
-		SELECT COUNT(*)
-		FROM meal_feedback f
-		WHERE f.meal_id =
-		m.meal_id
-		) AS feedbackCount,
-		(
-		SELECT COUNT(*)
-		FROM content_like cl
-		WHERE
-		cl.content_type = 'MEAL'
-		AND cl.content_id = m.meal_id
-		AND cl.like_type
-		= 'LIKE'
-		) AS likeCount,
-		(
-		SELECT COUNT(*)
-		FROM content_like cl
-		WHERE
-		cl.content_type = 'MEAL'
-		AND cl.content_id = m.meal_id
-		AND cl.like_type
-		= 'DISLIKE'
-		) AS dislikeCount,
-		NULL AS isFeedbackedByMe,
-		NULL AS
-		myReaction
-		FROM meal m
-		JOIN users u ON m.user_id = u.user_id
-		WHERE NOT
-		EXISTS (
-		SELECT 1
-		FROM meal_feedback f
-		WHERE f.meal_id = m.meal_id
-		AND
-		f.trainer_id = #{trainerId}
-		)
-		ORDER BY m.meal_time DESC
-	</select>
+
 
 	<select id="getFeedbackCalendarStat"
 		resultType="com.ssafy.eatnote.model.dto.FeedbackCalendarStat">
@@ -488,5 +428,20 @@
 	</select>
 
 
+	
+	<!-- 평균 자동 점수 조회 -->
+    <select id="getAverageAutoScore" parameterType="long" resultType="double">
+        SELECT ROUND(AVG(auto_score), 1)
+          FROM meal
+         WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 최근 식단 날짜 내림차순 조회 -->
+    <select id="findMealDatesDesc" parameterType="long" resultType="java.time.LocalDate">
+        SELECT DATE(meal_time)
+          FROM meal
+         WHERE user_id = #{userId}
+         ORDER BY meal_time DESC
+    </select>
 </mapper>
 	

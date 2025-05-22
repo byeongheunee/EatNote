@@ -14,7 +14,13 @@
       <!-- 제목 + 작성자 -->
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-2xl font-bold">{{ article.title }}</h2>
-        <span class="text-gray-500 text-sm">작성자 : {{ article.userNickname }}</span>
+        <!-- 작성자 클릭 시 모달 열기 -->
+        <span class="text-gray-500 text-sm hover:underline cursor-pointer" @click="openAuthorProfile">
+          작성자 : {{ article.userNickname }}
+          <span v-if="article && !isMyArticle && auth.user?.userType === 2" class="ml-2 text-xs text-blue-600">
+            · {{ article.following ? '팔로우 중' : '팔로우 안 함' }}
+          </span>
+        </span>
       </div>
 
       <!-- ✨ 수정/삭제 버튼 -->
@@ -89,6 +95,15 @@
         <p class="text-sm text-gray-500 mt-2">아직 댓글이 없습니다.</p>
       </div>
     </div>
+
+    <!-- 프로필 모달 -->
+    <UserProfileModal
+      :visible="isUserProfileOpen"
+      :profile="selectedProfile"
+      :isTrainer="isTrainer"
+      @close="isUserProfileOpen = false"
+    />
+
   </div>
 </template>
 
@@ -100,6 +115,7 @@ import axios from 'axios'
 import CommentItem from '@/components/CommentItem.vue'
 import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
+import UserProfileModal from '@/components/UserProfileModal.vue'
 
 // 📌 라우터에서 articleId와 boardId 추출
 const route = useRoute()
@@ -115,6 +131,50 @@ const comments = ref([])
 const auth = useAuthStore()
 const currentUser = computed(() => auth.user)
 
+const isUserProfileOpen = ref(false)
+const selectedProfile = ref(null)
+const isTrainer = ref(false)
+
+// 작성자 프로필 열기
+const openAuthorProfile = async () => {
+  // 내가 작성한 글이면 모달 열지 않음
+  if (isMyArticle.value) return
+
+  try {
+    const token = auth.accessToken
+
+    const res = await axios.get(`/api/users/${article.value.userId}/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    // 응답이 실패한 경우
+    if (!res.data.success) {
+      const code = res.data.code
+
+      if (code === 'FORBIDDEN_ADMIN_PROFILE') {
+        alert('관리자는 프로필을 조회할 수 없습니다.')
+      } else if (code === 'USER_NOT_FOUND') {
+        alert('해당 사용자가 존재하지 않습니다.')
+      } else if (code === 'VALIDATION_FAILED') {
+        alert('알 수 없는 사용자 유형입니다.')
+      } else {
+        alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
+      }
+
+      return
+    }
+
+    // 정상 응답 처리
+    const profile = res.data.data
+    selectedProfile.value = profile
+    isTrainer.value = 'introduction' in profile
+    isUserProfileOpen.value = true
+
+  } catch (e) {
+    console.error('작성자 프로필 조회 실패:', e)
+    alert('작성자 정보를 불러오지 못했습니다.')
+  }
+}
 
 // 권한 확인
 const isMyArticle = computed(() => {

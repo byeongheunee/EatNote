@@ -58,4 +58,6 @@ public interface FollowDao {
     // 내가 팔로우하고 있는 트레이너 목록
     List<User> findFollowedTrainersByMember(Long memberId);
     
+    // 팔로잉수
+    int countFollowing(@Param("userId") Long userId);
 }
