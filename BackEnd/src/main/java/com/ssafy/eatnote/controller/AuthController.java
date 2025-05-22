@@ -59,7 +59,8 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
-
+        System.out.println("email : " + email);
+        System.out.println("password : " + password);
         // 사용자 정보 조회
         User user = userService.getUserByEmail(email);
 

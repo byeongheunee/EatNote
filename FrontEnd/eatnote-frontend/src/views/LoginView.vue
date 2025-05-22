@@ -26,23 +26,29 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { Client } from '@stomp/stompjs'
+import SockJS from 'sockjs-client'
 
 const email = ref('')
 const password = ref('')
 const auth = useAuthStore()
 const router = useRouter()
 
-let stompClient = null
+let stompClient
 
 const connectWebSocket = (userId) => {
+  const socket = new SockJS('http://localhost:8080/ws')
+
   stompClient = new Client({
-    brokerURL: 'ws://localhost:8080/ws', // 실제 서버 주소로 교체!
+    webSocketFactory: () => socket,
     reconnectDelay: 5000,
     onConnect: () => {
       stompClient.subscribe(`/topic/notifications/${userId}`, (message) => {
         const body = JSON.parse(message.body)
         alert(`🔔 알림: ${body.content}`)
       })
+    },
+    onStompError: (frame) => {
+      console.error('WebSocket STOMP 에러:', frame)
     }
   })
 

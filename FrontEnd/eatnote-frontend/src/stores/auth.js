@@ -23,11 +23,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async login(email, password) {
       try {
-        console.log('[로그인 요청 바디]', { email, password })
         const response = await axios.post('/api/auth/login', { email, password })
-        console.log(response)
-        console.log(response.data)
-        console.log(response.data.data)
         const { accessToken, user } = response.data.data
 
         this.accessToken = accessToken
