@@ -8,12 +8,16 @@ import com.ssafy.eatnote.model.dto.UserFollow;
 import com.ssafy.eatnote.model.dto.response.UserFollowResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
@@ -57,11 +61,18 @@ public class FollowServiceImpl implements FollowService {
                 .relatedMealId(null) // 연관 없음
                 .build();
 
+        log.info("🔔 팔로우 요청 알림 생성 → toUserId={}, content='{}'", message.getReceiverId(), message.getContent());
+        
         notificationService.saveNotification(message);
+        
+        log.info("📡 WebSocket 전송 시작 → /topic/notifications/{}", toUser.getUserId());
+        
         messagingTemplate.convertAndSend(
             "/topic/notifications/" + toUser.getUserId(),
             message
         );
+        
+        log.info("✅ 팔로우 요청 알림 처리 완료");
     }
     
     private boolean isBothTrainer(Long fromId, Long toId) {
@@ -144,11 +155,15 @@ public class FollowServiceImpl implements FollowService {
                 .relatedMealId(null)
                 .build();
 
+        log.info("🔔 알림 메시지 전송 대상: userId={}, 내용={}", message.getReceiverId(), message.getContent());
+        
         notificationService.saveNotification(message);
         messagingTemplate.convertAndSend(
             "/topic/notifications/" + fromUser.getUserId(),
             message
         );
+        
+        log.info("✅ WebSocket 전송 완료!");
     }
     
 }

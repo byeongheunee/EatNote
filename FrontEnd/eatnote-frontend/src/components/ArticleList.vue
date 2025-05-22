@@ -30,14 +30,20 @@
 
           <!-- 작성자 및 좋아요 -->
           <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
-            <span>{{ article.userNickname }}</span>
-            <LikeButton
-              contentType="ARTICLE"
-              :contentId="article.articleId"
-              :likeCount="article.likeCount"
-              :myReaction="article.myReaction"
-              @onUpdated="$emit('refresh')"
-            />
+            <!-- 왼쪽: 작성자 -->
+            <span>작성자 : {{ article.userNickname }}</span>
+
+            <!-- 오른쪽: 조회수 + 좋아요 -->
+            <div class="flex items-center gap-4">
+              <span>조회수 : {{ article.viewCnt }}</span>
+              <LikeButton
+                contentType="ARTICLE"
+                :contentId="article.articleId"
+                :likeCount="article.likeCount"
+                :myReaction="article.myReaction"
+                @onUpdated="$emit('refresh')"
+              />
+            </div>
           </div>
         </div>
       </div>

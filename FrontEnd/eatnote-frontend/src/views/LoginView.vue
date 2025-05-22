@@ -42,7 +42,10 @@ const connectWebSocket = (userId) => {
     webSocketFactory: () => socket,
     reconnectDelay: 5000,
     onConnect: () => {
+      console.log('✅ WebSocket 연결 성공!');
+      console.log("🧠 구독 중인 채널: /topic/notifications/" + userId);
       stompClient.subscribe(`/topic/notifications/${userId}`, (message) => {
+        console.log('📥 알림 수신!', message.body);
         const body = JSON.parse(message.body)
         alert(`🔔 알림: ${body.content}`)
       })
@@ -63,6 +66,9 @@ const handleLogin = async () => {
   if (success) {
     alert('로그인 성공!')
     connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
+    setTimeout(() => {
+      router.push('/member')
+    }, 300) // 0.3초 대기 후 이동
     if (auth.user.userType === 1) {
       router.push('/trainer')
     } else if (auth.user.userType === 2) {

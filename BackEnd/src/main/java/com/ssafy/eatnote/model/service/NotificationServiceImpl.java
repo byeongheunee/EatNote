@@ -11,7 +11,9 @@ import com.ssafy.eatnote.model.dto.Notification;
 import com.ssafy.eatnote.model.dto.NotificationMessage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -30,7 +32,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-
+        
+        log.info("📥 알림 DB 저장: {}", message);
+        
         notificationDao.insert(notification);
     }
     
