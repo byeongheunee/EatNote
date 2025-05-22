@@ -332,7 +332,7 @@ public class UserServiceImpl implements UserService {
 	    if (file != null && !file.isEmpty()) {
 	        try {
 	            String fileName = "profile_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-	            File dir = new File(uploadDir);
+	            File dir = new File(uploadDir + "/profile");
 	            if (!dir.exists()) dir.mkdirs();
 	            File dest = new File(dir, fileName);
 	            file.transferTo(dest);
@@ -365,6 +365,8 @@ public class UserServiceImpl implements UserService {
 
         // 공통 정보
         var user = userDao.selectUserById(targetUserId);
+        dto.setUserId(user.getUserId());
+        dto.setUserType(user.getUserType());
         dto.setNickname(user.getNickname());
         dto.setGender(user.getGender());
         dto.setProfileImage(user.getProfileImage());
@@ -385,8 +387,11 @@ public class UserServiceImpl implements UserService {
         dto.setConsecutiveDays(consecutiveDays);
         dto.setFollowingCount(followDao.countFollowing(targetUserId));
         
-        boolean isFollowing = followDao.existsByFromAndTo(viewerId, targetUserId);
-        dto.setFollowing(isFollowing);
+        String status = followDao.getFollowStatus(viewerId, targetUserId);
+        if (status == null) {
+            status = "NONE"; // 아예 팔로우 기록이 없다면
+        }
+        dto.setFollowStatus(status);
 
         return dto;
     }
@@ -419,6 +424,8 @@ public class UserServiceImpl implements UserService {
         TrainerProfileResponse dto = new TrainerProfileResponse();
 
         var user = userDao.selectUserById(targetUserId);
+        dto.setUserId(user.getUserId());
+        dto.setUserType(user.getUserType());
         dto.setNickname(user.getNickname());
         dto.setGender(user.getGender());
         dto.setProfileImage(user.getProfileImage());
@@ -432,8 +439,11 @@ public class UserServiceImpl implements UserService {
         dto.setTotalFeedbacks(mealFeedbackDao.countByTrainerId(targetUserId));
         dto.setFollowingCount(followDao.countFollowing(targetUserId));
 
-        boolean isFollowing = followDao.existsByFromAndTo(viewerId, targetUserId);
-        dto.setFollowing(isFollowing);
+        String status = followDao.getFollowStatus(viewerId, targetUserId);
+        if (status == null) {
+            status = "NONE"; // 아예 팔로우 기록이 없다면
+        }
+        dto.setFollowStatus(status);
         
         return dto;
     }

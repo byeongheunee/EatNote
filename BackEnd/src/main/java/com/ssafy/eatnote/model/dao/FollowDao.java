@@ -60,4 +60,7 @@ public interface FollowDao {
     
     // 팔로잉수
     int countFollowing(@Param("userId") Long userId);
+    
+    // 팔로우 상태 조회
+    String getFollowStatus(Long viewerId, Long targetUserId);
 }

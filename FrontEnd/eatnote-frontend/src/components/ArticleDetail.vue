@@ -18,7 +18,7 @@
         <span class="text-gray-500 text-sm hover:underline cursor-pointer" @click="openAuthorProfile">
           작성자 : {{ article.userNickname }}
           <span v-if="article && !isMyArticle && auth.user?.userType === 2" class="ml-2 text-xs text-blue-600">
-            · {{ article.following ? '팔로우 중' : '팔로우 안 함' }}
+            · {{ followStatusLabel }}
           </span>
         </span>
       </div>
@@ -100,8 +100,8 @@
     <UserProfileModal
       :visible="isUserProfileOpen"
       :profile="selectedProfile"
-      :isTrainer="isTrainer"
       @close="isUserProfileOpen = false"
+      @follow-requested="handleFollowRequested"
     />
 
   </div>
@@ -133,7 +133,21 @@ const currentUser = computed(() => auth.user)
 
 const isUserProfileOpen = ref(false)
 const selectedProfile = ref(null)
-const isTrainer = ref(false)
+
+const handleFollowRequested = () => {
+  // 팔로우 요청 → 'PENDING' 으로
+  // 팔로우 취소 → 'NONE' 으로
+  if (selectedProfile.value?.followStatus === 'ACCEPTED') {
+    selectedProfile.value.followStatus = 'NONE'
+  } else {
+    selectedProfile.value.followStatus = 'PENDING'
+  }
+
+  // 💡 article도 같은 사용자면 동기화
+  if (article.value?.userId === selectedProfile.value?.userId) {
+    article.value.followStatus = selectedProfile.value.followStatus
+  }
+}
 
 // 작성자 프로필 열기
 const openAuthorProfile = async () => {
@@ -166,8 +180,8 @@ const openAuthorProfile = async () => {
 
     // 정상 응답 처리
     const profile = res.data.data
+    console.log(profile)
     selectedProfile.value = profile
-    isTrainer.value = 'introduction' in profile
     isUserProfileOpen.value = true
 
   } catch (e) {
@@ -175,6 +189,15 @@ const openAuthorProfile = async () => {
     alert('작성자 정보를 불러오지 못했습니다.')
   }
 }
+
+const followStatusLabel = computed(() => {
+  switch (article.value.followStatus) {
+    case 'ACCEPTED': return '팔로우 중';
+    case 'PENDING': return '팔로우 요청 중';
+    case 'REJECTED': return '팔로우 거절됨';
+    default: return '팔로우 안 함';
+  }
+});
 
 // 권한 확인
 const isMyArticle = computed(() => {
@@ -213,6 +236,7 @@ const fetchArticle = async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
     article.value = res.data.data
+    console.log(article.value)
     additionalImages.value = article.value.attachments?.slice(1) || []
   } catch (err) {
     console.error('게시글 조회 실패:', err)

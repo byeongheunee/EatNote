@@ -290,6 +290,15 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
 
+        // 팔로우 상태 조회
+        String followStatus = "NONE";
+        if (loginUserId != null && !loginUserId.equals(article.getUserId())) {
+            String status = followDao.getFollowStatus(loginUserId, article.getUserId());
+            if (status != null) {
+                followStatus = status; // ACCEPTED, PENDING, REJECTED
+            }
+        }
+        
         // 댓글 목록 조회 및 트리 구조 구성
         List<Comment> commentEntities = commentDao.getCommentsByTarget("ARTICLE", (long) articleId);
         List<CommentResponse> flatList = commentEntities.stream()
@@ -308,30 +317,31 @@ public class ArticleServiceImpl implements ArticleService {
         List<CommentResponse> commentTree = buildCommentTree(flatList);
 
         // 응답 조립
-        return toResponse(article, files, likeCount, dislikeCount, myReaction, commentTree);
+        return toResponse(article, files, likeCount, dislikeCount, myReaction, commentTree, followStatus);
     }
     
     private ArticleResponse toResponse(Article article, List<ArticleFileResponse> files,
             int likeCount, int dislikeCount, String myReaction,
-            List<CommentResponse> commentTree) {
-		return ArticleResponse.builder()
-			.articleId(article.getArticleId())
-			.title(article.getTitle())
-			.content(article.getContent())
-			.boardId(article.getBoardId())
-			.userId(article.getUserId())
-			.userNickname(article.getUserNickname())
-			.imageUrl(article.getImageUrl())
-			.viewCnt(article.getViewCnt())
-			.likeCount(likeCount)
-			.dislikeCount(dislikeCount)
-			.myReaction(myReaction)
-			.attachments(files)
-			.comments(commentTree)
-			.createdAt(article.getCreatedAt())
-			.modifiedAt(article.getModifiedAt())
-			.build();
-		}
+            List<CommentResponse> commentTree, String followStatus) {
+        return ArticleResponse.builder()
+            .articleId(article.getArticleId())
+            .title(article.getTitle())
+            .content(article.getContent())
+            .boardId(article.getBoardId())
+            .userId(article.getUserId())
+            .userNickname(article.getUserNickname())
+            .imageUrl(article.getImageUrl())
+            .viewCnt(article.getViewCnt())
+            .likeCount(likeCount)
+            .dislikeCount(dislikeCount)
+            .myReaction(myReaction)
+            .attachments(files)
+            .comments(commentTree)
+            .createdAt(article.getCreatedAt())
+            .modifiedAt(article.getModifiedAt())
+            .followStatus(followStatus)
+            .build();
+    }
 
     private List<CommentResponse> buildCommentTree(List<CommentResponse> flatList) {
         List<CommentResponse> rootList = new ArrayList<>();
@@ -367,7 +377,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 2. 각 게시글에 대해 ArticleResponse로 변환
         return articles.stream().map(article -> {
             String myReaction = null;
-            boolean isFollowing = false;
+            String followStatus = "NONE";
             
             // 로그인 사용자일 경우 내 반응 조회
             if (loginUserId != null) {
@@ -376,8 +386,16 @@ public class ArticleServiceImpl implements ArticleService {
                     myReaction = like.getLikeType(); // 'LIKE' or 'DISLIKE'
                 }
                 
-                // 작성자 팔로우 여부
-                isFollowing = followDao.existsByFromAndTo(loginUserId, article.getUserId());
+                System.out.println("로그인 유저 ID : " + loginUserId);
+                System.out.println("게시글 작성자 ID : " + article.getUserId());
+                
+                // 팔로우 상태 조회 (자기 자신은 제외)
+                if (!loginUserId.equals(article.getUserId())) {
+                    String status = followDao.getFollowStatus(loginUserId, article.getUserId());
+                    if (status != null) {
+                        followStatus = status; // 'ACCEPTED', 'PENDING', 'REJECTED'
+                    }
+                }
             }
 
             return ArticleResponse.builder()
@@ -394,7 +412,7 @@ public class ArticleServiceImpl implements ArticleService {
                     .likeCount(article.getLikeCount())
                     .dislikeCount(article.getDislikeCount())
                     .myReaction(myReaction)
-                    .following(isFollowing)
+                    .followStatus(followStatus)
                     .attachments(null)
                     .comments(null)
                     .build();

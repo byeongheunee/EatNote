@@ -6,24 +6,24 @@
 
     <div v-else class="flex flex-wrap gap-6">
       <div
-        v-for="user in following"
-        :key="user.nickname"
-        @click="$emit('open-profile', user)"
+        v-for="otherUser in following"
+        :key="otherUser.nickname"
+        @click="$emit('open-profile', otherUser)"
         class="flex flex-col items-center w-36 p-4 bg-white border rounded-2xl shadow hover:shadow-md cursor-pointer transition"
       >
         <!-- 프로필 이미지 -->
         <img
-          :src="getProfileImage(user.profileImage)"
+          :src="getProfileImage(otherUser.profileImage)"
           alt="프로필"
           class="w-20 h-20 rounded-full object-cover mb-2 border"
         />
 
         <!-- 닉네임 -->
-        <p class="font-semibold text-center text-base">{{ user.nickname }}</p>
+        <p class="font-semibold text-center text-base">{{ otherUser.nickname }}</p>
 
         <!-- 유저 타입 -->
         <p class="text-sm text-gray-500">
-          {{ user.userType === 1 ? '🏋️ 트레이너' : '👤 일반회원' }}
+          {{ otherUser.userType === 1 ? '🏋️ 트레이너' : '👤 일반회원' }}
         </p>
       </div>
     </div>
@@ -38,7 +38,6 @@ import { useAuthStore } from '@/stores/auth'
 const auth = useAuthStore()
 const following = ref([])
 
-// emits 정의
 defineEmits(['open-profile'])
 
 const getProfileImage = (path) => path ? `http://localhost:8080${path}` : '/images/default-profile.png'
@@ -55,6 +54,12 @@ const fetchFollowing = async () => {
     console.error('팔로우 목록 조회 실패', err)
   }
 }
+
+// 외부에서 호출 가능한 메서드로 expose
+const refresh = async () => {
+  await fetchFollowing()
+}
+defineExpose({ refresh })
 
 onMounted(fetchFollowing)
 </script>

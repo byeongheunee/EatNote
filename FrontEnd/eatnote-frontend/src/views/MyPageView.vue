@@ -49,7 +49,7 @@
         </ul>
 
         <!-- 팔로잉 목록 -->
-        <FollowingList @open-profile="openProfileModal" />
+        <MemberFollowingList ref="followingListRef" @open-profile="openProfileModal" />
 
         <!-- 최근 게시글 -->
         <h3 class="text-xl font-semibold mt-6 mb-2">📚 내가 작성한 최근 게시글</h3>
@@ -104,8 +104,8 @@
     <UserProfileModal
       :visible="profileModalVisible"
       :profile="selectedProfile"
-      :isTrainer="selectedProfile?.userType === 1"
       @close="profileModalVisible = false"
+      @follow-requested="handleFollowRequested"
     />
 
   </div>
@@ -118,7 +118,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
 import ArticleList from '@/components/ArticleList.vue'
-import FollowingList from '@/components/member/MemberFollowingList.vue'
+import MemberFollowingList from '@/components/member/MemberFollowingList.vue'
 import UserProfileModal from '@/components/UserProfileModal.vue'
 
 
@@ -134,12 +134,56 @@ const showModal = ref(false)
 const password = ref('')
 const errorMessage = ref('')
 
+const followingListRef = ref(null)
+
 // 프로필 모달 제어 관련
 const profileModalVisible = ref(false)
 const selectedProfile = ref(null)
-const openProfileModal = (user) => {
-  selectedProfile.value = user
-  profileModalVisible.value = true
+
+const handleFollowRequested = async () => {
+  if (selectedProfile.value?.followStatus === 'ACCEPTED') {
+    selectedProfile.value.followStatus = 'NONE'
+  } else {
+    selectedProfile.value.followStatus = 'PENDING'
+  }
+
+  // 팔로잉 목록도 즉시 갱신
+  if (followingListRef.value?.refresh) {
+    await followingListRef.value.refresh()
+  }
+}
+
+const openProfileModal = async (otherUser) => {
+  try {
+    const token = auth.accessToken
+
+    const res = await axios.get(`/api/users/${otherUser.userId}/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    if (!res.data.success) {
+      const code = res.data.code
+
+      if (code === 'FORBIDDEN_ADMIN_PROFILE') {
+        alert('관리자는 프로필을 조회할 수 없습니다.')
+      } else if (code === 'USER_NOT_FOUND') {
+        alert('해당 사용자가 존재하지 않습니다.')
+      } else if (code === 'VALIDATION_FAILED') {
+        alert('알 수 없는 사용자 유형입니다.')
+      } else {
+        alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
+      }
+
+      return
+    }
+    console.log(res.data.data)
+    selectedProfile.value = res.data.data
+    profileModalVisible.value = true
+
+  } catch (e) {
+    console.error('상대방 프로필 조회 실패:', e)
+    alert('프로필 정보를 불러오지 못했습니다.')
+  }
 }
 
 const fetchMyArticles = async () => {
@@ -185,11 +229,14 @@ const fetchMyInfo = async () => {
       }
     })
     const data = res.data.data
-
+    console.log(data)
     user.value = data.user
     memberDetails.value = data.memberDetails || null
     trainerDetails.value = data.trainerDetails || null
     allergies.value = data.allergies || []
+
+    // auth store의 사용자 정보도 같이 업데이트
+    auth.setUser(data.user)
   } catch (err) {
     console.error('회원정보 조회 실패', err)
   }
