@@ -23,7 +23,9 @@ public class UserFollowResponse {
 
     @Schema(description = "프로필 이미지 URL", example = "/images/profile1.jpg")
     private String profileImage;
-
+    
+    @Schema(description = "유저 ID", example = "7")
+    private Long userId;
 
     @Schema(description = "유저 타입 (0: 일반회원, 1: 트레이너)", example = "0")
     private int userType;
