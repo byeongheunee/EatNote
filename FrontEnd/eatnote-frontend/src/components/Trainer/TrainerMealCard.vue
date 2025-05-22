@@ -14,7 +14,7 @@
       <li>
         <strong>종류:</strong> {{ mealTypeMap[meal.mealType] || meal.mealType }}
       </li>
-      <li><strong>자동 점수:</strong> {{ meal.autoScore ?? '-' }}</li>
+      <li><strong>AI 점수:</strong> {{ meal.autoScore ?? '-' }}</li>
     </ul>
 
     <div class="pt-2">

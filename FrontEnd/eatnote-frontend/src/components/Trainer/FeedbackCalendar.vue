@@ -30,7 +30,7 @@
           <p><strong>음식:</strong> {{ meal.detectedFoods }}</p>
           <p><strong>칼로리:</strong> {{ meal.totalCalories }} kcal</p>
           <p><strong>종류:</strong> {{ meal.mealType }}</p>
-          <p><strong>자동 점수:</strong> {{ meal.autoScore }}</p>
+          <p><strong>AI 점수:</strong> {{ meal.autoScore }}</p>
           <p><strong>🧠 AI 피드백:</strong><br />{{ meal.aiFeedback }}</p>
         </div>
       </div>
@@ -90,7 +90,7 @@ const onDayClick = async ({ date }) => {
   selectedDate.value = ymd
   try {
     const token = localStorage.getItem('accessToken')
-    const res = await axios.get('/api/trainer/feedback/pending', {
+    const res = await axios.get('/api/trainer/pending', {
       headers: { Authorization: `Bearer ${token}` }
     })
     mealList.value = (res.data.data || []).filter(meal => meal.mealTime?.startsWith(ymd))

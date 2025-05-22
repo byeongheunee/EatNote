@@ -47,5 +47,7 @@ public interface MealDao {
     int calculateAverageCalories(@Param("userId") Long userId);
     
     List<MealListViewResponse> findRecentMealsByUserId(@Param("userId") Long userId);
+
+	List<MealListViewResponse> findMealsWithoutFeedbackByTrainer(Long trainerId, List<Long> followerIds);
     
 }

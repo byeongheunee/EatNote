@@ -1,10 +1,16 @@
 <template>
   <div>
+    <Header />
     <h2>식단 상세 보기</h2>
 
     <div v-if="loading">불러오는 중입니다...</div>
     <div v-else-if="error">에러가 발생했습니다: {{ error }}</div>
+
+
     <div v-else-if="meal">
+      <button @click="goBackToMealList" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">
+        목록으로 돌아가기
+      </button>
       <img :src="getImageUrl(meal.imageUrl)" alt="식단 이미지" class="w-96 mb-4" />
 
       <p><strong>식사 유형</strong>: {{
@@ -21,16 +27,16 @@
       </p>
 
       <p><strong>감지된 음식:</strong> {{ meal.detectedFoods }}</p>
-      <p><strong>총 칼로리:</strong> {{ meal.totalCalories }} kcal</p>
+      <p><strong>총 열량:</strong> {{ meal.totalCalories }} kcal</p>
       <p><strong>탄수화물:</strong> {{ meal.carbohydrates }} g</p>
       <p><strong>단백질:</strong> {{ meal.protein }} g</p>
       <p><strong>지방:</strong> {{ meal.fat }} g</p>
-      <p><strong>자동 점수:</strong> {{ meal.autoScore }} 점</p>
+      <p><strong>AI 점수:</strong> {{ meal.autoScore }} 점</p>
       <p><strong>AI 피드백:</strong> {{ meal.aiFeedback }}</p>
 
       <h3 class="mt-4 font-semibold">트레이너 피드백</h3>
       <p v-if="meal.trainerFeedback">{{ meal.trainerFeedback }}</p>
-      <p v-else>트레이너가 피드백 작성중입니다...</p>
+      <p v-else>작성된 트레이너 피드백이 없습니다. </p>
 
       <h3 class="mt-4 font-semibold">좋아요</h3>
       <!-- 좋아요/싫어요 영역 -->
@@ -52,13 +58,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import CommentItem from '@/components/CommentItem.vue'
 import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
+import Header from '@/components/common/Header.vue'
 
-
+const router = useRouter()
 const route = useRoute()
 const mealId = route.params.id
 
@@ -69,6 +76,9 @@ const error = ref(null)
 const targetType = "MEAL"
 
 const getImageUrl = (path) => `http://localhost:8080${path}`
+const goBackToMealList = () => {
+  router.push('/meals')  // MealView.vue가 연결된 경로
+}
 
 const loadMeal = async () => {
   try {

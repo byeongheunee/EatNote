@@ -1,10 +1,10 @@
 <!-- src/components/trainer/TodayPendingMeals.vue -->
 <template>
   <div class="p-4">
-    <h2 class="text-xl font-bold mb-4">📌 오늘의 피드백 요청 식단</h2>
+    <h2 class="text-xl font-bold mb-4">📌 피드백 미완료 식단</h2>
 
     <div v-if="loading">불러오는 중...</div>
-    <div v-else-if="meals.length === 0">오늘 요청된 식단이 없습니다.</div>
+    <div v-else-if="meals.length === 0">피드백 미완료 식단이 없습니다.</div>
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       <div v-for="meal in meals" :key="meal.mealId" class="border rounded-lg p-3 shadow hover:bg-gray-50 cursor-pointer"
         @click="goToMeal(meal.mealId)">
@@ -38,7 +38,7 @@ const goToMeal = (mealId) => router.push(`/trainer/feedback/${mealId}`)
 onMounted(async () => {
   try {
     const token = localStorage.getItem('accessToken')
-    const res = await axios.get('/api/trainer/feedback/pending', {
+    const res = await axios.get('/api/trainer/pending', {
       headers: { Authorization: `Bearer ${token}` }
     })
     meals.value = res.data.data || []

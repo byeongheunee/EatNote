@@ -12,7 +12,7 @@
         <img :src="getImageUrl(meal.imageUrl)" class="w-full max-w-md rounded" />
         <p class="mt-2"><strong>식사 시간:</strong> {{ formatDate(meal.mealTime) }}</p>
         <p><strong>감지된 음식:</strong> {{ meal.detectedFoods }}</p>
-        <p><strong>자동 점수:</strong> {{ meal.autoScore }}</p>
+        <p><strong>AI 점수:</strong> {{ meal.autoScore }}</p>
         <p><strong>식사 유형:</strong> {{
           {
             breakfast: '아침',
@@ -32,7 +32,7 @@
           <li><strong>지방:</strong> {{ meal.fat }} g</li>
           <li><strong>당류:</strong> {{ meal.sugars }} g</li>
           <li><strong>나트륨:</strong> {{ meal.sodium }} mg</li>
-          <li><strong>자동 점수:</strong> {{ meal.autoScore }} 점</li>
+          <li><strong>AI 점수:</strong> {{ meal.autoScore }} 점</li>
         </ul>
       </div>
 
@@ -66,10 +66,13 @@
         <textarea v-model="feedbackContent" rows="5" class="w-full border rounded p-2"
           placeholder="회원에게 전달할 피드백 내용을 입력하세요."></textarea>
         <div>
-          <label class="font-semibold">점수 (10점 만점)</label>
-          <input type="number" v-model.number="trainerScore" min="0" max="10" step="0.1"
-            class="w-24 border rounded p-1 ml-2" />
+          <label class="font-semibold">점수</label>
+          <select v-model.number="trainerScore" class="border rounded p-1 ml-2 w-24">
+            <option disabled value="0">점수 선택</option>
+            <option v-for="n in 10" :key="n" :value="n">{{ n }}점</option>
+          </select>
         </div>
+
         <button @click="submitFeedback" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">제출</button>
       </div>
     </div>

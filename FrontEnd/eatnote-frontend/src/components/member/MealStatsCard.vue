@@ -24,6 +24,7 @@ const props = defineProps({
   }
 })
 
+
 const statsList = computed(() => [
   { label: '연속 기록일', value: `${props.stats.consecutiveDays}일` },
   { label: '총 식단 기록', value: props.stats.totalMeals },

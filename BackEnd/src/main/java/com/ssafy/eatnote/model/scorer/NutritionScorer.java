@@ -18,7 +18,6 @@ public class NutritionScorer {
         MemberDetails member,
         String mealType
     ) {
-        // 간식은 감점 위주 계산
         if ("extra".equals(mealType)) {
             return calculateSnackScore(totalCalories, sugars, sodium);
         }
@@ -35,17 +34,22 @@ public class NutritionScorer {
         else if (calorieRatio >= 0.8f && calorieRatio <= 1.2f) score += 2;
         else score += 1;
 
-        // 2. 탄단지 비율 점수
-        float carbRatio = carbohydrates * 4 / totalCalories;
-        float proteinRatio = protein * 4 / totalCalories;
-        float fatRatio = fat * 9 / totalCalories;
+        // 2. 탄단지 비율 점수 (목표에 따른 가변 기준)
+        float carbRatio = (carbohydrates * 4) / totalCalories;
+        float proteinRatio = (protein * 4) / totalCalories;
+        float fatRatio = (fat * 9) / totalCalories;
 
-        float carbScore = (carbRatio >= 0.45 && carbRatio <= 0.65) ? 2.0f : 1.0f;
-        float proteinScore = (proteinRatio >= 0.15 && proteinRatio <= 0.3) ? 2.0f : 1.0f;
-        float fatScore = (fatRatio >= 0.2 && fatRatio <= 0.35) ? 1.0f : 0.5f;
+        float[] carbRange = getMacronutrientRange(member.getGoal(), "carb");
+        float[] proteinRange = getMacronutrientRange(member.getGoal(), "protein");
+        float[] fatRange = getMacronutrientRange(member.getGoal(), "fat");
+
+        float carbScore = (carbRatio >= carbRange[0] && carbRatio <= carbRange[1]) ? 1.5f : 0.5f;
+        float proteinScore = (proteinRatio >= proteinRange[0] && proteinRatio <= proteinRange[1]) ? 2.0f : 0.5f;
+        float fatScore = (fatRatio >= fatRange[0] && fatRatio <= fatRange[1]) ? 1.5f : 0.5f;
+
         score += (carbScore + proteinScore + fatScore);
 
-        // 3. 나트륨/당류
+        // 3. 나트륨/당류 점수
         if (sodium < 2000) score += 1;
         if (sugars < 20) score += 1;
 
@@ -72,25 +76,45 @@ public class NutritionScorer {
         }
     }
 
-    /**
-     * 권장 칼로리 계산 (Mifflin-St Jeor 공식 + 활동지수 1.375)
-     */
     public float getRecommendedCalories(User user, MemberDetails member) {
         float weight = member.getWeight();
         float height = member.getHeight();
         int age = (user.getAge() != null) ? user.getAge() : 30;
 
         float bmr;
-
         if ("M".equalsIgnoreCase(user.getGender())) {
             bmr = (10 * weight) + (6.25f * height) - (5 * age) + 5;
         } else if ("F".equalsIgnoreCase(user.getGender())) {
             bmr = (10 * weight) + (6.25f * height) - (5 * age) - 161;
         } else {
-            bmr = (10 * weight) + (6.25f * height) - (5 * age) - 78;  // 중립값
+            bmr = (10 * weight) + (6.25f * height) - (5 * age) - 78;
         }
 
         float activityFactor = 1.375f;
         return bmr * activityFactor;
+    }
+
+    private float[] getMacronutrientRange(String goal, String nutrient) {
+        switch (goal.toLowerCase()) {
+            case "감량":
+                switch (nutrient) {
+                    case "carb": return new float[]{0.40f, 0.50f};
+                    case "protein": return new float[]{0.25f, 0.35f};
+                    case "fat": return new float[]{0.15f, 0.25f};
+                }
+            case "증량":
+                switch (nutrient) {
+                    case "carb": return new float[]{0.50f, 0.60f};
+                    case "protein": return new float[]{0.25f, 0.40f};
+                    case "fat": return new float[]{0.20f, 0.35f};
+                }
+            default:
+                switch (nutrient) {
+                    case "carb": return new float[]{0.45f, 0.65f};
+                    case "protein": return new float[]{0.15f, 0.30f};
+                    case "fat": return new float[]{0.20f, 0.35f};
+                }
+        }
+        return new float[]{0f, 1f};
     }
 }

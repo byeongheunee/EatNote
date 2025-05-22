@@ -102,22 +102,7 @@ public class TrainerFeedbackController {
         }
     }
 
-   
-
-    @Operation(summary = "피드백 미작성 식단 목록 조회", description = "트레이너가 피드백하지 않은 식단 목록을 조회합니다.")
-    @GetMapping("/pending")
-    public MyApiResponse<?> getPendingFeedbackMeals(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
-            if (userDetails.getUser().getUserType() != 1) {
-                return MyApiResponse.failure("FEEDBACK_ACCESS_FORBIDDEN", "트레이너만 접근할 수 있습니다.");
-            }
-            Long trainerId = userDetails.getUser().getUserId();
-            List<MealListViewResponse> result = trainerService.getPendingFeedbackMeals(trainerId);
-            return MyApiResponse.success(result, "PENDING_FEEDBACK_LIST_SUCCESS", "미작성 피드백 식단 목록 조회 성공");
-        } catch (Exception e) {
-            return MyApiResponse.failure("PENDING_FEEDBACK_LIST_FAILED", "식단 목록 조회 실패: " + e.getMessage());
-        }
-    }
+ 
     
     @Operation(summary = "피드백 달력 통계 조회", description = "트레이너의 특정 월 피드백 작성/요청 통계를 반환합니다.")
     @GetMapping("/statistics")

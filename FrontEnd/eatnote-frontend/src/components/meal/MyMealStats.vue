@@ -8,7 +8,7 @@
       <div class="mb-6">
         <h3 class="text-xl font-semibold mb-2">📊 주간 요약</h3>
         <p><strong>주차:</strong> {{ weekly.week }}</p>
-        <p><strong>평균 자동 점수:</strong> {{ weekly.autoScore?.toFixed(1) ?? '-' }}</p>
+        <p><strong>평균 ai 점수:</strong> {{ weekly.autoScore?.toFixed(1) ?? '-' }}</p>
         <p><strong>총 섭취 칼로리:</strong> {{ weekly.totalCalories }} kcal</p>
         <p><strong>총 섭취 탄수화물:</strong> {{ weekly.totalCarbohydrates }} g</p>
         <p><strong>총 섭취 단백질:</strong> {{ weekly.totalProtein }} g</p>
@@ -32,14 +32,14 @@
 
       <!-- 일간 통계 -->
       <div class="mb-6">
-        <h3 class="text-xl font-semibold mb-2">🗓️ 일자별 자동 점수</h3>
+        <h3 class="text-xl font-semibold mb-2">🗓️ 일자별 AI 점수</h3>
         <canvas ref="dailyChartRef" height="200"></canvas>
 
         <table class="w-full mt-4 text-sm border">
           <thead class="bg-gray-100">
             <tr>
               <th class="p-2 border">날짜</th>
-              <th class="p-2 border">자동 점수</th>
+              <th class="p-2 border">AI 점수</th>
               <th class="p-2 border">트레이너 점수</th>
               <th class="p-2 border">식사 수</th>
               <th class="p-2 border">청 칼로리</th>
@@ -105,7 +105,7 @@ function drawDailyChart() {
       labels: dailyStats.value.map(d => d.day),
       datasets: [
         {
-          label: '자동 점수',
+          label: 'AI 점수',
           data: dailyStats.value.map(d => d.autoScore),
           borderColor: 'rgba(75, 192, 192, 1)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',

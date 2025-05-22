@@ -42,7 +42,7 @@ const meals = ref([])
 const followings = ref([])
 const selectedUserId = ref(null)
 const router = useRouter()
-const filteredFollowings = computed(() => followings.value.filter(user => user.userType === 0))
+const filteredFollowings = computed(() => followings.value.filter(user => user.userType === 2))
 const getImageUrl = (path) => `http://localhost:8080${path}`
 const formatDate = (datetime) => new Date(datetime).toLocaleDateString('ko-KR')
 const mealTypeKor = (type) => {

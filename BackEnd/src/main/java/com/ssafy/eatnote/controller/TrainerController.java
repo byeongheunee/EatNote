@@ -1,5 +1,6 @@
 package com.ssafy.eatnote.controller;
 
+import com.ssafy.eatnote.model.dto.response.MealListViewResponse;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
 import com.ssafy.eatnote.model.dto.response.PendingFollowRequestResponse;
 import com.ssafy.eatnote.model.security.UserDetailsImpl;
@@ -35,4 +36,36 @@ public class TrainerController {
             return MyApiResponse.failure("FOLLOW_REQUEST_LIST_FAILED", "팔로우 요청 목록 조회 실패: " + e.getMessage());
         }
     }
+    
+    @Operation(
+    	    summary = "나를 팔로우한 회원의 미작성 식단 조회",
+    	    description = "트레이너가 피드백하지 않은 팔로워 회원의 식단 목록을 조회합니다."
+    	)
+    	@GetMapping("/pending")
+    	public MyApiResponse<?> getMealsWithoutTrainerFeedback(
+    	        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    	    try {
+    	        if (userDetails.getUser().getUserType() != 1) {
+    	            return MyApiResponse.failure(
+    	                "FEEDBACK_ACCESS_FORBIDDEN",
+    	                "트레이너만 접근할 수 있습니다."
+    	            );
+    	        }
+
+    	        Long trainerId = userDetails.getUser().getUserId();
+    	        List<MealListViewResponse> result = trainerService.getPendingFeedbackMeals(trainerId);
+
+    	        return MyApiResponse.success(
+    	            result,
+    	            "PENDING_FEEDBACK_LIST_SUCCESS",
+    	            "나를 팔로우한 회원의 피드백 미작성 식단 조회 성공"
+    	        );
+    	    } catch (Exception e) {
+    	        return MyApiResponse.failure(
+    	            "PENDING_FEEDBACK_LIST_FAILED",
+    	            "식단 목록 조회 실패: " + e.getMessage()
+    	        );
+    	    }
+    	}
+
 }

@@ -5,7 +5,9 @@
 
 
     <!-- 👤 유저 목록 -->
-    <TrainerFolloweeList :users="users" :selected-user-id="selectedUserId" @select="selectUser" />
+    <TrainerFolloweeList :users="users" :selected-user-id="selectedUserId" :total-pending="pendingMeals.length"
+      :total-done="calendarStats.reduce((sum, s) => sum + s.written, 0)" @select="selectUser" />
+
 
     <!-- 🟡 초기: 전체 미작성 식단 -->
     <div v-if="!selectedUserId && pendingMeals.length > 0" class="mt-6">
@@ -56,6 +58,13 @@ const goToFeedbackForm = (mealId) => {
 }
 
 const selectUser = async (userId) => {
+  // 전체 선택
+  if (userId === null) {
+    selectedUserId.value = null
+    selectedUserNickname.value = ''
+    return
+  }
+
   selectedUserId.value = userId
   const selected = users.value.find(u => u.userId === userId)
   selectedUserNickname.value = selected?.nickname || ''
@@ -67,6 +76,7 @@ const selectUser = async (userId) => {
     alert('선택한 회원의 식단을 불러올 수 없습니다.')
   }
 }
+
 
 const fetchCalendarStats = async () => {
   try {
@@ -83,7 +93,7 @@ const fetchCalendarStats = async () => {
 
 onMounted(async () => {
   try {
-    const pendingRes = await axios.get('/api/trainer/feedback/pending', authHeader)
+    const pendingRes = await axios.get('/api/trainer/pending', authHeader)
     pendingMeals.value = pendingRes.data.data || []
 
     const userRes = await axios.get('/api/trainer/feedback/followings', authHeader)
