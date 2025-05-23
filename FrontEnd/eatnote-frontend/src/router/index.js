@@ -46,14 +46,19 @@ const router = createRouter({
   ],
 })
 
-// 🔐 전역 네비게이션 가드
-router.beforeEach((to, from, next) => {
-  const isLoggedIn = !!localStorage.getItem('accessToken')
+// 최신 방식으로 변경한 네비게이션 가드
+router.beforeEach((to) => {
+  const auth = JSON.parse(localStorage.getItem('auth') || '{}')
+  const isLoggedIn = !!auth.accessToken
+  console.log('로그인 여부')
+  console.log(isLoggedIn)
+  
   if (to.meta.requiresAuth && !isLoggedIn) {
-    next('/login')
-  } else {
-    next()
+    return '/login'
   }
+
+  // 로그인 되어있거나 인증 필요 없는 페이지는 그대로 진행
+  return true
 })
 
 export default router

@@ -28,6 +28,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const meals = ref([])
 const router = useRouter()
@@ -45,15 +46,16 @@ const mealTypeKor = (type) => {
 }
 
 const loadMyMeals = async () => {
-  const token = localStorage.getItem('accessToken')
-  const user = JSON.parse(localStorage.getItem('user'))
-  const userId = user?.userId
+  const auth = useAuthStore()
+  const userId = auth.user?.userId
   if (!userId) return
 
-  const res = await axios.get(`/api/users/user/${userId}/meals`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  meals.value = res.data.data
+  try {
+    const res = await axios.get(`/api/users/user/${userId}/meals`)
+    meals.value = res.data.data
+  } catch (e) {
+    console.error('🍽️ 식단 목록 불러오기 실패:', e)
+  }
 }
 
 const goToDetail = (mealId) => router.push(`/meal/${mealId}`)

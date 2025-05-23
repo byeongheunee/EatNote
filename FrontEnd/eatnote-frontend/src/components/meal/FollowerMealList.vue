@@ -38,6 +38,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
@@ -45,13 +46,14 @@ const meals = ref([])
 const followings = ref([])
 const selectedUserId = ref(null)
 const router = useRouter()
+const auth = useAuthStore()
+
 const filteredFollowings = computed(() => followings.value.filter(user => user.userType === 2))
+
 const getImageUrl = (path) => {
   if (!path) return '/images/default-profile.png'
   return `http://localhost:8080${path.startsWith('/') ? path : '/' + path}`
 }
-
-
 
 const formatDate = (datetime) => new Date(datetime).toLocaleDateString('ko-KR')
 const mealTypeKor = (type) => {
@@ -65,19 +67,21 @@ const mealTypeKor = (type) => {
 }
 
 const loadAllMeals = async () => {
-  const token = localStorage.getItem('accessToken')
-  const res = await axios.get('/api/meal/followings', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  meals.value = res.data.data
+  try {
+    const res = await axios.get('/api/meal/followings')
+    meals.value = res.data.data
+  } catch (e) {
+    console.error('팔로워 식단 로딩 실패:', e)
+  }
 }
 
 const loadFollowings = async () => {
-  const token = localStorage.getItem('accessToken')
-  const res = await axios.get('/api/follow/following', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  followings.value = res.data.data
+  try {
+    const res = await axios.get('/api/follow/following')
+    followings.value = res.data.data
+  } catch (e) {
+    console.error('팔로우 목록 로딩 실패:', e)
+  }
 }
 
 const selectUser = async (userId) => {
@@ -88,11 +92,12 @@ const selectUser = async (userId) => {
   }
 
   selectedUserId.value = userId
-  const token = localStorage.getItem('accessToken')
-  const res = await axios.get(`/api/users/user/${userId}/meals`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  meals.value = res.data.data
+  try {
+    const res = await axios.get(`/api/users/user/${userId}/meals`)
+    meals.value = res.data.data
+  } catch (e) {
+    console.error('선택 유저 식단 조회 실패:', e)
+  }
 }
 
 const goToDetail = (mealId) => router.push(`/meal/${mealId}`)

@@ -42,6 +42,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const calendarStats = ref({})
 const selectedDate = ref(null)
@@ -53,11 +54,18 @@ const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padS
 
 const fetchStats = async () => {
   try {
-    const token = localStorage.getItem('accessToken')
+    const auth = useAuthStore()
+    const token = auth.accessToken
+    console.log('현재 토큰:', token)
+
     const res = await axios.get('/api/trainer/feedback/statistics', {
-      headers: { Authorization: `Bearer ${token}` },
-      params: { month: currentMonth }
+      params: { month: currentMonth } // 헤더 생략
     })
+    console.log(res)
+    console.log(res.data)
+    console.log(res.data.data)
+    
+
     const map = {}
     res.data.data.forEach(item => {
       map[item.date] = {
@@ -65,6 +73,7 @@ const fetchStats = async () => {
         written: item.completedCount
       }
     })
+
     calendarStats.value = map
   } catch (e) {
     console.error('통계 불러오기 실패', e)

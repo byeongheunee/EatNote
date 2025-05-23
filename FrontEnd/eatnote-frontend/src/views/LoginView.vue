@@ -22,41 +22,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { Client } from '@stomp/stompjs'
-import SockJS from 'sockjs-client'
 
 const email = ref('')
 const password = ref('')
 const auth = useAuthStore()
 const router = useRouter()
-
-let stompClient
-
-const connectWebSocket = (userId) => {
-  const socket = new SockJS('http://localhost:8080/ws')
-
-  stompClient = new Client({
-    webSocketFactory: () => socket,
-    reconnectDelay: 5000,
-    onConnect: () => {
-      console.log('✅ WebSocket 연결 성공!');
-      console.log("🧠 구독 중인 채널: /topic/notifications/" + userId);
-      stompClient.subscribe(`/topic/notifications/${userId}`, (message) => {
-        console.log('📥 알림 수신!', message.body);
-        const body = JSON.parse(message.body)
-        alert(`🔔 알림: ${body.content}`)
-      })
-    },
-    onStompError: (frame) => {
-      console.error('WebSocket STOMP 에러:', frame)
-    }
-  })
-
-  stompClient.activate()
-}
 
 const handleLogin = async () => {
   console.log('[디버깅] 로그인 시도 이메일:', email.value)
@@ -65,13 +38,17 @@ const handleLogin = async () => {
   const success = await auth.login(email.value, password.value)
   if (success) {
     alert('로그인 성공!')
-    connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결!!! 💥
-    setTimeout(() => {
-      router.push('/member')
-    }, 300) // 0.3초 대기 후 이동
+    auth.connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결
+    
+    await nextTick()
+
+    console.log(auth)
+    console.log(auth.user.userType)
     if (auth.user.userType === 1) {
+      console.log("트레이너")
       router.push('/trainer')
     } else if (auth.user.userType === 2) {
+      console.log("회원")
       router.push('/member')
     } else {
       router.push('/') // 예외 상황 대비
