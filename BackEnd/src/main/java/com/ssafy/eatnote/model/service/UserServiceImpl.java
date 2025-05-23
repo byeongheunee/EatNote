@@ -393,6 +393,15 @@ public class UserServiceImpl implements UserService {
         }
         dto.setFollowStatus(status);
 
+        String followedMeStatus = followDao.getFollowStatus(targetUserId, viewerId);
+        if (followedMeStatus == null) {
+            followedMeStatus = "NONE";
+        }
+        dto.setFollowedByOtherStatus(followedMeStatus);
+        
+        Long FollowId = followDao.getFollowId(targetUserId, viewerId);
+        dto.setFollowId(FollowId);
+        
         return dto;
     }
 	
@@ -444,6 +453,15 @@ public class UserServiceImpl implements UserService {
             status = "NONE"; // 아예 팔로우 기록이 없다면
         }
         dto.setFollowStatus(status);
+        
+        String followedMeStatus = followDao.getFollowStatus(targetUserId, viewerId);
+        if (followedMeStatus == null) {
+            followedMeStatus = "NONE";
+        }
+        dto.setFollowedByOtherStatus(followedMeStatus);
+        
+        Long FollowId = followDao.getFollowId(targetUserId, viewerId);
+        dto.setFollowId(FollowId);
         
         return dto;
     }

@@ -69,7 +69,7 @@
     "bmi": 21.4,
     "bodyFatPercentage": 19.7,
     "goal": "감량",
-    "trainerNickname": "길똥",
+    "trainerNickname": "",
     "allergyIds": [10, 11, 12]
   }
 }

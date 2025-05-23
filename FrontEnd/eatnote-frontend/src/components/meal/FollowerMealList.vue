@@ -26,7 +26,14 @@
           <p class="text-sm">식사 유형: {{ mealTypeKor(meal.mealType) }}</p>
         </div>
         <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
-          <span>💬 {{ meal.feedbackCount }} · ❤️ {{ meal.likeCount }}</span>
+          <span>💬 {{ meal.feedbackCount }}</span>
+          <LikeButton
+            contentType="MEAL"
+            :contentId="meal.mealId"
+            :likeCount="meal.likeCount"
+            :myReaction="meal.myReaction || null"
+            @onUpdated="refreshMealList"
+          />
         </div>
       </div>
     </div>
@@ -41,6 +48,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import LikeButton from '@/components/LikeButton.vue'
 
 const meals = ref([])
 const followings = ref([])
@@ -106,4 +114,18 @@ onMounted(async () => {
   await loadFollowings()
   await loadAllMeals()
 })
+
+const refreshMealList = async () => {
+  if (selectedUserId.value) {
+    try {
+      const res = await axios.get(`/api/users/user/${selectedUserId.value}/meals`)
+      meals.value = res.data.data
+    } catch (e) {
+      console.error('선택 유저 식단 새로고침 실패:', e)
+    }
+  } else {
+    await loadAllMeals()
+  }
+}
+
 </script>

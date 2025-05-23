@@ -93,4 +93,12 @@
 	   WHERE from_user_id = #{viewerId}
 	     AND to_user_id = #{targetUserId}
 	</select>
+	
+	<select id="getFollowId" resultType="Long">
+	    SELECT follow_id
+	      FROM user_follow
+	     WHERE from_user_id = #{fromUserId}
+	       AND to_user_id = #{toUserId}
+	</select>
+
 </mapper>

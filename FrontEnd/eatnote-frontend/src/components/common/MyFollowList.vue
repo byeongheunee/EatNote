@@ -1,12 +1,16 @@
 <template>
   <div>
-    <h3 class="text-xl font-semibold mt-6 mb-4">👥 내가 팔로우한 사람들</h3>
+    <h3 class="text-xl font-semibold mt-6 mb-4">
+      {{ isTrainer ? '관리중인 회원 목록' : '👥 팔로잉' }}
+    </h3>
 
-    <div v-if="following.length === 0" class="text-gray-500">팔로우한 사용자가 없습니다.</div>
+    <div v-if="users.length === 0" class="text-gray-500">
+      {{ isTrainer ? '관리중인 회원이 없습니다.' : '팔로우한 사용자가 없습니다.' }}
+    </div>
 
     <div v-else class="flex flex-wrap gap-6">
       <div
-        v-for="otherUser in following"
+        v-for="otherUser in users"
         :key="otherUser.nickname"
         @click="$emit('open-profile', otherUser)"
         class="flex flex-col items-center w-36 p-4 bg-white border rounded-2xl shadow hover:shadow-md cursor-pointer transition"
@@ -31,35 +35,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
-const following = ref([])
+const userType = computed(() => auth.user.userType)
+const isTrainer = computed(() => userType.value === 1)
+
+const users = ref([])
 
 defineEmits(['open-profile'])
 
-const getProfileImage = (path) => path ? `http://localhost:8080${path}` : '/images/default-profile.png'
+const getProfileImage = (path) =>
+  path ? `http://localhost:8080${path}` : '/images/default-profile.png'
 
-const fetchFollowing = async () => {
+const fetchUsers = async () => {
   try {
-    const res = await axios.get('/api/follow/following', {
+    const url = isTrainer.value ? '/api/follow/followers' : '/api/follow/following'
+    const res = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${auth.accessToken}`
       }
     })
-    following.value = res.data.data
+    users.value = res.data.data
   } catch (err) {
     console.error('팔로우 목록 조회 실패', err)
   }
 }
 
-// 외부에서 호출 가능한 메서드로 expose
 const refresh = async () => {
-  await fetchFollowing()
+  await fetchUsers()
 }
 defineExpose({ refresh })
 
-onMounted(fetchFollowing)
+onMounted(fetchUsers)
 </script>

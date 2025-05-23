@@ -47,4 +47,11 @@ public class TrainerProfileResponse {
     
     @Schema(description = "팔로우 상태", example = "PENDING") // NONE, PENDING, ACCEPTED, REJECTED
     private String followStatus;
+    
+    @Schema(description = "상대방이 나를 팔로우 중인 상태", example = "ACCEPTED") // NONE, PENDING, ACCEPTED, REJECTED
+    private String followedByOtherStatus;
+    
+    @Schema(description = "요청 받은 팔로우 ID", example = "3")
+    private Long followId;
+    
 }
