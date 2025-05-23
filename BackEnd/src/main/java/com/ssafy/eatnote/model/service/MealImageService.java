@@ -98,14 +98,14 @@ public class MealImageService {
 
 	        File imageFile = new File(imagePath);
 	        if (!imageFile.exists()) {
-	            throw new RuntimeException("❌ 이미지 파일이 존재하지 않습니다: " + imagePath);
+	            throw new RuntimeException("이미지 파일이 존재하지 않습니다: " + imagePath);
 	        }
 
 	        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	        body.add("file", new FileSystemResource(imageFile));  // ✅ 실제 이미지 파일을 보냄
+	        body.add("file", new FileSystemResource(imageFile));
 
 	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentType(MediaType.MULTIPART_FORM_DATA);  // ✅ 중요
+	        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
 	        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
 
@@ -113,8 +113,8 @@ public class MealImageService {
 	        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 	        
 	        if (response.getStatusCode() != HttpStatus.OK) {
-	        	System.out.println("🔥 Flask 응답 본문: " + response.getBody());
-	            throw new RuntimeException("❌ 분석 실패: " + response.getStatusCode());
+	        	System.out.println("Flask 응답 본문: " + response.getBody());
+	            throw new RuntimeException("분석 실패: " + response.getStatusCode());
 	        }
 
 	        ObjectMapper mapper = new ObjectMapper();

@@ -127,7 +127,6 @@ public class MealServiceImpl implements MealService {
 	        notifyTrainersOnMealPost(userId, savedMeal); // 알림 전송
 	        return savedMeal;
 		} catch (IllegalArgumentException e) {
-		    // ✅ 여기서 RuntimeException으로 바꿔 던져야 Controller에서 잡을 수 있음
 		    throw new RuntimeException("NO_FOOD_DETECTED: " + e.getMessage());
 		}
 		catch (Exception e) {
@@ -200,8 +199,7 @@ public class MealServiceImpl implements MealService {
 		sb.append(String.format("- 지방: %.1fg\n", fat));
 		sb.append(String.format("- 나트륨: %.2fg\n", sodium));
 		sb.append(String.format("- 당류: %.1fg\n", sugar));
-
-		sb.append("\n이 정보를 바탕으로 건강한 식단인지 간단히 2~3줄로 피드백을 해줘.");
+		sb.append("신체정보와 목표, 음식 정보에 따라 객관적으로 3~4줄의 상 피드백 만들어줘");
 		return sb.toString();
 	}
 

@@ -9,6 +9,7 @@
     <div class="flex flex-col lg:flex-row gap-6">
       <div class="flex-1">
         <RecentMealsCard :meals="recentMeals" />
+        <PendingFollowRequests/>
         <QuickMenuCard class="mt-6" />
       </div>
       <div class="w-full lg:w-1/3">
@@ -29,6 +30,7 @@ import RecentFeedbackCard from '@/components/member/RecentFeedbackCard.vue'
 import QuickMenuCard from '@/components/member/QuickMenuCard.vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
+import PendingFollowRequests from '@/components/Trainer/PendingFollowRequests.vue'
 
 const auth = useAuthStore()
 const token = computed(() => auth.accessToken)
