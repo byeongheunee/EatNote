@@ -65,6 +65,8 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 // 상태 변수
 const mealType = ref('breakfast')
@@ -143,15 +145,18 @@ const handleUpload = async () => {
       }
     });
     result.value = response.data.data;
-    uploadComplete.value = true; // ✅ 업로드 완료 상태 변경
+    uploadComplete.value = true; // 업로드 완료 상태 변경
+    toast.success('식단이 성공적으로 업로드되었습니다.')
   } catch (error) {
     console.error('[❌ 업로드 에러 발생]', error);
 
     const msg = error?.response?.data?.message || '';
     if (msg.includes('감지된 음식이 없습니다')) {
-      alert('사진이 인식되지 않았습니다. 다시 확인해주세요.');
+      // alert('사진이 인식되지 않았습니다. 다시 확인해주세요.');
+      toast.warning('😥 음식이 감지되지 않았어요. \n 더 선명한 사진으로 다시 시도해보세요! \n 음식의 전체가 보이도록 찍어주세요!!')
     } else {
-      alert('식단 업로드 중 문제가 발생했습니다.');
+      // alert('식단 업로드 중 문제가 발생했습니다.');
+      toast.error('🚨 식단 업로드 중 문제가 발생했습니다.')
     }
   } finally {
     uploading.value = false;

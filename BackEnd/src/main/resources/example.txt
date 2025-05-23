@@ -75,7 +75,7 @@
 }
 
 {
-  "email": "lbh3939@naver.com",
+  "email": "member2@naver.com",
   "password": "1234",
   "name": "이병",
   "nickname": "이병이병",
@@ -94,7 +94,7 @@
     "bmi": 23.4,
     "bodyFatPercentage": 19.7,
     "goal": "감량",
-    "trainerNickname": "둔촌동 몸짱",
+    "trainerNickname": "",
     "allergyIds": [1, 2, 3]
   }
 }

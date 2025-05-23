@@ -105,6 +105,8 @@
   import { ref, computed } from 'vue'
   import TrainerDetailForm from '@/components/register/TrainerDetailForm.vue'
   import MemberDetailForm from '@/components/register/MemberDetailForm.vue'
+  import { useToast } from 'vue-toastification'
+  const toast = useToast()
 
   const router = useRouter()
   const step = ref(1)
@@ -151,7 +153,8 @@
 
   const goToNextStep = () => {
     if (passwordMismatch.value) {
-      alert('비밀번호가 일치하지 않습니다.')
+      // alert('비밀번호가 일치하지 않습니다.')
+      toast.warning('비밀번호가 일치하지 않습니다.')
       return
     }
 
@@ -213,7 +216,8 @@
           'Content-Type': 'multipart/form-data',
         },
       })
-      alert('회원가입 성공! 🎉')
+      // alert('회원가입 성공! 🎉')
+      toast.success('🎉 회원가입이 완료되었습니다! 🎉')
       console.log('서버 응답:', response.data)
 
       // 로그인 페이지로 이동
@@ -221,7 +225,8 @@
 
     } catch (error) {
       console.error('회원가입 실패:', error)
-      alert('회원가입 중 오류가 발생했습니다.')
+      // alert('회원가입 중 오류가 발생했습니다.')
+      toast.error('회원가입 중 오류가 발생했습니다.')
     }
   }
 

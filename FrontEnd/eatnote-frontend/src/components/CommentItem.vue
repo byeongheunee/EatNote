@@ -44,6 +44,8 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import CommentInput from './CommentInput.vue'
 import CommentItem from './CommentItem.vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 const props = defineProps({
   comment: Object,
@@ -82,6 +84,7 @@ const handleLike = async (type) => {
     props.onReload()
   } catch (e) {
     console.error('댓글 좋아요 실패:', e)
+    toast.error('좋아요 처리에 실패했습니다. 다시 시도해주세요.')
   }
 }
 
@@ -97,9 +100,11 @@ const handleDelete = async () => {
       }
     })
     props.onReload()
+    toast.success('댓글이 삭제되었습니다. 🗑️')
   } catch (e) {
     console.error('댓글 삭제 실패:', e)
-    alert('댓글 삭제에 실패했습니다.')
+    // alert('댓글 삭제에 실패했습니다.')
+    toast.error('댓글 삭제에 실패했습니다.')
   }
 }
 </script>

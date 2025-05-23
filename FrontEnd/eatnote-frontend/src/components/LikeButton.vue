@@ -11,7 +11,8 @@ import { ref, watch } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
-
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 const auth = useAuthStore()
 const router = useRouter()
 
@@ -35,7 +36,8 @@ watch(() => props.likeCount, (val) => count.value = val)
 // 좋아요 토글
 const toggleLike = async () => {
   if (!auth.isLoggedIn) {
-    alert('좋아요를 누르려면 로그인해야 합니다.')
+    // alert('좋아요를 누르려면 로그인해야 합니다.')
+    toast.warning('좋아요를 누르려면 로그인해야 합니다. 💡')
     router.push({ path: '/login', query: { redirect: `/meal/${props.contentId}` } })
     return
   }
@@ -63,6 +65,7 @@ const toggleLike = async () => {
     props.onUpdated()
   } catch (err) {
     console.error('좋아요 토글 실패:', err)
+    toast.error('좋아요 처리에 실패했습니다. 다시 시도해주세요.')
   }
 }
 </script>

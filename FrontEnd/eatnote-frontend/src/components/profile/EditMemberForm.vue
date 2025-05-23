@@ -150,7 +150,9 @@
 import { ref, reactive, watchEffect, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const selectedAllergyNames = computed(() => {
   const selected = []
   for (const category in allergyMap.value) {
@@ -295,11 +297,13 @@ const submitForm = async () => {
         'Content-Type': 'multipart/form-data'
       }
     })
-    alert('수정 성공!')
+    // alert('수정 성공!')
+    toast.success('회원 정보가 성공적으로 수정되었습니다!')
     router.replace('/profile') // 저장 후 마이페이지로 이동
   } catch (err) {
     console.error('수정 실패', err)
-    alert('에러 발생: ' + (err?.response?.data?.message || '서버 오류'))
+    // alert('에러 발생: ' + (err?.response?.data?.message || '서버 오류'))
+    toast.error('수정 중 오류가 발생했습니다: ' + (err?.response?.data?.message || '서버 오류'))
   }
 }
 

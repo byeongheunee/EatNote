@@ -63,11 +63,29 @@
         <p><strong>연락처:</strong> {{ trainerDetails.phone }}</p>
         <p><strong>주소:</strong> {{ trainerDetails.address }}</p>
         <p><strong>소속 헬스장:</strong> {{ trainerDetails.gymName }}</p>
-        <p>
+        <!-- <p>
           <strong>헬스장 홈페이지:</strong>
           <a :href="trainerDetails.gymWebsite" class="text-blue-600 underline" target="_blank">{{
             trainerDetails.gymWebsite }}</a>
-        </p>
+        </p> -->
+
+        <!-- 헬스장 홈페이지 + 미리보기 버튼 (한 줄 정렬) -->
+        <div v-if="trainerDetails.gymWebsite" class="flex items-center gap-4">
+          <a
+            :href="trainerDetails.gymWebsite"
+            target="_blank"
+            class="font-semibold text-blue-600 hover:underline"
+          >
+            헬스장 홈페이지
+          </a>
+
+          <button
+            @click="showGymPreview = true"
+            class="text-sm text-gray-600 underline hover:text-black"
+          >
+            🔍 미리보기
+          </button>
+        </div>
         <p><strong>자격증 번호:</strong> {{ trainerDetails.certificationNumber }}</p>
         <div v-if="trainerDetails.certificationImage">
           <strong>자격증 이미지:</strong><br />
@@ -85,6 +103,20 @@
         
         <MyFollowList v-if="user.userType === 1" ref="trainerFollowListRef" @open-profile="openProfileModal" />
 
+      </div>
+    </div>
+
+    <!-- 🖼️ iframe 모달 -->
+    <div v-if="showGymPreview" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div class="bg-white rounded-xl w-[90%] max-w-5xl p-4 shadow-xl relative">
+        <button @click="showGymPreview = false" class="absolute top-2 right-3 text-2xl text-gray-600">×</button>
+        <iframe
+          :src="trainerDetails.gymWebsite"
+          class="w-full h-[80vh] border rounded"
+          frameborder="0"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        ></iframe>
       </div>
     </div>
 
@@ -118,8 +150,12 @@ import Header from '@/components/common/Header.vue'
 import ArticleList from '@/components/ArticleList.vue'
 import MyFollowList from '@/components/common/MyFollowList.vue'
 import UserProfileModal from '@/components/UserProfileModal.vue'
+import { useToast } from 'vue-toastification'
+
+const showGymPreview = ref(false) // 헬스장 사이트 미리보기
 
 
+const toast = useToast()
 const myArticles = ref([])
 const auth = useAuthStore()
 const router = useRouter()
@@ -169,13 +205,17 @@ const openProfileModal = async (otherUser) => {
       const code = res.data.code
 
       if (code === 'FORBIDDEN_ADMIN_PROFILE') {
-        alert('관리자는 프로필을 조회할 수 없습니다.')
+        // alert('관리자는 프로필을 조회할 수 없습니다.')
+        toast.warning('❌ 관리자는 프로필을 조회할 수 없습니다.')
       } else if (code === 'USER_NOT_FOUND') {
-        alert('해당 사용자가 존재하지 않습니다.')
+        // alert('해당 사용자가 존재하지 않습니다.')
+        toast.warning('❌ 해당 사용자가 존재하지 않습니다.')
       } else if (code === 'VALIDATION_FAILED') {
-        alert('알 수 없는 사용자 유형입니다.')
+        // alert('알 수 없는 사용자 유형입니다.')
+        toast.error('⚠️ 알 수 없는 사용자 유형입니다.')
       } else {
-        alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
+        // alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
+        toast.error(res.data.message || '🚨 알 수 없는 오류가 발생했습니다.')
       }
 
       return
@@ -186,7 +226,8 @@ const openProfileModal = async (otherUser) => {
 
   } catch (e) {
     console.error('상대방 프로필 조회 실패:', e)
-    alert('프로필 정보를 불러오지 못했습니다.')
+    // alert('프로필 정보를 불러오지 못했습니다.')
+    toast.error('프로필 정보를 불러오지 못했습니다.')
   }
 }
 

@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadPath;
 
         if (os.contains("win")) {
-            uploadPath = "file:///C:/Users/SSAFY/eatnote-uploads/";
+            uploadPath = "file:///C:/Users/HTYANG/eatnote-uploads/";
 
         } else {
             uploadPath = "file:/Users/leebyeongheon/eatnote-uploads/";

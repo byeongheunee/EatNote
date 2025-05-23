@@ -40,6 +40,8 @@ import { useRouter } from 'vue-router'
 import TrainerFolloweeList from '@/components/Trainer/TrainerFolloweeList.vue'
 import TrainerMealCard from '@/components/Trainer/TrainerMealCard.vue'
 import Header from '@/components/common/Header.vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 const visibleCount = ref(4)
 
@@ -110,7 +112,8 @@ const selectUser = async (userId) => {
     visibleCount.value = 4
   } catch (e) {
     console.error('식단 조회 실패', e)
-    alert('선택한 회원의 식단을 불러올 수 없습니다.')
+    // alert('선택한 회원의 식단을 불러올 수 없습니다.')
+    toast.error('해당 회원의 식단을 불러오는 데 실패했습니다.')
   }
 }
 
@@ -123,7 +126,8 @@ const fetchCalendarStats = async () => {
     calendarStats.value = res.data.data || []
     console.log('📅 calendarStats:', calendarStats.value)
   } catch (e) {
-    console.error('달력 통계 조회 실패', e)
+    // console.error('달력 통계 조회 실패', e)
+    toast.warning('달력 통계를 불러오지 못했어요. \n 화면을 새로고침 해보세요. 🔁')
   }
 }
 

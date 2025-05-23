@@ -58,7 +58,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const props = defineProps(['userData'])
 const router = useRouter()
 
@@ -137,11 +139,13 @@ const submitForm = async () => {
         'Content-Type': 'multipart/form-data'
       }
     })
-    alert('수정 성공!')
+    // alert('수정 성공!')
+    toast.success('트레이너 정보가 성공적으로 수정되었습니다!')
     router.replace('/profile')
   } catch (err) {
     console.error('수정 실패', err)
-    alert('에러 발생: ' + (err?.response?.data?.message || '서버 오류'))
+    // alert('에러 발생: ' + (err?.response?.data?.message || '서버 오류'))
+    toast.error('수정 중 오류가 발생했습니다: ' + (err?.response?.data?.message || '서버 오류'))
   }
 }
 

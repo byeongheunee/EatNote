@@ -116,6 +116,8 @@ import CommentItem from '@/components/CommentItem.vue'
 import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
 import UserProfileModal from '@/components/UserProfileModal.vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 // 📌 라우터에서 articleId와 boardId 추출
 const route = useRoute()
@@ -166,13 +168,17 @@ const openAuthorProfile = async () => {
       const code = res.data.code
 
       if (code === 'FORBIDDEN_ADMIN_PROFILE') {
-        alert('관리자는 프로필을 조회할 수 없습니다.')
+        // alert('관리자는 프로필을 조회할 수 없습니다.')
+        toast.warning('관리자는 프로필을 조회할 수 없습니다. ⚠️')
       } else if (code === 'USER_NOT_FOUND') {
-        alert('해당 사용자가 존재하지 않습니다.')
+        // alert('해당 사용자가 존재하지 않습니다.')
+        toast.warning('해당 사용자가 존재하지 않습니다.')
       } else if (code === 'VALIDATION_FAILED') {
-        alert('알 수 없는 사용자 유형입니다.')
+        // alert('알 수 없는 사용자 유형입니다.')
+        toast.error('알 수 없는 사용자 유형입니다. ⚠️')
       } else {
-        alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
+        // alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
+        toast.error(res.data.message || '알 수 없는 오류가 발생했습니다. 🚨')
       }
 
       return
@@ -186,7 +192,8 @@ const openAuthorProfile = async () => {
 
   } catch (e) {
     console.error('작성자 프로필 조회 실패:', e)
-    alert('작성자 정보를 불러오지 못했습니다.')
+    // alert('작성자 정보를 불러오지 못했습니다.')
+    toast.error('작성자 정보를 불러오지 못했습니다.')
   }
 }
 
@@ -215,11 +222,13 @@ const deleteArticle = async () => {
     await axios.delete(`/api/articles/${articleId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    alert('게시글이 삭제되었습니다.')
+    // alert('게시글이 삭제되었습니다.')
+    toast.success('게시글이 성공적으로 삭제되었습니다! 🗑️')
     router.push(`/community/${boardId}`)
   } catch (e) {
     console.error('게시글 삭제 실패:', e)
-    alert('삭제 중 오류가 발생했습니다.')
+    // alert('삭제 중 오류가 발생했습니다.')
+    toast.error('게시글 삭제 중 오류가 발생했습니다.')
   }
 }
 

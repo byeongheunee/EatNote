@@ -3,6 +3,7 @@ package com.ssafy.eatnote.controller;
 import com.ssafy.eatnote.model.dto.Notification;
 import com.ssafy.eatnote.model.dto.NotificationMessage;
 import com.ssafy.eatnote.model.dto.response.MyApiResponse;
+import com.ssafy.eatnote.model.security.UserDetailsImpl;
 import com.ssafy.eatnote.model.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 
 import java.util.List;
 
@@ -43,7 +46,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "알림 목록 조회 성공"),
     })
     @GetMapping
-    public ResponseEntity<MyApiResponse<List<Notification>>> getNotifications(@RequestParam Long userId) {
+    public ResponseEntity<MyApiResponse<List<Notification>>> getNotifications(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Long userId = userDetails.getUserId();
         List<Notification> notifications = notificationService.getNotificationsByUser(userId);
         return ResponseEntity.ok(
                 MyApiResponse.success(notifications, "NOTIFICATION_LIST_SUCCESS", "알림 목록을 성공적으로 조회했습니다.")
@@ -68,7 +74,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
     })
     @GetMapping("/unread-count")
-    public ResponseEntity<MyApiResponse<Integer>> countUnread(@RequestParam Long userId) {
+    public ResponseEntity<MyApiResponse<Integer>> countUnread(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Long userId = userDetails.getUserId();
         int count = notificationService.countUnreadNotifications(userId);
         return ResponseEntity.ok(
                 MyApiResponse.success(count, "NOTIFICATION_UNREAD_COUNT", "안 읽은 알림 개수를 성공적으로 조회했습니다.")
@@ -80,7 +89,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "200", description = "전체 알림 읽음 처리 완료")
     })
     @PutMapping("/read-all")
-    public ResponseEntity<MyApiResponse<Void>> markAllAsRead(@RequestParam Long userId) {
+    public ResponseEntity<MyApiResponse<Void>> markAllAsRead(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        Long userId = userDetails.getUserId();
         notificationService.markAllAsRead(userId);
         return ResponseEntity.ok(
                 MyApiResponse.success(null, "NOTIFICATION_MARK_ALL_READ", "모든 알림을 읽음 처리했습니다.")

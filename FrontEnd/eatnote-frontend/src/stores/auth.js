@@ -70,7 +70,12 @@ export const useAuthStore = defineStore('auth', {
           console.log('✅ WebSocket 연결 성공!')
           stompClient.subscribe(`/topic/notifications/${userId}`, (message) => {
             const body = JSON.parse(message.body)
+            
             alert(`🔔 알림: ${body.content}`)
+
+            window.dispatchEvent(new CustomEvent('newNotification', { 
+              detail: body 
+            }))
           })
         },
         onStompError: (frame) => {

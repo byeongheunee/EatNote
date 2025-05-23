@@ -78,7 +78,9 @@ import CommentItem from '@/components/CommentItem.vue'
 import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
 import Header from '@/components/common/Header.vue'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const router = useRouter()
 const route = useRoute()
 const mealId = route.params.id
@@ -158,10 +160,13 @@ const deleteFeedback = async (feedbackId) => {
     await axios.delete(`/api/trainer/feedback/${feedbackId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    alert('삭제되었습니다.')
+    // alert('삭제되었습니다.')
+    toast.success('피드백이 삭제되었습니다!')
+
     await loadTrainerFeedbacks()
   } catch (e) {
-    alert('삭제 실패')
+    // alert('삭제 실패')
+    toast.error('피드백 삭제에 실패했습니다.')
     console.error('삭제 오류:', e)
   }
 }

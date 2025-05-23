@@ -75,6 +75,8 @@ import Header from '@/components/common/Header.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 const route = useRoute()
 const router = useRouter()
@@ -105,19 +107,22 @@ const submitFeedback = async () => {
       await axios.put(`/api/trainer/feedback/${feedbackId}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      alert('피드백이 수정되었습니다.')
+      // alert('피드백이 수정되었습니다.')
+      toast.success('피드백이 수정되었습니다.')
     } else {
       // 새 피드백 등록
       await axios.post(`/api/trainer/feedback/meal/${mealId}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       })
-      alert('피드백이 등록되었습니다.')
+      // alert('피드백이 등록되었습니다.')
+      toast.success('피드백이 등록되었습니다!')
     }
 
     router.push('/trainer')
   } catch (e) {
     console.error('피드백 처리 실패', e)
-    alert('요청에 실패했습니다.')
+    // alert('요청에 실패했습니다.')
+    toast.error('피드백 요청에 실패했습니다.')
   }
 }
 
@@ -159,7 +164,8 @@ onMounted(async () => {
 
   } catch (e) {
     console.error('데이터 로딩 실패', e)
-    alert('잘못된 요청입니다.')
+    // alert('잘못된 요청입니다.')
+    toast.error('잘못된 요청입니다. \n 페이지를 다시 확인해주세요. ⚠️')
     router.push('/trainer')
   } finally {
     loading.value = false

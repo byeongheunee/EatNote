@@ -37,11 +37,13 @@
 import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from 'vue-toastification'
 
 const email = ref('')
 const password = ref('')
 const auth = useAuthStore()
 const router = useRouter()
+const toast = useToast()
 
 const handleLogin = async () => {
   console.log('[디버깅] 로그인 시도 이메일:', email.value)
@@ -49,7 +51,8 @@ const handleLogin = async () => {
   await auth.logout() // 이전 세션 정리
   const success = await auth.login(email.value, password.value)
   if (success) {
-    alert('로그인 성공!')
+    // alert('로그인 성공!')
+    toast.success('로그인 성공! 🎉')
     auth.connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결
 
     await nextTick()
@@ -66,7 +69,8 @@ const handleLogin = async () => {
       router.push('/') // 예외 상황 대비
     }
   } else {
-    alert('로그인 실패. 이메일 또는 비밀번호를 확인하세요!')
+    // alert('로그인 실패. 이메일 또는 비밀번호를 확인하세요!')
+    toast.error('로그인 실패 😢\n이메일 또는 비밀번호를 확인하세요.')
   }
 }
 

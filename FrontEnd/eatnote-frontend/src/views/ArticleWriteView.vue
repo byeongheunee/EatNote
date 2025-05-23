@@ -53,7 +53,9 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
@@ -99,7 +101,8 @@ const handleFileChange = (event) => {
 
 const submit = async () => {
   if (!title.value || !content.value) {
-    alert('제목과 내용을 입력해주세요!')
+    // alert('제목과 내용을 입력해주세요!')
+    toast.warning('제목과 내용을 입력해주세요!')
     return
   }
 
@@ -139,7 +142,8 @@ const submit = async () => {
     router.replace(`/community/${boardId}/article/${newArticleId}`)
   } catch (e) {
     console.error('게시글 저장 실패:', e)
-    alert(isEditMode ? '수정 중 오류가 발생했습니다.' : '작성 중 오류가 발생했습니다.')
+    // alert(isEditMode ? '수정 중 오류가 발생했습니다.' : '작성 중 오류가 발생했습니다.')
+    toast.error(isEditMode ? '수정 중 오류가 발생했습니다.' : '작성 중 오류가 발생했습니다.')
   }
 }
 
