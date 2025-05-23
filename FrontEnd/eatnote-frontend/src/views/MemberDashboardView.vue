@@ -9,13 +9,14 @@
     <div class="flex flex-col lg:flex-row gap-6">
       <div class="flex-1">
         <RecentMealsCard :meals="recentMeals" />
+        <QuickMenuCard class="mt-6" />
       </div>
       <div class="w-full lg:w-1/3">
         <RecentFeedbackCard :feedbacks="recentFeedbacks" />
       </div>
     </div>
 
-    <QuickMenuCard class="mt-6" />
+
   </div>
 </template>
 
@@ -49,7 +50,7 @@ const fetchDashboardData = async () => {
       axios.get('/api/meal/my/recent-feedbacks', { headers }),
     ])
 
-    mealStats.value = statsRes.data.data    
+    mealStats.value = statsRes.data.data
     recentMeals.value = mealsRes.data.data
     recentFeedbacks.value = feedbacksRes.data.data
 

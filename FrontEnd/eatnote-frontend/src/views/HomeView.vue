@@ -1,23 +1,30 @@
 <template>
   <div class="home">
-    <Header
-      @go-feature="scrollToFeature"
-      @go-usage="scrollToUsage"
-    />
+    <Header @go-feature="scrollToFeature" @go-usage="scrollToUsage" />
 
     <!-- 최근 등록 식단 -->
     <section class="my-6">
       <h2 class="text-lg font-bold">최근 등록 식단</h2>
-      <div class="flex overflow-x-auto space-x-4 mt-2">
-        <MealCard v-for="meal in recentMeals" :key="meal.mealId" :meal="meal" />
+      <div class="relative">
+        <Swiper :modules="[Navigation]" :slides-per-view="4" :space-between="20" navigation
+          class="swiper-container-centered" style="padding-left: 60px;">
+          <SwiperSlide v-for="meal in recentMeals" :key="meal.mealId">
+            <MealCard :meal="meal" />
+          </SwiperSlide>
+        </Swiper>
       </div>
     </section>
 
     <!-- 핫한 식단 -->
     <section class="my-6">
       <h2 class="text-lg font-bold">핫한 식단</h2>
-      <div class="flex overflow-x-auto space-x-4 mt-2">
-        <MealCard v-for="meal in popularMeals" :key="meal.mealId" :meal="meal" />
+      <div class="relative">
+        <Swiper :modules="[Navigation]" :slides-per-view="4" :space-between="20" navigation
+          class="swiper-container-centered" style="padding-left: 60px;">
+          <SwiperSlide v-for="meal in popularMeals" :key="meal.mealId">
+            <MealCard :meal="meal" />
+          </SwiperSlide>
+        </Swiper>
       </div>
     </section>
 
@@ -44,26 +51,15 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 import MealCard from '@/components/MealCard.vue'
 import FeatureCard from '@/components/FeatureCard.vue'
@@ -113,25 +109,40 @@ onMounted(fetchMeals)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style>
+/* scoped 가능 */
+.swiper-meal-section {
+  padding: 0 60px;
+  /* 양옆 버튼 공간 확보 */
+  overflow: visible;
+  /* 내부는 보이되, 외부에서 자름 */
+  position: relative;
+}
+
+/* 좌우 버튼을 Swiper 밖으로 빼고 정확히 위치 */
+.swiper-meal-section .swiper-button-prev,
+.swiper-meal-section .swiper-button-next {
+  color: black;
+  top: 40%;
+  width: 36px;
+  height: 36px;
+  background-color: white;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* 안보이던 문제 해결: 버튼 위치 조정 */
+.swiper-meal-section .swiper-button-prev {
+  left: -30px;
+}
+
+.swiper-meal-section .swiper-button-next {
+  right: -30px;
+}
+
+
+
 .home {
   padding: 20px;
   font-family: 'Noto Sans KR', sans-serif;

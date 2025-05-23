@@ -14,9 +14,17 @@
       </div>
     </div>
 
+    <!-- 날짜 필터 버튼 -->
+    <div class="flex gap-3 mb-4">
+      <button @click="setFilter('all')" :class="filter === 'all' ? activeClass : baseClass">전체 식단</button>
+      <button @click="setFilter('today')" :class="filter === 'today' ? activeClass : baseClass">오늘의 식단</button>
+      <button @click="setFilter('week')" :class="filter === 'week' ? activeClass : baseClass">이번주 식단</button>
+
+    </div>
+
     <!-- 식단 목록 -->
     <div v-if="meals.length > 0" class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-      <div v-for="meal in meals" :key="meal.mealId" class="bg-white rounded shadow p-4 cursor-pointer"
+      <div v-for="meal in limitedMeals" :key="meal.mealId" class="bg-white rounded shadow p-4 cursor-pointer"
         @click="goToDetail(meal.mealId)">
         <img :src="getImageUrl(meal.imageUrl)" alt="meal" class="w-full h-40 object-cover rounded" />
         <div class="mt-2">
@@ -40,6 +48,9 @@
     <div v-else class="text-center text-gray-500 mt-6">
       해당 유저는 아직 식단을 올리지 않았습니다.
     </div>
+    <div v-if="filteredMeals.length > mealLimit" class="text-center mt-4">
+      <button @click="mealLimit += 9" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">더보기</button>
+    </div>
   </div>
 </template>
 
@@ -49,15 +60,32 @@ import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import LikeButton from '@/components/LikeButton.vue'
+import dayjs from 'dayjs'
 
 const meals = ref([])
 const followings = ref([])
 const selectedUserId = ref(null)
+const filter = ref('all')
 const router = useRouter()
 const auth = useAuthStore()
+const mealLimit = ref(9)
+const limitedMeals = computed(() => filteredMeals.value.slice(0, mealLimit.value))
+const activeClass = 'px-3 py-1 bg-green-600 text-white rounded'
+const baseClass = 'px-3 py-1 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100'
 
 const filteredFollowings = computed(() => followings.value.filter(user => user.userType === 2))
 
+const filteredMeals = computed(() => {
+  if (filter.value === 'today') {
+    const today = dayjs().format('YYYY-MM-DD')
+    return meals.value.filter(m => dayjs(m.mealTime).format('YYYY-MM-DD') === today)
+  } else if (filter.value === 'week') {
+    const startOfWeek = dayjs().startOf('week')
+    const endOfWeek = dayjs().endOf('week')
+    return meals.value.filter(m => dayjs(m.mealTime).isAfter(startOfWeek) && dayjs(m.mealTime).isBefore(endOfWeek))
+  }
+  return meals.value
+})
 const getImageUrl = (path) => {
   if (!path) return '/images/default-profile.png'
   return `http://localhost:8080${path.startsWith('/') ? path : '/' + path}`
@@ -108,6 +136,7 @@ const selectUser = async (userId) => {
   }
 }
 
+const setFilter = (f) => filter.value = f
 const goToDetail = (mealId) => router.push(`/meal/${mealId}`)
 
 onMounted(async () => {

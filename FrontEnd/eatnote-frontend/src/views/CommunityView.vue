@@ -1,18 +1,11 @@
 <template>
   <div class="community-view px-6 pb-10">
-    <Header
-      @go-feature="scrollToFeature"
-      @go-usage="scrollToUsage"
-    />
+    <Header @go-feature="scrollToFeature" @go-usage="scrollToUsage" />
 
     <h1 class="text-3xl font-bold text-center mt-10 mb-6">게시판</h1>
 
     <!-- 게시판 슬라이더 -->
-    <BoardSlider
-      :boards="filteredBoards"
-      :selectedBoardId="selectedBoardId"
-      @selectBoard="selectBoard"
-    />
+    <BoardSlider :boards="filteredBoards" :selectedBoardId="selectedBoardId" @selectBoard="selectBoard" />
 
     <!-- 검색 조건 영역 -->
     <div class="flex flex-wrap gap-2 mb-4 items-center">
@@ -25,13 +18,8 @@
       </select>
 
       <!-- 검색어 입력 -->
-      <input
-        v-model="keyword"
-        type="text"
-        placeholder="검색어를 입력하세요"
-        class="border px-3 py-1 rounded w-48"
-        @keyup.enter="handleSearch"
-      />
+      <input v-model="keyword" type="text" placeholder="검색어를 입력하세요" class="border px-3 py-1 rounded w-48"
+        @keyup.enter="handleSearch" />
 
       <!-- 정렬 기준 드롭다운 -->
       <select v-model="sort" class="border px-2 py-1 rounded">
@@ -40,10 +28,7 @@
       </select>
 
       <!-- 검색 버튼 -->
-      <button
-        class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-        @click="handleSearch"
-      >
+      <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" @click="handleSearch">
         🔍 검색
       </button>
     </div>
@@ -51,18 +36,16 @@
     <!-- 게시글 목록 -->
     <div>
       <div class="text-right mb-4" v-if="canWriteArticle">
-        <button
-          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          @click="goToWrite"
-        >
+        <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" @click="goToWrite">
           ✏️ 게시글 작성
         </button>
       </div>
-      <ArticleList
-        :articles="articles"
-        @open-detail="openDetail"
-        @refresh="handleRefresh"
-      />
+      <ArticleList :articles="pagedArticles" @open-detail="openDetail" @refresh="handleRefresh" />
+    </div>
+    <div v-if="pagedArticles.length < articles.length" class="text-center mt-4">
+      <button @click="loadMore" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        더보기
+      </button>
     </div>
   </div>
 </template>
@@ -80,7 +63,13 @@ import ArticleList from '@/components/ArticleList.vue'
 const keyword = ref('')
 const searchField = ref('ALL')
 const sort = ref('createdAt')
-
+const visibleCount = ref(5)
+const pagedArticles = computed(() => {
+  return articles.value.slice(0, visibleCount.value)
+})
+const loadMore = () => {
+  visibleCount.value += 5
+}
 const handleSearch = async () => {
   if (!selectedBoardId.value) return
 
@@ -196,7 +185,10 @@ const handleRefresh = () => {
 
 // 1. selectedBoardId가 바뀌면 게시글을 다시 불러온다
 watch(selectedBoardId, (newVal) => {
-  if (newVal !== null) fetchArticles(newVal)
+  if (newVal !== null) {
+    visibleCount.value = 5
+    fetchArticles(newVal)
+  }
 })
 
 // 2. URL의 boardId 파라미터가 바뀌면 selectedBoardId도 바꾼다
@@ -221,5 +213,3 @@ watch(selectedBoardId, (newVal) => {
 
 onMounted(fetchBoards)
 </script>
-
-
