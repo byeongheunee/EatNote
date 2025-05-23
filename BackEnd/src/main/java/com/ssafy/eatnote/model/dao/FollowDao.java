@@ -63,4 +63,7 @@ public interface FollowDao {
     
     // 팔로우 상태 조회
     String getFollowStatus(Long viewerId, Long targetUserId);
+    
+    // 나에게 요청온 팔로우 id 찾기
+    Long getFollowId(Long fromUserId, Long toUserId);
 }

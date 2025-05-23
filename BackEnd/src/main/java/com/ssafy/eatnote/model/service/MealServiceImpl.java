@@ -399,10 +399,23 @@ public class MealServiceImpl implements MealService {
         return mealDao.findPopularMealsInLast7Days();
     }
     
+    @Override
     public List<MealListViewResponse> getMealsOfMyFollowings(Long userId) {
         List<User> followings = followDao.selectFollowing(userId);
         List<Long> userIds = followings.stream().map(User::getUserId).toList();
-        return mealDao.findMealsByUserIds(userIds);
+        
+        List<MealListViewResponse> resultList = mealDao.findMealsByUserIds(userIds);
+        
+        for (MealListViewResponse meal : resultList) {
+	        Long mealId = meal.getMealId();
+
+	        // 내 반응 상태 추가
+	        ContentLike like = contentLikeDao.selectByUserAndContent(userId, "MEAL", mealId);
+	        meal.setMyReaction(like != null ? like.getLikeType() : null);
+
+	    }
+        
+        return resultList;
     }
 
     @Override

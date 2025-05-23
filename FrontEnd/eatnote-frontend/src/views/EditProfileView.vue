@@ -7,23 +7,30 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
+
 import EditMemberForm from '@/components/profile/EditMemberForm.vue'
 import EditTrainerForm from '@/components/profile/EditTrainerForm.vue'
-import axios from 'axios'
+
+// 스토어에서 사용자 정보 가져오기
+const auth = useAuthStore()
+const userType = auth.user.userType
 
 const userData = ref({})
 const editComponent = ref('')
 
+// Axios interceptor는 글로벌 설정에 적용돼 있어야 함!
 const fetchMyInfo = async () => {
-  const res = await axios.get('/api/auth/me', {
-    headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-  })
-  userData.value = res.data.data
+  try {
+    const res = await axios.get('/api/auth/me')
+    userData.value = res.data.data
 
-  // ✅ userType은 localStorage에서 가져옴
-  const localUser = JSON.parse(localStorage.getItem('user'))
-  const userType = localUser?.userType
-  editComponent.value = userType === 1 ? EditTrainerForm : EditMemberForm
+    // 스토어에 있는 userType으로 분기
+    editComponent.value = userType === 1 ? EditTrainerForm : EditMemberForm
+  } catch (err) {
+    console.error('회원정보 조회 실패:', err)
+  }
 }
 
 onMounted(fetchMyInfo)

@@ -64,6 +64,14 @@ public class FollowController {
         followService.cancelFollow(userDetails.getUserId(), request.getNickname());
         return ResponseEntity.ok(MyApiResponse.success(null, "FOLLOW_CANCEL_SUCCESS", "팔로우가 취소되었습니다."));
     }
+
+    @DeleteMapping("/follower")
+    @Operation(summary = "팔로워 끊기", description = "트레이너가 자신을 팔로우한 유저를 차단/삭제합니다.")
+    public ResponseEntity<?> removeFollower(@RequestBody FollowRequest request,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        followService.removeFollower(userDetails.getUserId(), request.getNickname());
+        return ResponseEntity.ok(MyApiResponse.success(null, "FOLLOWER_REMOVE_SUCCESS", "팔로워를 삭제했습니다."));
+    }
     
     @GetMapping("/following")
     @Operation(summary = "팔로우 목록 조회", description = "내가 팔로우한 사용자 목록을 조회합니다.")

@@ -50,8 +50,7 @@
           </li>
         </ul>
 
-        <!-- 팔로잉 목록 -->
-        <MemberFollowingList ref="followingListRef" @open-profile="openProfileModal" />
+        <MyFollowList v-if="user.userType === 2" ref="memberFollowListRef" @open-profile="openProfileModal" />
 
         <!-- 최근 게시글 -->
         <h3 class="text-xl font-semibold mt-6 mb-2">📚 내가 작성한 최근 게시글</h3>
@@ -83,6 +82,9 @@
             trainerDetails.instagramUrl }}</a>
         </p>
         <p><strong>인증 여부:</strong> {{ trainerDetails.isVerified ? '✅ 인증됨' : '❌ 미인증' }}</p>
+        
+        <MyFollowList v-if="user.userType === 1" ref="trainerFollowListRef" @open-profile="openProfileModal" />
+
       </div>
     </div>
 
@@ -114,7 +116,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
 import ArticleList from '@/components/ArticleList.vue'
-import MemberFollowingList from '@/components/member/MemberFollowingList.vue'
+import MyFollowList from '@/components/common/MyFollowList.vue'
 import UserProfileModal from '@/components/UserProfileModal.vue'
 
 
@@ -130,7 +132,8 @@ const showModal = ref(false)
 const password = ref('')
 const errorMessage = ref('')
 
-const followingListRef = ref(null)
+const memberFollowListRef = ref(null)
+const trainerFollowListRef = ref(null)
 
 // 프로필 모달 제어 관련
 const profileModalVisible = ref(false)
@@ -143,10 +146,15 @@ const handleFollowRequested = async () => {
     selectedProfile.value.followStatus = 'PENDING'
   }
 
-  // 팔로잉 목록도 즉시 갱신
-  if (followingListRef.value?.refresh) {
-    await followingListRef.value.refresh()
+  // 조건 분기해서 정확한 컴포넌트의 refresh() 호출
+  if (user.value.userType === 1 && trainerFollowListRef.value?.refresh) {
+    await trainerFollowListRef.value.refresh()
+  } else if (user.value.userType === 2 && memberFollowListRef.value?.refresh) {
+    await memberFollowListRef.value.refresh()
   }
+
+  // 모달 닫기
+  profileModalVisible.value = false
 }
 
 const openProfileModal = async (otherUser) => {

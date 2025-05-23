@@ -92,6 +92,17 @@ public class FollowServiceImpl implements FollowService {
         }
     }
     
+    @Override
+    public void removeFollower(Long toUserId, String requesterNickname) {
+        // 요청한 사람(팔로워) 조회
+        User fromUser = userDao.findByNickname(requesterNickname)
+                .orElseThrow(() -> new IllegalArgumentException("해당 닉네임의 유저가 존재하지 않습니다."));
+
+        int deleted = followDao.deleteFollow(fromUser.getUserId(), toUserId);
+        if (deleted == 0) {
+            throw new IllegalStateException("팔로우 관계가 존재하지 않아 취소할 수 없습니다.");
+        }
+    }
     
     @Override
     public List<UserFollowResponse> getFollowingList(Long userId) {
@@ -108,6 +119,7 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public void respondToFollowRequest(Long followId, String action, Long userId) {
         // 요청 정보 조회
+    	System.out.println(followId);
     	UserFollow follow = followDao.findById(followId)
             .orElseThrow(() -> new IllegalArgumentException("해당 팔로우 요청이 존재하지 않습니다."));
 

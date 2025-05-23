@@ -23,7 +23,14 @@
           <p class="text-sm">식사 유형: {{ mealTypeKor(meal.mealType) }}</p>
         </div>
         <div class="flex justify-between items-center mt-2 text-sm text-gray-600">
-          <span>💬 {{ meal.feedbackCount }} · ❤️ {{ meal.likeCount }}</span>
+          <span>💬 {{ meal.feedbackCount }}</span>
+          <LikeButton
+            contentType="MEAL"
+            :contentId="meal.mealId"
+            :likeCount="meal.likeCount"
+            :myReaction="meal.myReaction || null"
+            @onUpdated="loadMyMeals"
+          />
         </div>
       </div>
     </div>
@@ -40,6 +47,8 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import LikeButton from '@/components/LikeButton.vue'
+
 
 const meals = ref([])
 const selectedFilter = ref('all')

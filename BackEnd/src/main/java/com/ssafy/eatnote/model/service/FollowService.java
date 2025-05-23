@@ -12,6 +12,9 @@ public interface FollowService {
     // 팔로우 취소
     void cancelFollow(Long fromUserId, String targetNickname);
     
+    // 팔로워 끊기 (트레이너용)
+ 	void removeFollower(Long userId, String nickname);
+    
     // 내가 팔로우 하는 사람들 조회 
     List<UserFollowResponse> getFollowingList(Long userId);
     
@@ -20,4 +23,5 @@ public interface FollowService {
     
     // 팔로우 수락 or 거절
     void respondToFollowRequest(Long followId, String action, Long userId);
+    
 }

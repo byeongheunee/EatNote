@@ -40,27 +40,101 @@
         <p><strong>팔로잉 수:</strong> {{ profile.followingCount }}</p>
       </div>
 
-      <!-- 팔로우 버튼 영역 (공통) -->
+      <!-- 팔로우 버튼 영역 -->
       <div class="mt-6 text-center">
-        <template v-if="profile.followStatus === 'ACCEPTED'">
-          <div class="flex flex-col items-center space-y-2">
-            <p class="text-green-600 font-semibold">✅ 팔로우 중</p>
-            <button @click="cancelFollow"
-              class="px-3 py-1 text-sm bg-red-100 text-red-600 border border-red-300 rounded hover:bg-red-200">
-              ❌ 팔로우 취소
-            </button>
+        <!-- 로그인 유저가 트레이너라면: 무조건 팔로우 끊기만 보여줌 -->
+        <template v-if="isTrainer">
+          <div class="mt-4 flex flex-col items-center space-y-2">
+            <template v-if="profile.followedByOtherStatus === 'ACCEPTED'">
+              <p class="text-green-600 font-semibold">👥 {{ profile.nickname }}님이 나를 팔로우 중입니다.</p>
+              <button @click="cancelFollow"
+                class="px-3 py-1 text-sm bg-red-100 text-red-600 border border-red-300 rounded hover:bg-red-200">
+                ❌ 팔로우 끊기
+              </button>
+            </template>
+
+            <template v-else-if="profile.followedByOtherStatus === 'PENDING'">
+              <p class="text-blue-500 font-semibold">📩 {{ profile.nickname }}님의 팔로우 요청</p>
+              <div class="flex gap-2">
+                <button @click="acceptFollowRequest"
+                  class="px-3 py-1 text-sm bg-green-100 text-green-700 border border-green-300 rounded hover:bg-green-200">
+                  ✅ 수락
+                </button>
+                <button @click="rejectFollowRequest"
+                  class="px-3 py-1 text-sm bg-red-100 text-red-600 border border-red-300 rounded hover:bg-red-200">
+                  ❌ 거절
+                </button>
+              </div>
+            </template>
+
+            <template v-else-if="profile.followedByOtherStatus === 'REJECTED'">
+              <p class="text-gray-500 font-semibold">🙅 {{ profile.nickname }}님의 요청을 거절하였습니다.</p>
+            </template>
+
+            <template v-else>
+              <p class="text-gray-400">🙈 {{ profile.nickname }}님의 팔로우 요청이 없습니다.</p>
+            </template>
           </div>
         </template>
-        <template v-else-if="profile.followStatus === 'PENDING'">
-          <p class="text-blue-500 font-semibold">⏳ 팔로우 요청 중</p>
-        </template>
-        <template v-else-if="profile.followStatus === 'REJECTED'">
-          <p class="text-red-500 font-semibold">❌ 팔로우 요청이 거절되었습니다</p>
-        </template>
+
+        <!-- 일반 사용자일 경우 -->
         <template v-else>
-          <button @click="sendFollowRequest" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-            ➕ 팔로우 요청
-          </button>
+          <!-- 내가 보낸 팔로우 상태 -->
+          <template v-if="profile.followStatus === 'ACCEPTED'">
+            <div class="flex flex-col items-center space-y-2">
+              <p class="text-green-600 font-semibold">✅ 팔로우 중</p>
+              <button @click="cancelFollow"
+                class="px-3 py-1 text-sm bg-red-100 text-red-600 border border-red-300 rounded hover:bg-red-200">
+                ❌ 팔로우 취소
+              </button>
+            </div>
+          </template>
+          <template v-else-if="profile.followStatus === 'PENDING'">
+            <p class="text-blue-500 font-semibold">⏳ 팔로우 요청 중</p>
+          </template>
+          <template v-else-if="profile.followStatus === 'REJECTED'">
+            <p class="text-red-500 font-semibold">❌ 팔로우 요청이 거절되었습니다</p>
+          </template>
+          <template v-else>
+            <button @click="sendFollowRequest"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              ➕ 팔로우 요청
+            </button>
+          </template>
+
+          <!-- 상대방이 나를 팔로우하는 상태 -->
+          <div class="mt-4">
+            <template v-if="profile.followedByOtherStatus === 'ACCEPTED'">
+              <p class="text-green-600 font-semibold">👀 상대방이 나를 팔로우하고 있습니다.</p>
+              <!-- <button @click="cancelFollow"
+                class="px-3 py-1 text-sm bg-red-100 text-red-600 border border-red-300 rounded hover:bg-red-200">
+                ❌ 팔로우 취소
+              </button> -->
+            </template>
+            <template v-else-if="profile.followedByOtherStatus === 'PENDING'">
+              <div class="flex flex-col items-center space-y-2">
+                <p class="text-blue-500 font-semibold">📩 팔로우 요청이 도착했습니다.</p>
+                <div class="flex gap-2">
+                  <button @click="acceptFollowRequest"
+                    class="px-3 py-1 text-sm bg-green-100 text-green-700 border border-green-300 rounded hover:bg-green-200">
+                    ✅ 수락
+                  </button>
+                  <button @click="rejectFollowRequest"
+                    class="px-3 py-1 text-sm bg-red-100 text-red-600 border border-red-300 rounded hover:bg-red-200">
+                    ❌ 거절
+                  </button>
+                </div>
+              </div>
+            </template>
+            <template v-else-if="profile.followedByOtherStatus === 'REJECTED'">
+              <p class="text-gray-500 font-semibold">🙅 상대방의 요청을 거절하였습니다.</p>
+            </template>
+            <template v-else>
+              <p class="text-gray-400">🙈 상대방의 팔로우 요청이 없습니다.</p>
+            </template>
+          </div>
+
+
         </template>
       </div>
     </div>
@@ -71,6 +145,9 @@
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
 import { useAuthStore } from '@/stores/auth'
+import { computed } from 'vue'
+
+const isTrainer = computed(() => auth.user.userType === 1)
 
 const emit = defineEmits(['follow-requested'])
 
@@ -115,7 +192,10 @@ const sendFollowRequest = async () => {
 
 const cancelFollow = async () => {
   try {
-    const res = await axios.delete('/api/follow', {
+    const isTrainer = auth.user.userType === 1
+    const url = isTrainer ? '/api/follow/follower' : '/api/follow'
+
+    const res = await axios.delete(url, {
       data: {
         nickname: props.profile.nickname,
       },
@@ -125,11 +205,15 @@ const cancelFollow = async () => {
     });
 
     if (res.data?.success) {
-      const msg = `${props.profile.nickname}님과의 팔로우가 취소되었습니다.`
+      const msg = isTrainer
+        ? `${props.profile.nickname}님을 팔로우 목록에서 제거했습니다.`
+        : `${props.profile.nickname}님과의 팔로우가 취소되었습니다.`
       toast?.success(msg) ?? alert(msg)
 
-      // 상태 업데이트
       emit('follow-requested')
+
+      // 모달 닫기
+      emit('close')
     } else {
       const fallback = res.data?.message || '팔로우 취소에 실패했습니다.'
       toast?.error(fallback) ?? alert(fallback)
@@ -139,5 +223,34 @@ const cancelFollow = async () => {
     toast?.error('서버 오류로 요청을 처리할 수 없습니다.') ?? alert('서버 오류 발생')
   }
 }
+
+
+const respondToFollowRequest = async (action) => {
+  try {
+    const res = await axios.post('/api/follow/respond', {
+      followId: props.profile.followId,
+      action: action // 'ACCEPT' or 'REJECT'
+    })
+
+    if (res.data?.success) {
+      const msg = action === 'ACCEPT'
+        ? `${props.profile.nickname}님의 팔로우 요청을 수락했습니다.`
+        : `${props.profile.nickname}님의 팔로우 요청을 거절했습니다.`
+      toast?.success(msg) ?? alert(msg)
+      emit('follow-requested')
+      emit('close') // 모달 닫기
+    } else {
+      const fallback = res.data?.message || '요청 처리에 실패했습니다.'
+      toast?.error(fallback) ?? alert(fallback)
+    }
+  } catch (e) {
+    console.error(`팔로우 ${action} 실패:`, e)
+    toast?.error('서버 오류로 요청을 처리할 수 없습니다.') ?? alert('서버 오류 발생')
+  }
+}
+
+const acceptFollowRequest = () => respondToFollowRequest('ACCEPT')
+const rejectFollowRequest = () => respondToFollowRequest('REJECT')
+
 
 </script>
