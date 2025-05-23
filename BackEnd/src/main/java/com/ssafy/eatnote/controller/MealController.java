@@ -60,8 +60,10 @@ public class MealController {
 
     @GetMapping("/{mealId}/feedback")
     @Operation(summary = "공개 식단 피드백 조회", description = "식단 ID에 해당하는 모든 트레이너 피드백을 조회합니다.")
-    public MyApiResponse<List<TrainerFeedbackResponse>> getTrainerFeedbackList(@PathVariable Long mealId) {
-        List<TrainerFeedbackResponse> feedbackList = mealService.getFeedbackListByMealId(mealId);
+    public MyApiResponse<List<TrainerFeedbackResponse>> getTrainerFeedbackList(@PathVariable Long mealId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    	Long userId = userDetails.getUserId();
+    	System.out.println(userId);
+    	List<TrainerFeedbackResponse> feedbackList = mealService.getFeedbackListByMealId(mealId, userId);
         return MyApiResponse.success(feedbackList, "MEAL_FEEDBACK_LIST_SUCCESS", "트레이너 피드백 목록 조회 성공");
     }
 

@@ -320,7 +320,8 @@ public class MealServiceImpl implements MealService {
 	}
 
 	@Override
-	public List<TrainerFeedbackResponse> getFeedbackListByMealId(Long mealId) {
+	public List<TrainerFeedbackResponse> getFeedbackListByMealId(Long mealId, Long loginUserId)
+	{
 	    List<MealFeedback> feedbacks = feedbackDao.findAllByMealId(mealId);
 
 	    return feedbacks.stream().map(fb -> TrainerFeedbackResponse.builder()
@@ -330,6 +331,7 @@ public class MealServiceImpl implements MealService {
 	            .trainerScore(fb.getTrainerScore())
 	            .comment(fb.getContent())
 	            .createdAt(fb.getCreatedAt())
+	            .isWrittenByMe(fb.getTrainerId().equals(loginUserId))
 	            .build()
 	    ).collect(Collectors.toList());
 	}

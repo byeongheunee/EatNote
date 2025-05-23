@@ -21,7 +21,7 @@ public interface MealService {
     MealPublicDetailResponse getPublicMealDetail(Long mealId, Long loginUserId);
     
     // 식단 번호를 바탕으로 트레이너 피드백을 모두 가져오는 메서드 
-    List<TrainerFeedbackResponse> getFeedbackListByMealId(Long mealId);
+    List<TrainerFeedbackResponse> getFeedbackListByMealId(Long mealId, Long loginUserId);
     
     // 식단 리스트를 찾아 볼 수 있게 하는 메서드
     List<MealListViewResponse> getMealsForViewer(Long targetUserId, Long requesterId);
