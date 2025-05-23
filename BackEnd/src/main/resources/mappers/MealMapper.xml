@@ -404,7 +404,7 @@
 		WHERE
 		m.user_id = #{userId}
 		ORDER BY m.meal_time DESC
-		LIMIT 20
+		LIMIT 9
 	</select>
 
 	<select id="findMealsWithoutFeedbackByTrainer"

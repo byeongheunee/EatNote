@@ -20,21 +20,36 @@
     <div v-if="selectedUserId" class="mt-6">
       <h2 class="text-lg font-semibold mb-2">👤 {{ selectedUserNickname }}님의 식단</h2>
       <div v-if="meals.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TrainerMealCard v-for="meal in meals" :key="meal.mealId" :meal="meal"
+        <TrainerMealCard v-for="meal in visibleMeals" :key="meal.mealId" :meal="meal"
           :highlightPending="!meal.isFeedbackedByMe" @feedback="goToFeedbackForm" @view="goToMealDetail" />
       </div>
-      <div v-else class="text-gray-500 mt-4 text-center">식단 데이터가 없습니다.</div>
+      <div v-if="visibleMeals.length < meals.length" class="text-center mt-4">
+        <button @click="showMore" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          더보기
+        </button>
+      </div>
+      <div v-if="meals.length === 0" class="text-gray-500 mt-4 text-center">식단 데이터가 없습니다.</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import TrainerFolloweeList from '@/components/Trainer/TrainerFolloweeList.vue'
 import TrainerMealCard from '@/components/Trainer/TrainerMealCard.vue'
 import Header from '@/components/common/Header.vue'
+
+const visibleCount = ref(4)
+
+const visibleMeals = computed(() => {
+  return meals.value.slice(0, visibleCount.value)
+})
+
+const showMore = () => {
+  visibleCount.value = Math.min(visibleCount.value + 4, meals.value.length)
+}
 
 const users = ref([])
 const pendingMeals = ref([])
@@ -92,7 +107,7 @@ const selectUser = async (userId) => {
       })
 
     meals.value = sortedMeals
-
+    visibleCount.value = 4
   } catch (e) {
     console.error('식단 조회 실패', e)
     alert('선택한 회원의 식단을 불러올 수 없습니다.')

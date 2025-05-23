@@ -1,18 +1,10 @@
 <template>
   <div class="space-y-4">
-    <div
-      v-for="article in articles"
-      :key="article.articleId"
-      class="p-4 border rounded mb-2 hover:bg-gray-50"
-    >
+    <div v-for="article in articles" :key="article.articleId" class="p-4 border rounded mb-2 hover:bg-gray-50">
       <div class="flex gap-4">
         <!-- 대표 이미지 -->
         <div v-if="article.imageUrl" class="flex-shrink-0">
-          <img
-            :src="getImageUrl(article.imageUrl)"
-            alt="대표 이미지"
-            class="w-48 h-48 object-cover rounded"
-          />
+          <img :src="getImageUrl(article.imageUrl)" alt="대표 이미지" class="w-48 h-48 object-cover rounded" />
         </div>
 
         <!-- 본문 영역 -->
@@ -30,19 +22,12 @@
 
           <!-- 작성자 및 좋아요 -->
           <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
-            <!-- 왼쪽: 작성자 -->
             <span>작성자 : {{ article.userNickname }}</span>
 
-            <!-- 오른쪽: 조회수 + 좋아요 -->
             <div class="flex items-center gap-4">
               <span>조회수 : {{ article.viewCnt }}</span>
-              <LikeButton
-                contentType="ARTICLE"
-                :contentId="article.articleId"
-                :likeCount="article.likeCount"
-                :myReaction="article.myReaction"
-                @onUpdated="$emit('refresh')"
-              />
+              <LikeButton contentType="ARTICLE" :contentId="article.articleId" :likeCount="article.likeCount"
+                :myReaction="article.myReaction" @onUpdated="$emit('refresh')" />
             </div>
           </div>
         </div>
@@ -54,7 +39,7 @@
 <script setup>
 import LikeButton from '@/components/LikeButton.vue'
 
-defineProps({ articles: Array })
+const props = defineProps({ articles: Array })
 defineEmits(['open-detail', 'refresh'])
 
 const formatDate = (dateStr) => {

@@ -15,7 +15,7 @@ import ArticleDetailView from '@/views/ArticleDetailView.vue'
 import TrainerFeedbackForm from '@/views/TrainerFeedbackForm.vue'
 import TrainerFeedbackPage from '@/views/TrainerFeedbackPage.vue'
 import MemberDashboardView from '@/views/MemberDashboardView.vue'
-import TrainerFeedbackEdit from '@/views/TrainerFeedbackEdit.vue'
+import TrainerFeedbackEdit from '@/views/TrainerFeedbackForm.vue'
 
 // 탭 통합 메인 뷰
 import MealView from '@/views/MealView.vue'
@@ -33,16 +33,46 @@ const router = createRouter({
     { path: '/meal/upload', name: 'MealUpload', component: MealUploadPage },
     { path: '/meal/:id', name: 'MealDetail', component: MealDetailPage },
     { path: '/profile', name: 'MyPage', component: MyPageView, meta: { requiresAuth: true } },
-    { path: '/trainer', name: 'TrainerDashboard', component: TrainerDashboardView, meta: { requiresAuth: true } },
+    {
+      path: '/trainer',
+      name: 'TrainerDashboard',
+      component: TrainerDashboardView,
+      meta: { requiresAuth: true },
+    },
     { path: '/profile/edit', name: 'EditProfile', component: EditProfileView },
     { path: '/meals', name: 'MealView', component: MealView },
-    { path: '/community/:boardId/article/:articleId', name: 'ArticleDetail', component: ArticleDetailView },
+    {
+      path: '/community/:boardId/article/:articleId',
+      name: 'ArticleDetail',
+      component: ArticleDetailView,
+    },
     { path: '/community/:boardId', name: 'CommunityBoard', component: CommunityView },
-    { path: '/articles/:articleId/edit', name: 'ArticleEdit', component: ArticleWriteView, meta: { requiresAuth: true } },
-    { path: '/trainer/feedback/:mealId', name: 'TrainerFeedbackForm', component: TrainerFeedbackForm, meta: { requiresAuth: true } },
-    { path: '/trainer/feedback', name: 'TrainerFeedbackPage', component: TrainerFeedbackPage, meta: { requiresAuth: true } },
+    {
+      path: '/articles/:articleId/edit',
+      name: 'ArticleEdit',
+      component: ArticleWriteView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/trainer/feedback/:mealId',
+      name: 'TrainerFeedbackForm',
+      component: TrainerFeedbackForm,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/trainer/feedback',
+      name: 'TrainerFeedbackPage',
+      component: TrainerFeedbackPage,
+      meta: { requiresAuth: true },
+    },
     { path: '/member', name: 'MemberDashboard', component: MemberDashboardView },
-    { path: '/trainer/feedback/:feedbackId/edit', name: 'TrainerFeedbackEdit', component: TrainerFeedbackEdit, props: true },
+    {
+      path: '/trainer/feedback/edit/:feedbackId',
+      name: 'TrainerFeedbackEdit',
+      component: TrainerFeedbackEdit,
+      props: true,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
@@ -52,7 +82,7 @@ router.beforeEach((to) => {
   const isLoggedIn = !!auth.accessToken
   console.log('로그인 여부')
   console.log(isLoggedIn)
-  
+
   if (to.meta.requiresAuth && !isLoggedIn) {
     return '/login'
   }

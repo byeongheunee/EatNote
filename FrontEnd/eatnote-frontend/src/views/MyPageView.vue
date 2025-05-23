@@ -1,10 +1,7 @@
 <template>
   <div>
     <!-- 로그인 상태 전용 헤더 -->
-    <Header
-      @go-feature="scrollToFeature"
-      @go-usage="scrollToUsage"
-    />
+    <Header @go-feature="scrollToFeature" @go-usage="scrollToUsage" />
 
     <!-- 본문 -->
     <div class="max-w-3xl mx-auto my-10 p-6 bg-white rounded shadow">
@@ -30,16 +27,21 @@
         <h3 class="text-xl font-semibold mt-6 mb-2">신체 정보</h3>
         <p><strong>키:</strong> {{ memberDetails.height }} cm</p>
         <p><strong>몸무게:</strong> {{ memberDetails.weight }} kg</p>
-        <p><strong>BMI:</strong> {{ memberDetails.bmi }}</p>
-        <p><strong>체수분:</strong> {{ memberDetails.bodyWater }} %</p>
-        <p><strong>단백질:</strong> {{ memberDetails.protein }} %</p>
-        <p><strong>무기질:</strong> {{ memberDetails.mineral }} %</p>
-        <p><strong>체지방:</strong> {{ memberDetails.bodyFat }} kg</p>
-        <p><strong>골격근:</strong> {{ memberDetails.skeletalMuscle }} kg</p>
-        <p><strong>체지방량:</strong> {{ memberDetails.bodyFatMass }} kg</p>
-        <p><strong>체지방률:</strong> {{ memberDetails.bodyFatPercentage }} %</p>
+        <p><strong>BMI:</strong> {{ memberDetails.bmi ? memberDetails.bmi : '입력되지 않았습니다.' }}</p>
+        <p><strong>체수분:</strong> {{ memberDetails.bodyWater ? memberDetails.bodyWater + ' %' : '입력되지 않았습니다.' }}</p>
+        <p><strong>단백질:</strong> {{ memberDetails.protein ? memberDetails.protein + ' %' : '입력되지 않았습니다.' }}</p>
+        <p><strong>무기질:</strong> {{ memberDetails.mineral ? memberDetails.mineral + ' %' : '입력되지 않았습니다.' }}</p>
+        <p><strong>체지방:</strong> {{ memberDetails.bodyFat ? memberDetails.bodyFat + ' kg' : '입력되지 않았습니다.' }}</p>
+        <p><strong>골격근:</strong> {{ memberDetails.skeletalMuscle ? memberDetails.skeletalMuscle + ' kg' : '입력되지 않았습니다.'
+        }}</p>
+        <p><strong>체지방량:</strong> {{ memberDetails.bodyFatMass ? memberDetails.bodyFatMass + ' kg' : '입력되지 않았습니다.' }}
+        </p>
+        <p><strong>체지방률:</strong> {{ memberDetails.bodyFatPercentage ? memberDetails.bodyFatPercentage + ' %' :
+          '입력되지않았습니다.' }}</p>
         <p><strong>목표:</strong> {{ memberDetails.goal }}</p>
-        <p><strong>담당 트레이너:</strong> {{ memberDetails.trainerNickname }}</p>
+        <p><strong>담당 트레이너:</strong>
+          {{ memberDetails.trainerNickname ? memberDetails.trainerNickname : '담당 트레이너가 없습니다.' }}
+        </p>
 
         <h3 class="text-xl font-semibold mt-6 mb-2">알레르기</h3>
         <ul>
@@ -64,7 +66,8 @@
         <p><strong>소속 헬스장:</strong> {{ trainerDetails.gymName }}</p>
         <p>
           <strong>헬스장 홈페이지:</strong>
-          <a :href="trainerDetails.gymWebsite" class="text-blue-600 underline" target="_blank">{{ trainerDetails.gymWebsite }}</a>
+          <a :href="trainerDetails.gymWebsite" class="text-blue-600 underline" target="_blank">{{
+            trainerDetails.gymWebsite }}</a>
         </p>
         <p><strong>자격증 번호:</strong> {{ trainerDetails.certificationNumber }}</p>
         <div v-if="trainerDetails.certificationImage">
@@ -76,7 +79,8 @@
         <p><strong>경력 요약:</strong> {{ trainerDetails.career }}</p>
         <p>
           <strong>인스타그램:</strong>
-          <a :href="trainerDetails.instagramUrl" class="text-pink-500 underline" target="_blank">{{ trainerDetails.instagramUrl }}</a>
+          <a :href="trainerDetails.instagramUrl" class="text-pink-500 underline" target="_blank">{{
+            trainerDetails.instagramUrl }}</a>
         </p>
         <p><strong>인증 여부:</strong> {{ trainerDetails.isVerified ? '✅ 인증됨' : '❌ 미인증' }}</p>
       </div>
@@ -86,27 +90,19 @@
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded shadow w-96">
         <h3 class="text-lg font-semibold mb-4">비밀번호 확인</h3>
-        <input
-          v-model="password"
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          class="w-full p-2 border rounded mb-4"
-        />
+        <input v-model="password" type="password" placeholder="비밀번호를 입력하세요" class="w-full p-2 border rounded mb-4" />
         <div class="flex justify-end space-x-2">
           <button @click="closeModal" class="px-3 py-1 border rounded">취소</button>
-          <button @click="checkPassword" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">확인</button>
+          <button @click="checkPassword"
+            class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">확인</button>
         </div>
         <p v-if="errorMessage" class="text-red-500 mt-2">{{ errorMessage }}</p>
       </div>
     </div>
 
     <!-- 프로필 모달 -->
-    <UserProfileModal
-      :visible="profileModalVisible"
-      :profile="selectedProfile"
-      @close="profileModalVisible = false"
-      @follow-requested="handleFollowRequested"
-    />
+    <UserProfileModal :visible="profileModalVisible" :profile="selectedProfile" @close="profileModalVisible = false"
+      @follow-requested="handleFollowRequested" />
 
   </div>
 </template>

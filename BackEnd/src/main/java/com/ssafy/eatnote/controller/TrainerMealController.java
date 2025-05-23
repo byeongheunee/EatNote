@@ -52,11 +52,6 @@ public class TrainerMealController {
                 .body(MyApiResponse.failure("FORBIDDEN", "트레이너만 접근할 수 있는 기능입니다."));
         }
         
-        if (trainerMealService.hasTrainerWrittenFeedback(mealId, trainerId)) {
-        	return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(MyApiResponse.failure("FEEDBACK_ALREADY_EXISTS", "이미 피드백을 작성한 식단입니다."));
-        }
         
         // 1. 식단 상세 정보 조회 (작성자 ID 포함되도록)
         TrainerMealDetailResponse mealDetail = trainerMealService.getMealDetailById(mealId);
