@@ -3,20 +3,18 @@
     <Header />
 
     <div class="max-w-3xl mx-auto mt-10">
+      <!-- 🔹 목록 이동 버튼 -->
+      <div class="flex justify-end mb-4">
+        <button @click="goToBoard" class="text-sm text-blue-600 hover:underline">
+          ← 목록으로 이동하기
+        </button>
+      </div>
+
       <h1 class="text-2xl font-bold mb-6">{{ isEditMode ? '게시글 수정' : '게시글 작성' }}</h1>
 
-      <input
-        v-model="title"
-        type="text"
-        placeholder="제목을 입력하세요"
-        class="w-full border p-3 rounded mb-4 text-lg"
-      />
+      <input v-model="title" type="text" placeholder="제목을 입력하세요" class="w-full border p-3 rounded mb-4 text-lg" />
 
-      <textarea
-        v-model="content"
-        placeholder="내용을 입력하세요"
-        class="w-full border p-3 rounded h-60 mb-4"
-      ></textarea>
+      <textarea v-model="content" placeholder="내용을 입력하세요" class="w-full border p-3 rounded h-60 mb-4"></textarea>
 
       <!-- 기존 이미지 목록 -->
       <div v-if="existingImages.length" class="grid grid-cols-3 gap-4 mb-6">
@@ -24,8 +22,7 @@
           <img :src="getImageUrl(img.filePath)" class="w-full h-32 object-cover rounded shadow" />
           <button
             class="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded opacity-70 group-hover:opacity-100"
-            @click="removeExistingImage(i)"
-          >✕</button>
+            @click="removeExistingImage(i)">✕</button>
         </div>
       </div>
 
@@ -38,19 +35,13 @@
 
       <!-- 새 이미지 미리보기 -->
       <div v-if="previewUrls.length" class="grid grid-cols-3 gap-4 mt-4">
-        <img
-          v-for="(url, i) in previewUrls"
-          :key="i"
-          :src="url"
-          class="w-full h-32 object-cover rounded shadow"
-        />
+        <img v-for="(url, i) in previewUrls" :key="i" :src="url" class="w-full h-32 object-cover rounded shadow" />
       </div>
 
       <div class="text-right mt-6">
-        <button
-          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          @click="submit"
-        >{{ isEditMode ? '수정 완료' : '작성 완료' }}</button>
+        <button class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" @click="submit">{{ isEditMode ?
+          "수정완료" : "작성 완료" }}
+        </button>
       </div>
     </div>
   </div>
@@ -81,6 +72,10 @@ const deletedFileIds = ref([])
 
 const getImageUrl = (path) => `http://localhost:8080${path}`
 
+const goToBoard = () => {
+  router.push(`/community/${boardId}`)
+}
+
 const fetchArticle = async () => {
   const res = await axios.get(`/api/articles/${articleId}`, {
     headers: { Authorization: `Bearer ${auth.accessToken}` }
@@ -110,15 +105,15 @@ const submit = async () => {
 
   const articleData = isEditMode
     ? {
-        title: title.value,
-        content: content.value,
-        deleteFileIds: deletedFileIds.value
-      }
+      title: title.value,
+      content: content.value,
+      deleteFileIds: deletedFileIds.value
+    }
     : {
-        title: title.value,
-        content: content.value,
-        boardId: boardId
-      }
+      title: title.value,
+      content: content.value,
+      boardId: boardId
+    }
 
   const formData = new FormData()
   formData.append('article', JSON.stringify(articleData))

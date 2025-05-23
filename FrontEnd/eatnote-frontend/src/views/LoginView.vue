@@ -18,8 +18,20 @@
       class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300">
       로그인
     </button>
+
+    <div class="flex justify-between space-x-4">
+      <button @click="goHome"
+        class="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-100 transition duration-300">
+        홈으로
+      </button>
+      <button @click="goResister"
+        class="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-100 transition duration-300">
+        회원가입
+      </button>
+    </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, nextTick } from 'vue'
@@ -39,7 +51,7 @@ const handleLogin = async () => {
   if (success) {
     alert('로그인 성공!')
     auth.connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결
-    
+
     await nextTick()
 
     console.log(auth)
@@ -56,6 +68,14 @@ const handleLogin = async () => {
   } else {
     alert('로그인 실패. 이메일 또는 비밀번호를 확인하세요!')
   }
+}
+
+const goHome = () => {
+  router.push('/')
+}
+
+const goResister = () => {
+  router.push('/register')
 }
 </script>
 
