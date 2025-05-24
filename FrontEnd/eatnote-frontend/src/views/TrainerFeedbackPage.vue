@@ -8,13 +8,25 @@
       :total-done="calendarStats.reduce((sum, s) => sum + s.written, 0)" @select="selectUser" />
 
     <!-- 🟡 초기: 전체 미작성 식단 -->
-    <div v-if="!selectedUserId && pendingMeals.length > 0" class="mt-6">
-      <h2 class="text-lg font-semibold mb-2">🟡 전체 피드백 미작성 식단</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TrainerMealCard v-for="meal in pendingMeals" :key="meal.mealId" :meal="meal" :highlightPending="true"
-          @feedback="goToFeedbackForm" @edit="editFeedback" />
-      </div>
-    </div>
+<div v-if="!selectedUserId && pendingMeals.length > 0" class="mt-6">
+  <h2 class="text-lg font-semibold mb-2">🟡 전체 피드백 미작성 식단</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <TrainerMealCard
+      v-for="meal in visiblePendingMeals"
+      :key="meal.mealId"
+      :meal="meal"
+      :highlightPending="true"
+      @feedback="goToFeedbackForm"
+      @edit="editFeedback"
+    />
+  </div>
+  <div v-if="visiblePendingMeals.length < pendingMeals.length" class="text-center mt-4">
+    <button @click="showMorePending" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+      더보기
+    </button>
+  </div>
+</div>
+
 
     <!-- 👤 선택된 유저의 전체 식단 목록 -->
     <div v-if="selectedUserId" class="mt-6">
@@ -44,13 +56,22 @@ import { useToast } from 'vue-toastification'
 const toast = useToast()
 
 const visibleCount = ref(4)
+const visibleCountPending = ref(4)
+
 
 const visibleMeals = computed(() => {
   return meals.value.slice(0, visibleCount.value)
 })
 
+const visiblePendingMeals = computed(() => {
+  return pendingMeals.value.slice(0, visibleCountPending.value)
+})
+
 const showMore = () => {
   visibleCount.value = Math.min(visibleCount.value + 4, meals.value.length)
+}
+const showMorePending = () => {
+  visibleCountPending.value = Math.min(visibleCountPending.value + 4, pendingMeals.value.length)
 }
 
 const users = ref([])
