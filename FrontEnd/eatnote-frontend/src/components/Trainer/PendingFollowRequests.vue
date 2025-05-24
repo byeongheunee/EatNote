@@ -5,7 +5,6 @@
     <div v-if="loading">불러오는 중...</div>
     <div v-else-if="users.length === 0">팔로우 요청이 없습니다.</div>
 
-    <!-- ✅ 슬라이드 형태 (4개 이상) -->
     <div v-else-if="users.length >= 4" class="relative">
       <!-- 왼쪽 화살표 -->
       <button
@@ -32,7 +31,6 @@
         </div>
       </div>
 
-      <!-- 오른쪽 화살표 -->
       <button
         v-if="canScrollRight"
         class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white px-2 py-1 shadow rounded-full hover:bg-gray-100"
@@ -40,13 +38,12 @@
       >→</button>
     </div>
 
-    <!-- ✅ 그리드 형태 (1~3개) -->
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       <div v-for="user in users" :key="user.followId"
         class="bg-white rounded-lg p-3 shadow hover:bg-gray-50 flex flex-col items-center space-y-2">
         <img :src="getProfileImage(user.profileImage)" class="w-20 h-20 rounded-full object-cover" />
         <p class="font-semibold text-lg">{{ user.nickname }}</p>
-        <p class="text-sm text-gray-600">{{ user.gender }}</p>
+        <p class="text-sm text-gray-600">{{ user.requestedAt.slice(0, 10)}}</p>
         <div class="flex space-x-2 mt-2">
           <button class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
             @click="acceptRequest(user.followId)">수락</button>

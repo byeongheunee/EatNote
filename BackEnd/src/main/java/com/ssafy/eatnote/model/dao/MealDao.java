@@ -52,4 +52,7 @@ public interface MealDao {
     
     Double getAverageAutoScore(@Param("userId") Long userId);
     
+    List<DailyNutritionStatsResponse> findDailyStatsByUserIdAndWeek(@Param("userId") Long userId, @Param("week") String week);
+
+    
 }
