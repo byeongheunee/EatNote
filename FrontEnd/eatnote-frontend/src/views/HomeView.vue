@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home"> 
     <Header @go-feature="scrollToFeature" @go-usage="scrollToUsage" />
 
     <!-- 최근 등록 식단 -->
@@ -76,12 +76,12 @@ const featureSection = ref(null) // ✅ 추가됨
 const usageSection = ref(null)   // ✅ 추가됨
 
 const features = [
-  { title: '간편한 식단 등록', description: '사진만 올려도 자동으로 등록되는 간편한 식단 기록 기능!' },
-  { title: 'AI 식단 분석', description: '업로드된 식단을 AI가 자동 분석해 성분과 칼로리를 추정합니다.' },
-  { title: '전문 트레이너 피드백', description: '식단에 대해 전문 트레이너의 피드백을 받을 수 있어요.' },
-  { title: '맞춤형 운동 추천', description: '식단과 체형 정보를 바탕으로 운동도 추천해드려요.' },
-  { title: '커뮤니티 참여', description: '다른 사람들의 식단을 구경하고 댓글도 남길 수 있어요.' },
-  { title: '상세한 식단 리포트', description: '매일/주간 식단 데이터를 기반으로 리포트를 제공해요.' }
+  { title: '간편한 식단 등록', description: '사진 업로드 만으로도 쉽게 식단을 기록하고 관리할 수 있습니다. \n 번거로운 입력 과정 없이 간편하게 식단을 기록하세요.'},
+  { title: 'AI 식단 분석', description: '인공지능이 업로드된 식단 사진을 분석하여 영양소와 칼로리 정보를 자동으로 계산해 드립니다.' },
+  { title: '전문 트레이너 피드백', description: '실제 전문 트레이너가 AI 분석을 바탕으로 개인화된 식단 피드백과 조언을 제공합니다. ' },
+  { title: '맞춤형 운동 추천', description: '식단과 체형 정보 및 개인 목표에 맞는 운동영상도 추천해드려요.' },
+  { title: '커뮤니티 참여', description: '다른 회원들과 식단을 공유하고 자유롭게  소통하며 동기부여를 받을 수 있습니다.' },
+  { title: '상세한 식단 리포트', description: '주간, 월간 식단 리포트를 통해 식습관의 변화와 개선점을 한눈에 확인할 수 있습니다.' }
 ]
 
 const usageSteps = ['회원가입', '식단 업로드', 'AI 분석', '피드백 확인']
