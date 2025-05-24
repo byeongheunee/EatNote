@@ -231,7 +231,7 @@ const fetchMeals = async () => {
 const scrollToFeature = () => {
   if (featureTitle.value) {
     const element = featureTitle.value
-    const headerHeight = 80 // 헤더 높이 (대략적으로)
+    const headerHeight = 100 // 헤더 높이
     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
     const offsetPosition = elementPosition - headerHeight
     
@@ -245,7 +245,7 @@ const scrollToFeature = () => {
 const scrollToUsage = () => {
   if (usageTitle.value) {
     const element = usageTitle.value
-    const headerHeight = 80 // 헤더 높이 (대략적으로)
+    const headerHeight = 100 // 헤더 높이
     const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
     const offsetPosition = elementPosition - headerHeight
     
