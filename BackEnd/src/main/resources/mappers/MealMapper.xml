@@ -64,19 +64,18 @@
 		ROUND(SUM(m.total_calories), 1) AS totalCalories,
 		ROUND(SUM(m.carbohydrates), 1) AS totalCarbohydrates,
 		ROUND(SUM(m.protein), 1) AS totalProtein,
-		ROUND(SUM(m.fat), 1) AS
-		totalFat,
+		ROUND(SUM(m.fat), 1) AS totalFat,
 		ROUND(AVG(m.auto_score), 1) AS autoScore,
-		ROUND(AVG(f.trainer_score), 1) AS trainerScore,
+		ROUND(AVG(CASE WHEN f.trainer_score IS NOT NULL THEN f.trainer_score END), 1) AS
+		trainerScore,
 		COUNT(*) AS mealCount
 		FROM meal m
 		LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id
-		WHERE
-		m.user_id = #{userId}
+		WHERE m.user_id = #{userId}
 		GROUP BY DATE_FORMAT(m.meal_time, '%x-W%v')
-		ORDER
-		BY week DESC
+		ORDER BY DATE_FORMAT(m.meal_time, '%x-W%v') DESC
 	</select>
+
 
 	<select id="findById" parameterType="long" resultType="Meal">
 		SELECT *
@@ -143,31 +142,30 @@
 		m.meal_time DESC
 	</select>
 
-	<select id="findDailyStatsByUserId"
-		resultType="DailyNutritionStatsResponse">
-		SELECT
-		DATE(m.meal_time) AS day,
-		ROUND(AVG(m.total_calories), 1) AS avgCalories,
-		ROUND(AVG(m.carbohydrates), 1) AS avgCarbohydrates,
-		ROUND(AVG(m.protein), 1) AS avgProtein,
-		ROUND(AVG(m.fat), 1) AS avgFat,
-		ROUND(SUM(m.total_calories), 1) AS totalCalories,
-		ROUND(SUM(m.carbohydrates), 1) AS totalCarbohydrates,
-		ROUND(SUM(m.protein), 1) AS totalProtein,
-		ROUND(SUM(m.fat), 1) AS
-		totalFat,
-		ROUND(AVG(m.auto_score), 1) AS autoScore,
-		ROUND(AVG(f.trainer_score), 1) AS trainerScore,
-		COUNT(*) AS mealCount
-		FROM meal m
-		LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id
-		WHERE
-		m.user_id = #{userId}
-		AND DATE(m.meal_time) >= CURDATE() - INTERVAL 7
-		DAY
-		GROUP BY DATE(m.meal_time)
-		ORDER BY day DESC
-	</select>
+	<select id="findDailyStatsByUserIdAndWeek"
+        resultType="DailyNutritionStatsResponse">
+    SELECT
+        DATE(m.meal_time) AS day,
+        ROUND(AVG(m.total_calories), 1) AS avgCalories,
+        ROUND(AVG(m.carbohydrates), 1) AS avgCarbohydrates,
+        ROUND(AVG(m.protein), 1) AS avgProtein,
+        ROUND(AVG(m.fat), 1) AS avgFat,
+        ROUND(SUM(m.total_calories), 1) AS totalCalories,
+        ROUND(SUM(m.carbohydrates), 1) AS totalCarbohydrates,
+        ROUND(SUM(m.protein), 1) AS totalProtein,
+        ROUND(SUM(m.fat), 1) AS totalFat,
+        ROUND(AVG(m.auto_score), 1) AS autoScore,
+        ROUND(AVG(CASE WHEN f.trainer_score IS NOT NULL THEN f.trainer_score END), 1) AS trainerScore,
+        COUNT(*) AS mealCount
+    FROM meal m
+    LEFT JOIN meal_feedback f ON m.meal_id = f.meal_id
+    WHERE m.user_id = #{userId}
+      AND DATE_FORMAT(m.meal_time, '%x-W%v') = #{week}
+    GROUP BY DATE(m.meal_time)
+    ORDER BY DATE(m.meal_time) DESC
+</select>
+
+
 
 	<!-- 1. 최근 식사 10개 -->
 	<select id="findPopularMealsInLast7Days"
@@ -339,17 +337,22 @@
 		END) AS completedCount
 		FROM meal m
 		LEFT JOIN meal_feedback f
-		ON m.meal_id = f.meal_id
+		ON
+		m.meal_id = f.meal_id
 		AND f.trainer_id = #{trainerId}
-		WHERE DATE_FORMAT(m.meal_time, '%Y-%m') = #{month}
+		WHERE
+		DATE_FORMAT(m.meal_time, '%Y-%m') = #{month}
 		AND m.user_id IN (
-		SELECT from_user_id
+		SELECT
+		from_user_id
 		FROM user_follow
 		WHERE to_user_id = #{trainerId}
-		AND status = 'ACCEPTED'
+		AND status
+		= 'ACCEPTED'
 		)
 		GROUP BY DATE_FORMAT(m.meal_time, '%Y-%m-%d')
-		ORDER BY date
+		ORDER BY
+		date
 	</select>
 
 
@@ -412,36 +415,41 @@
 		SELECT m.meal_id, m.user_id, u.nickname, m.meal_time, m.image_url,
 		m.detected_foods, m.total_calories,
 		m.meal_type, m.auto_score,
-		FALSE AS isFeedbackedByMe
+		FALSE AS
+		isFeedbackedByMe
 		FROM meal m
 		JOIN users u ON m.user_id = u.user_id
-		WHERE m.user_id IN
+		WHERE
+		m.user_id IN
 		<foreach item="id" collection="followerIds" open="("
 			separator="," close=")">
 			#{id}
 		</foreach>
 		AND NOT EXISTS (
 		SELECT 1 FROM meal_feedback mf
-		WHERE mf.meal_id = m.meal_id AND mf.trainer_id = #{trainerId}
+		WHERE mf.meal_id =
+		m.meal_id AND mf.trainer_id = #{trainerId}
 		)
 		ORDER BY m.meal_time DESC
 	</select>
 
 
-	
+
 	<!-- 평균 자동 점수 조회 -->
-    <select id="getAverageAutoScore" parameterType="long" resultType="double">
-        SELECT ROUND(AVG(auto_score), 1)
-          FROM meal
-         WHERE user_id = #{userId}
-    </select>
-    
-    <!-- 최근 식단 날짜 내림차순 조회 -->
-    <select id="findMealDatesDesc" parameterType="long" resultType="java.time.LocalDate">
-        SELECT DATE(meal_time)
-          FROM meal
-         WHERE user_id = #{userId}
-         ORDER BY meal_time DESC
-    </select>
+	<select id="getAverageAutoScore" parameterType="long"
+		resultType="double">
+		SELECT ROUND(AVG(auto_score), 1)
+		FROM meal
+		WHERE user_id = #{userId}
+	</select>
+
+	<!-- 최근 식단 날짜 내림차순 조회 -->
+	<select id="findMealDatesDesc" parameterType="long"
+		resultType="java.time.LocalDate">
+		SELECT DATE(meal_time)
+		FROM meal
+		WHERE user_id = #{userId}
+		ORDER BY meal_time DESC
+	</select>
 </mapper>
 	

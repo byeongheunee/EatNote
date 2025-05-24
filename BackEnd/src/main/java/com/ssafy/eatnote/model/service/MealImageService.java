@@ -72,11 +72,11 @@ public class MealImageService {
 	private String classifyMealTimeByNow() {
 		LocalTime now = LocalTime.now();
 
-		if (now.isAfter(LocalTime.of(5, 0)) && now.isBefore(LocalTime.of(11, 0))) {
+		if (now.isAfter(LocalTime.of(4, 0)) && now.isBefore(LocalTime.of(11, 0))) {
 			return "breakfast";
 		} else if (now.isBefore(LocalTime.of(16, 0))) {
 			return "lunch";
-		} else if (now.isBefore(LocalTime.of(21, 0))) {
+		} else if (now.isBefore(LocalTime.of(24, 0))) {
 			return "dinner";
 		} else {
 			return "extra";

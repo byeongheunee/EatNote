@@ -13,11 +13,12 @@ public interface TrainerMealService {
     TrainerMealDetailResponse getMealDetailById(Long mealId);
     
     List<WeeklyNutritionStatsResponse> getWeeklyStats(Long userId);
-    
-    List<DailyNutritionStatsResponse> getDailyStats(Long userId);
 
 	WeeklyFeedbackResponse getWeeklyGptFeedback(Long userId);
 	
 	boolean hasTrainerWrittenFeedback(Long mealId, Long trainerId);
+
+	List<DailyNutritionStatsResponse> getDailyStatsByWeek(Long userId, String week);
+
 }
 

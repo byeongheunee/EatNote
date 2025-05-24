@@ -26,15 +26,12 @@ public class NutritionScorer {
         float recommendedCalories = getRecommendedCalories(user, member);
         float mealStandardCalories = recommendedCalories * weightRatio;
 
-        float score = 0;
+        double score = 0;
 
-        // 1. 열량 점수
-        float calorieRatio = totalCalories / mealStandardCalories;
-        if (calorieRatio >= 0.9f && calorieRatio <= 1.1f) score += 3;
-        else if (calorieRatio >= 0.8f && calorieRatio <= 1.2f) score += 2;
-        else score += 1;
+        // 1. 열량 점수 (0~3점)
+        score += getCalorieScore(totalCalories, mealStandardCalories);
 
-        // 2. 탄단지 비율 점수 (목표에 따른 가변 기준)
+        // 2. 탄단지 점수 (각 0~2점 또는 3점, 가중치 있음)
         float carbRatio = (carbohydrates * 4) / totalCalories;
         float proteinRatio = (protein * 4) / totalCalories;
         float fatRatio = (fat * 9) / totalCalories;
@@ -43,19 +40,41 @@ public class NutritionScorer {
         float[] proteinRange = getMacronutrientRange(member.getGoal(), "protein");
         float[] fatRange = getMacronutrientRange(member.getGoal(), "fat");
 
-        float carbScore = (carbRatio >= carbRange[0] && carbRatio <= carbRange[1]) ? 1.5f : 0.5f;
-        float proteinScore = (proteinRatio >= proteinRange[0] && proteinRatio <= proteinRange[1]) ? 2.0f : 0.5f;
-        float fatScore = (fatRatio >= fatRange[0] && fatRatio <= fatRange[1]) ? 1.5f : 0.5f;
-
-        score += (carbScore + proteinScore + fatScore);
+        score += getMacroScore(carbRatio, carbRange, 2.0f);
+        score += getMacroScore(proteinRatio, proteinRange, 3.0f);
+        score += getMacroScore(fatRatio, fatRange, 2.0f);
 
         // 3. 나트륨/당류 점수
-        if (sodium < 2000) score += 1;
-        if (sugars < 20) score += 1;
+        if (sodium <= 1500) score += 1;
+        else if (sodium >= 2300) score -= 0.5f;
 
-        return Math.min(score, 10.0f);
+        if (sugars <= 15) score += 1;
+        else if (sugars >= 30) score -= 0.5f;
+
+        return Math.max(0f, Math.min(Math.round(score*10)/10, 10.0f)); // 0 ~ 10 제한
     }
 
+    // 열량 점수 (비율 기반)
+    private float getCalorieScore(float total, float target) {
+        float ratio = total / target;
+        if (ratio >= 0.9f && ratio <= 1.1f) return 3.0f;
+        else if (ratio >= 0.7f && ratio <= 1.3f) return 2.0f;
+        else return Math.max(0f, 3.0f - (Math.abs(ratio - 1f) * 5));  // 부드러운 감점
+    }
+
+    // 탄단지 점수 (가중치 포함)
+    private float getMacroScore(float actual, float[] range, float weight) {
+        float mid = (range[0] + range[1]) / 2;
+        float dist = Math.abs(actual - mid);
+        if (actual >= range[0] && actual <= range[1]) {
+            return weight; // 완벽
+        } else {
+            float penalty = dist / 0.1f * (weight / 2); // 10% 벗어나면 반감
+            return Math.max(0f, weight - penalty);
+        }
+    }
+
+    // 간식 점수
     private float calculateSnackScore(float calories, float sugars, float sodium) {
         float score = 10.0f;
 
@@ -67,6 +86,7 @@ public class NutritionScorer {
         return Math.max(score, 0.0f);
     }
 
+    // 식사 비중 (열량 가중치)
     private float getMealWeight(String mealType) {
         switch (mealType) {
             case "breakfast": return 0.25f;
@@ -76,6 +96,7 @@ public class NutritionScorer {
         }
     }
 
+    // 권장 칼로리 계산
     public float getRecommendedCalories(User user, MemberDetails member) {
         float weight = member.getWeight();
         float height = member.getHeight();
@@ -90,10 +111,23 @@ public class NutritionScorer {
             bmr = (10 * weight) + (6.25f * height) - (5 * age) - 78;
         }
 
-        float activityFactor = 1.375f;
+        float activityFactor = getActivityFactorByGoal(member.getGoal());
         return bmr * activityFactor;
     }
 
+    // 목표에 따른 활동지수 반환
+    private float getActivityFactorByGoal(String goal) {
+        if (goal == null) return 1.3f;
+
+        switch (goal.toLowerCase()) {
+            case "감량": return 1.2f;
+            case "유지": return 1.375f;
+            case "증량": return 1.55f;
+            default: return 1.3f;
+        }
+    }
+
+    // 목표에 따른 탄단지 비율 범위
     private float[] getMacronutrientRange(String goal, String nutrient) {
         switch (goal.toLowerCase()) {
             case "감량":

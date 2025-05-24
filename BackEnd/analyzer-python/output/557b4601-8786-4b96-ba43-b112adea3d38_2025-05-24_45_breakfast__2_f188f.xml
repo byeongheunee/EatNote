@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<annotation>
+  <folder>output</folder>
+  <filename>/Users/leebyeongheon/git/eatnote/BackEnd/analyzer-python/uploads/557b4601-8786-4b96-ba43-b112adea3d38_2025-05-24_45_breakfast__2_f188f.jpeg</filename>
+  <path>output/557b4601-8786-4b96-ba43-b112adea3d38_2025-05-24_45_breakfast__2_f188f.jpeg</path>
+  <object>
+    <name>02011010</name>
+    <bndbox>
+      <xmin>156</xmin>
+      <ymin>190</ymin>
+      <xmax>503</xmax>
+      <ymax>499</ymax>
+    </bndbox>
+  </object>
+</annotation>

@@ -42,8 +42,8 @@ public class TrainerMealServiceImpl implements TrainerMealService {
 	    }
 	    
 	    @Override
-	    public List<DailyNutritionStatsResponse> getDailyStats(Long userId) {
-	        return mealDao.findDailyStatsByUserId(userId);
+	    public List<DailyNutritionStatsResponse> getDailyStatsByWeek(Long userId, String week) {
+	        return mealDao.findDailyStatsByUserIdAndWeek(userId, week);
 	    }
 
 	    @Override

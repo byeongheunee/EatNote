@@ -297,13 +297,20 @@ public class UserController {
         return MyApiResponse.success(stats, "USER_WEEKLY_STATS_SUCCESS", "주간 영양 통계 조회 성공");
     }
     
-    @Operation(summary = "일별 통계 조회 (본인)", description = "로그인한 사용자의 일별 평균 영양 통계를 조회합니다.")
+    @Operation(summary = "선택된 주차의 일별 통계 조회")
     @GetMapping("/statistics/daily")
-    public MyApiResponse<List<DailyNutritionStatsResponse>> getMyDailyStatistics(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public MyApiResponse<List<DailyNutritionStatsResponse>> getDailyStatsByWeek(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = false) String week
+    ) {
         Long userId = userDetails.getUser().getUserId();
-        List<DailyNutritionStatsResponse> stats = trainerMealService.getDailyStats(userId);
-        return MyApiResponse.success(stats, "USER_DAILY_STATS_SUCCESS", "일별 영양 통계 조회 성공");
+        List<DailyNutritionStatsResponse> stats = trainerMealService.getDailyStatsByWeek(userId, week);
+        
+        return MyApiResponse.success(stats, "USER_DAILY_WEEKLY_STATS_SUCCESS", "선택 주차 일별 통계 조회 성공");
     }
+
+    
+    
     
     @Operation(summary = "주간 AI 피드백 조회", description = "사용자의 주간 식사 통계 기반 GPT AI 피드백을 제공합니다.")
     @GetMapping("/statistics/weekly/ai-feedback")
