@@ -1,100 +1,147 @@
 <template>
-  <div>
-    <!-- 닫기 버튼 -->
-    <div class="text-right mb-4">
-      <button
-        class="px-4 py-1 text-sm text-gray-600 hover:underline"
-        @click="goBackToBoard"
-      >
-        ← 목록으로 돌아가기
-      </button>
+  <div class="article-detail-container">
+    <!-- 게시글 메인 컨텐츠 -->
+    <div v-if="article" class="article-content">
+      <!-- 게시글 헤더 -->
+      <header class="article-header">
+        <div class="header-main">
+          <h1 class="article-title">{{ article.title }}</h1>
+          <div class="article-meta">
+            <div class="meta-left">
+              <div class="author-info" @click="openAuthorProfile">
+                <div class="author-avatar">
+                  <span class="avatar-icon">👤</span>
+                </div>
+                <div class="author-details">
+                  <span class="author-name">{{ article.userNickname }}</span>
+                  <span v-if="article && !isMyArticle && auth.user?.userType === 2" class="follow-status">
+                    {{ followStatusLabel }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="meta-right">
+              <span class="publish-date">{{ formatDate(article.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 게시글 본문 -->
+      <main class="article-body">
+        <!-- 메인 이미지 -->
+        <div v-if="article.imageUrl" class="main-image-container">
+          <img 
+            :src="getImageUrl(article.imageUrl)" 
+            :alt="article.title"
+            class="main-image"
+          />
+        </div>
+
+        <!-- 본문 내용 -->
+        <div class="content-text">
+          {{ article.content }}
+        </div>
+
+        <!-- 추가 첨부 이미지 -->
+        <div v-if="additionalImages.length" class="additional-images">
+          <h4 class="images-title">첨부 이미지</h4>
+          <div class="images-grid">
+            <div 
+              v-for="(img, index) in additionalImages" 
+              :key="index" 
+              class="image-item"
+            >
+              <img 
+                :src="getImageUrl(img.filePath)"
+                :alt="img.originalName" 
+                class="attachment-image"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 수정/삭제 버튼 -->
+        <div v-if="isMyArticle" class="action-buttons-bottom">
+          <button @click="goToEdit" class="action-btn edit-btn">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            수정
+          </button>
+          <button @click="deleteArticle" class="action-btn delete-btn">
+            <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            삭제
+          </button>
+        </div>
+      </main>
+
+      <!-- 게시글 푸터 (통계 및 반응) -->
+      <footer class="article-footer">
+        <div class="stats-container">
+          <div class="view-count">
+            <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            <span>조회 {{ article.viewCnt }}</span>
+          </div>
+          <div class="reaction-buttons">
+            <LikeDislikeButtons
+              contentType="ARTICLE"
+              :contentId="articleId"
+              :likeCount="article.likeCount"
+              :dislikeCount="article.dislikeCount"
+              :myReaction="article.myReaction"
+              :onUpdated="fetchArticle"
+            />
+          </div>
+        </div>
+      </footer>
     </div>
 
-    <div v-if="article" class="bg-white p-6 rounded shadow mb-10">
-      <!-- 제목 + 작성자 -->
-      <div class="flex justify-between items-center mb-2">
-        <h2 class="text-2xl font-bold">{{ article.title }}</h2>
-        <!-- 작성자 클릭 시 모달 열기 -->
-        <span class="text-gray-500 text-sm hover:underline cursor-pointer" @click="openAuthorProfile">
-          작성자 : {{ article.userNickname }}
-          <span v-if="article && !isMyArticle && auth.user?.userType === 2" class="ml-2 text-xs text-blue-600">
-            · {{ followStatusLabel }}
-          </span>
-        </span>
-      </div>
-
-      <!-- ✨ 수정/삭제 버튼 -->
-      <div v-if="isMyArticle" class="flex justify-end gap-2 mb-2">
-        <button
-          @click="goToEdit"
-          class="px-4 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
-        >
-          수정
-        </button>
-        <button
-          @click="deleteArticle"
-          class="px-4 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700"
-        >
-          삭제
-        </button>
-      </div>
-
-      <!-- 내용 + 대표 이미지 -->
-      <div class="flex flex-col md:flex-row gap-4 mt-4">
-        <div class="flex-1 whitespace-pre-line text-gray-800">
-          내용 : {{ article.content }}
-        </div>
-        <img v-if="article.imageUrl" :src="getImageUrl(article.imageUrl)" alt="대표 이미지"
-          class="w-full md:w-80 h-auto rounded object-cover shadow" />
-      </div>
-
-      <!-- 추가 첨부 이미지 -->
-      <div v-if="additionalImages.length" class="mt-6">
-        <h4 class="font-semibold mb-2">첨부 이미지</h4>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <img v-for="(img, index) in additionalImages" :key="index" :src="getImageUrl(img.filePath)"
-            :alt="img.originalName" class="w-full h-40 object-cover rounded shadow" />
-        </div>
-      </div>
-
-      <!-- 좋아요/싫어요/조회수 -->
-      <div class="flex items-center gap-3 text-gray-500 text-sm mt-4">
-        <LikeDislikeButtons
-          contentType="ARTICLE"
-          :contentId="articleId"
-          :likeCount="article.likeCount"
-          :dislikeCount="article.dislikeCount"
-          :myReaction="article.myReaction"
-          :onUpdated="fetchArticle"
-        />
-        <span class="flex items-center gap-1"> 👁️ 조회수 {{ article.viewCnt }} </span>
+    <!-- 댓글 섹션 -->
+    <section class="comments-section">
+      <div class="comments-header">
+        <h3 class="comments-title">
+          <svg class="title-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.906-1.294l-3.181.795.795-3.181A9.863 9.863 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path>
+          </svg>
+          댓글 {{ comments.length }}개
+        </h3>
       </div>
 
       <!-- 댓글 입력 -->
-      <h3 class="mt-8 text-lg font-semibold">댓글</h3>
-
-      <CommentInput
-        :parentCommentId="null"
-        :onSubmit="loadComments"
-        targetType="ARTICLE"
-        :targetId="articleId"
-      />
-
-      <!-- 댓글 목록 -->
-      <div v-if="comments.length">
-        <CommentItem
-          v-for="comment in comments"
-          :key="comment.commentId"
-          :comment="comment"
-          :onReload="loadComments"
+      <div class="comment-input-container">
+        <CommentInput
+          :parentCommentId="null"
+          :onSubmit="loadComments"
           targetType="ARTICLE"
           :targetId="articleId"
         />
       </div>
-      <div v-else>
-        <p class="text-sm text-gray-500 mt-2">아직 댓글이 없습니다.</p>
+
+      <!-- 댓글 목록 -->
+      <div class="comments-list">
+        <div v-if="comments.length" class="comments-items">
+          <CommentItem
+            v-for="comment in comments"
+            :key="comment.commentId"
+            :comment="comment"
+            :onReload="loadComments"
+            targetType="ARTICLE"
+            :targetId="articleId"
+          />
+        </div>
+        <div v-else class="no-comments">
+          <div class="no-comments-icon">💬</div>
+          <p class="no-comments-text">아직 댓글이 없습니다</p>
+          <p class="no-comments-subtext">첫 번째 댓글을 작성해보세요!</p>
+        </div>
       </div>
-    </div>
+    </section>
 
     <!-- 프로필 모달 -->
     <UserProfileModal
@@ -103,7 +150,6 @@
       @close="isUserProfileOpen = false"
       @follow-requested="handleFollowRequested"
     />
-
   </div>
 </template>
 
@@ -117,6 +163,7 @@ import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
 import UserProfileModal from '@/components/UserProfileModal.vue'
 import { useToast } from 'vue-toastification'
+
 const toast = useToast()
 
 // 📌 라우터에서 articleId와 boardId 추출
@@ -153,31 +200,38 @@ const handleFollowRequested = () => {
 
 // 작성자 프로필 열기
 const openAuthorProfile = async () => {
+  console.log('openAuthorProfile 호출됨')
+  console.log('isMyArticle:', isMyArticle.value)
+  console.log('article.userId:', article.value?.userId)
+  console.log('currentUser.userId:', currentUser.value?.userId)
+  
   // 내가 작성한 글이면 모달 열지 않음
-  if (isMyArticle.value) return
+  if (isMyArticle.value) {
+    console.log('내가 작성한 글이므로 모달을 열지 않습니다')
+    return
+  }
 
   try {
     const token = auth.accessToken
+    console.log('API 호출 시작, token:', token ? '있음' : '없음')
 
     const res = await axios.get(`/api/users/${article.value.userId}/profile`, {
       headers: { Authorization: `Bearer ${token}` }
     })
+
+    console.log('API 응답:', res.data)
 
     // 응답이 실패한 경우
     if (!res.data.success) {
       const code = res.data.code
 
       if (code === 'FORBIDDEN_ADMIN_PROFILE') {
-        // alert('관리자는 프로필을 조회할 수 없습니다.')
         toast.warning('관리자는 프로필을 조회할 수 없습니다. ⚠️')
       } else if (code === 'USER_NOT_FOUND') {
-        // alert('해당 사용자가 존재하지 않습니다.')
         toast.warning('해당 사용자가 존재하지 않습니다.')
       } else if (code === 'VALIDATION_FAILED') {
-        // alert('알 수 없는 사용자 유형입니다.')
         toast.error('알 수 없는 사용자 유형입니다. ⚠️')
       } else {
-        // alert(res.data.message || '알 수 없는 오류가 발생했습니다.')
         toast.error(res.data.message || '알 수 없는 오류가 발생했습니다. 🚨')
       }
 
@@ -186,19 +240,19 @@ const openAuthorProfile = async () => {
 
     // 정상 응답 처리
     const profile = res.data.data
-    console.log(profile)
+    console.log('프로필 데이터:', profile)
     selectedProfile.value = profile
     isUserProfileOpen.value = true
+    console.log('모달 열림 상태:', isUserProfileOpen.value)
 
   } catch (e) {
     console.error('작성자 프로필 조회 실패:', e)
-    // alert('작성자 정보를 불러오지 못했습니다.')
     toast.error('작성자 정보를 불러오지 못했습니다.')
   }
 }
 
 const followStatusLabel = computed(() => {
-  switch (article.value.followStatus) {
+  switch (article.value?.followStatus) {
     case 'ACCEPTED': return '팔로우 중';
     case 'PENDING': return '팔로우 요청 중';
     case 'REJECTED': return '팔로우 거절됨';
@@ -210,9 +264,6 @@ const followStatusLabel = computed(() => {
 const isMyArticle = computed(() => {
   return article.value?.userId === currentUser.value?.userId
 })
-const hasMyComment = computed(() => {
-  return comments.value.some(c => c.userId === currentUser.value?.userId)
-})
 
 // 게시글 삭제
 const deleteArticle = async () => {
@@ -222,17 +273,15 @@ const deleteArticle = async () => {
     await axios.delete(`/api/articles/${articleId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    // alert('게시글이 삭제되었습니다.')
     toast.success('게시글이 성공적으로 삭제되었습니다! 🗑️')
     router.push(`/community/${boardId}`)
   } catch (e) {
     console.error('게시글 삭제 실패:', e)
-    // alert('삭제 중 오류가 발생했습니다.')
     toast.error('게시글 삭제 중 오류가 발생했습니다.')
   }
 }
 
-// 수정 페이지로 이동 <- 이 부분 이따가 수정.....
+// 수정 페이지로 이동
 const goToEdit = () => {
   router.push(`/articles/${articleId}/edit`)
 }
@@ -278,11 +327,18 @@ const increaseViewCount = async () => {
   }
 }
 
-const getImageUrl = (path) => `http://localhost:8080${path}`
-
-const goBackToBoard = () => {
-  router.push(`/community/${boardId}`)
+// 날짜 포맷
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}.${month}.${day} ${hours}:${minutes}`
 }
+
+const getImageUrl = (path) => `http://localhost:8080${path}`
 
 watch(() => articleId, async () => {
   await fetchArticle()
@@ -297,5 +353,417 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 필요 시 스타일 추가 */
+/* 컨테이너 */
+.article-detail-container {
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+
+/* 게시글 컨텐츠 */
+.article-content {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+/* 게시글 헤더 */
+.article-header {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid rgba(245, 158, 11, 0.1);
+}
+
+.header-main {
+  flex: 1;
+}
+
+.article-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.3;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #374151, #111827);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.article-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.author-info:hover {
+  background: rgba(245, 158, 11, 0.1);
+  transform: translateY(-1px);
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.avatar-icon {
+  font-size: 1.2rem;
+  color: white;
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.author-name {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.follow-status {
+  font-size: 0.8rem;
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.publish-date {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 하단 액션 버튼 (첨부 이미지 밑에 위치) */
+.action-buttons-bottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.edit-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+}
+
+/* 게시글 본문 */
+.article-body {
+  margin-bottom: 2rem;
+}
+
+.main-image-container {
+  margin-bottom: 2rem;
+}
+
+.main-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+  transform: scale(1.02);
+}
+
+.content-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #374151;
+  white-space: pre-line;
+  margin-bottom: 2rem;
+}
+
+/* 추가 이미지 */
+.additional-images {
+  margin-top: 2rem;
+}
+
+.images-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.images-title::before {
+  content: '📎';
+  font-size: 1.1rem;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.image-item {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.image-item:hover {
+  transform: translateY(-4px);
+}
+
+.attachment-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* 게시글 푸터 */
+.article-footer {
+  padding-top: 2rem;
+  border-top: 2px solid rgba(245, 158, 11, 0.1);
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stat-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* 댓글 섹션 */
+.comments-section {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.1);
+}
+
+.comments-header {
+  margin-bottom: 1.5rem;
+}
+
+.comments-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.title-icon {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+}
+
+.comment-input-container {
+  margin-bottom: 2rem;
+}
+
+.comments-list {
+  margin-top: 1rem;
+}
+
+.comments-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* 빈 댓글 상태 */
+.no-comments {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #6b7280;
+}
+
+.no-comments-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+.no-comments-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.no-comments-subtext {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .article-content,
+  .comments-section {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .article-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .action-buttons-bottom {
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+
+  .article-title {
+    font-size: 1.6rem;
+  }
+
+  .article-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .content-text {
+    font-size: 1rem;
+  }
+
+  .images-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .stats-container {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .article-content,
+  .comments-section {
+    padding: 1rem;
+  }
+
+  .article-title {
+    font-size: 1.4rem;
+  }
+
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .action-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .images-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.article-content,
+.comments-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.comments-section {
+  animation-delay: 0.1s;
+}
 </style>

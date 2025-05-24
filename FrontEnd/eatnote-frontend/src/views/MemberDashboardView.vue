@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6 pb-10">
+  <div class="MemberDashboard-container">
     <Header />
 
     <div class="mt-6 text-xl font-semibold">안녕하세요, {{ userNickname }}님!!</div>
@@ -66,5 +66,9 @@ onMounted(fetchDashboardData)
 </script>
 
 <style scoped>
-/* 필요 시 추가 스타일 */
+.MemberDashboard-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+}
 </style>

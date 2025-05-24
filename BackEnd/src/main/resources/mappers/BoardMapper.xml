@@ -51,7 +51,7 @@
             created_at AS createdAt,
             updated_at AS updatedAt
         FROM board
-        ORDER BY created_at DESC
+        ORDER BY board_id
     </select>
     
     <!-- 게시판 유형 조회 -->
