@@ -50,7 +50,7 @@
             </div>
           </div>
           <div class="card-container">
-            <PendingFollowRequests @update-count="updateFollowRequestCount" />
+            <PendingFollowRequests2 @update-count="updateFollowRequestCount" />
           </div>
         </section>
 
@@ -72,7 +72,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import TodayPendingMeals from '@/components/Trainer/TodayPendingMeals.vue'
-import PendingFollowRequests from '@/components/PendingFollowRequests.vue'
+import PendingFollowRequests2 from '@/components/PendingFollowRequests2.vue'
 import FeedbackCalendar from '@/components/Trainer/FeedbackCalendar.vue'
 import Header from '@/components/common/Header.vue'
 import { useAuthStore } from '@/stores/auth'

@@ -1,265 +1,245 @@
+<!-- src/components/meal/MyMealStats.vue -->
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- 헤더 -->
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">📊 나의 식단 통계</h1>
-        <p class="text-gray-600">건강한 식습관을 위한 데이터 분석</p>
-      </div>
+  <div class="my-meal-stats">
+    <!-- 헤더 섹션 -->
+    <div class="header-section">
+      <h2 class="section-title">나의 식단 통계</h2>
+      <p class="section-subtitle">건강한 식습관을 위한 데이터 분석</p>
+    </div>
 
-      <!-- 로딩 상태 -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-        <span class="ml-3 text-gray-600">데이터를 불러오는 중...</span>
-      </div>
+    <!-- 로딩 상태 -->
+    <div v-if="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">데이터를 불러오는 중...</span>
+    </div>
 
-      <!-- 메인 컨텐츠 -->
-      <div v-else class="space-y-8">
-        <!-- 주차 선택 카드 -->
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="p-2 bg-indigo-100 rounded-lg">
-                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-              </div>
-              <h2 class="text-xl font-semibold text-gray-800">기간 선택</h2>
-            </div>
-            <select
-              v-model="selectedWeek"
-              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white shadow-sm"
-            >
-              <option v-for="w in weekList" :key="w.week" :value="w.week">
-                {{ w.week }}
-              </option>
-            </select>
+    <!-- 메인 컨텐츠 -->
+    <div v-else class="main-content">
+      <!-- 주차 선택 카드 -->
+      <div class="period-selector-card">
+        <div class="selector-header">
+          <div class="selector-icon-wrapper">
+            <span class="selector-icon">📅</span>
           </div>
+          <h3 class="selector-title">기간 선택</h3>
+        </div>
+        <select
+          v-model="selectedWeek"
+          class="week-selector"
+        >
+          <option v-for="w in weekList" :key="w.week" :value="w.week">
+            {{ w.week }}
+          </option>
+        </select>
+      </div>
+
+      <!-- 주간 요약 카드 -->
+      <div class="summary-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="card-icon">📈</span>
+            주간 요약
+          </h3>
         </div>
 
-        <!-- 주간 요약 카드 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white flex items-center">
-              <span class="mr-2">📈</span>
-              주간 요약
-            </h2>
+        <div class="summary-content">
+          <div v-if="dailyStats.length === 0" class="empty-stats">
+            <div class="empty-icon">📝</div>
+            <h4 class="empty-title">이번 주에는 아직 식사 기록이 없습니다</h4>
+            <p class="empty-description">식사를 기록하면 통계를 확인할 수 있어요!</p>
           </div>
 
-          <div class="p-6">
-            <div v-if="dailyStats.length === 0" class="text-center py-8">
-              <div class="text-gray-400 text-6xl mb-4">📝</div>
-              <p class="text-gray-500 text-lg">이번 주에는 아직 식사 기록이 없습니다</p>
-              <p class="text-gray-400 text-sm mt-2">식사를 기록하면 통계를 확인할 수 있어요!</p>
+          <div v-else class="stats-grid">
+            <div class="stat-item week-stat">
+              <div class="stat-content">
+                <p class="stat-label">주차</p>
+                <p class="stat-value">{{ weekly.week }}</p>
+              </div>
+              <div class="stat-emoji">🗓️</div>
             </div>
 
-            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm text-blue-600 font-medium">주차</p>
-                    <p class="text-2xl font-bold text-blue-800">{{ weekly.week }}</p>
-                  </div>
-                  <div class="text-blue-500 text-2xl">🗓️</div>
-                </div>
+            <div class="stat-item score-stat">
+              <div class="stat-content">
+                <p class="stat-label">평균 AI 점수</p>
+                <p class="stat-value">{{ weekly.autoScore?.toFixed(1) ?? '-' }}</p>
               </div>
+              <div class="stat-emoji">🧠</div>
+            </div>
 
-              <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm text-green-600 font-medium">평균 AI 점수</p>
-                    <p class="text-2xl font-bold text-green-800">{{ weekly.autoScore?.toFixed(1) ?? '-' }}</p>
-                  </div>
-                  <div class="text-green-500 text-2xl">🧠</div>
-                </div>
+            <div class="stat-item calorie-stat">
+              <div class="stat-content">
+                <p class="stat-label">평균 칼로리</p>
+                <p class="stat-value">{{ weekly.avgCalories }}</p>
+                <p class="stat-unit">kcal</p>
               </div>
+              <div class="stat-emoji">🔥</div>
+            </div>
 
-              <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm text-orange-600 font-medium">평균 칼로리</p>
-                    <p class="text-2xl font-bold text-orange-800">{{ weekly.avgCalories }}</p>
-                    <p class="text-xs text-orange-500">kcal</p>
-                  </div>
-                  <div class="text-orange-500 text-2xl">🔥</div>
-                </div>
+            <div class="stat-item carb-stat">
+              <div class="stat-content">
+                <p class="stat-label">평균 탄수화물</p>
+                <p class="stat-value">{{ weekly.avgCarbohydrates }}</p>
+                <p class="stat-unit">g</p>
               </div>
+              <div class="stat-emoji">🍞</div>
+            </div>
 
-              <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm text-yellow-600 font-medium">평균 탄수화물</p>
-                    <p class="text-2xl font-bold text-yellow-800">{{ weekly.avgCarbohydrates }}</p>
-                    <p class="text-xs text-yellow-500">g</p>
-                  </div>
-                  <div class="text-yellow-500 text-2xl">🍞</div>
-                </div>
+            <div class="stat-item protein-stat">
+              <div class="stat-content">
+                <p class="stat-label">평균 단백질</p>
+                <p class="stat-value">{{ weekly.avgProtein }}</p>
+                <p class="stat-unit">g</p>
               </div>
+              <div class="stat-emoji">🥩</div>
+            </div>
 
-              <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm text-red-600 font-medium">평균 단백질</p>
-                    <p class="text-2xl font-bold text-red-800">{{ weekly.avgProtein }}</p>
-                    <p class="text-xs text-red-500">g</p>
-                  </div>
-                  <div class="text-red-500 text-2xl">🥩</div>
-                </div>
+            <div class="stat-item fat-stat">
+              <div class="stat-content">
+                <p class="stat-label">평균 지방</p>
+                <p class="stat-value">{{ weekly.avgFat }}</p>
+                <p class="stat-unit">g</p>
               </div>
-
-              <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm text-purple-600 font-medium">평균 지방</p>
-                    <p class="text-2xl font-bold text-purple-800">{{ weekly.avgFat }}</p>
-                    <p class="text-xs text-purple-500">g</p>
-                  </div>
-                  <div class="text-purple-500 text-2xl">🥑</div>
-                </div>
-              </div>
+              <div class="stat-emoji">🥑</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- AI 피드백 카드 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white flex items-center">
-              <span class="mr-2">🤖</span>
-              AI 피드백
-            </h2>
+      <!-- AI 피드백 카드 -->
+      <div class="feedback-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="card-icon">🤖</span>
+            AI 피드백
+          </h3>
+        </div>
+
+        <div class="feedback-content">
+          <div class="feedback-item warning-feedback">
+            <div class="feedback-icon-wrapper">
+              <span class="feedback-icon">⚠️</span>
+            </div>
+            <div class="feedback-text">
+              <h4 class="feedback-title">주의사항</h4>
+              <p class="feedback-description">{{ aiFeedback.warning }}</p>
+            </div>
           </div>
 
-          <div class="p-6 space-y-4">
-            <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-sm font-medium text-red-800">주의사항</h3>
-                  <p class="text-sm text-red-700 mt-1">{{ aiFeedback.warning }}</p>
-                </div>
-              </div>
+          <div class="feedback-item tip-feedback">
+            <div class="feedback-icon-wrapper">
+              <span class="feedback-icon">💡</span>
             </div>
-
-            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <h3 class="text-sm font-medium text-blue-800">건강 팁</h3>
-                  <p class="text-sm text-blue-700 mt-1">{{ aiFeedback.tip }}</p>
-                </div>
-              </div>
+            <div class="feedback-text">
+              <h4 class="feedback-title">건강 팁</h4>
+              <p class="feedback-description">{{ aiFeedback.tip }}</p>
             </div>
+          </div>
 
-            <div v-if="aiFeedback.recommendedFoods?.length" class="bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg">
-              <h3 class="text-sm font-medium text-green-800 mb-2">🍎 추천 식품</h3>
-              <div class="space-y-2">
+          <div v-if="aiFeedback.recommendedFoods?.length" class="feedback-item recommendation-feedback">
+            <div class="feedback-icon-wrapper">
+              <span class="feedback-icon">🍎</span>
+            </div>
+            <div class="feedback-text">
+              <h4 class="feedback-title">추천 식품</h4>
+              <div class="recommended-foods">
                 <div
                   v-for="(food, i) in aiFeedback.recommendedFoods"
                   :key="i"
-                  class="bg-white p-3 rounded-lg border border-green-200"
+                  class="food-recommendation"
                 >
-                  <p class="font-medium text-green-800">{{ food.name }}</p>
-                  <p class="text-sm text-green-600">{{ food.reason }}</p>
+                  <p class="food-name">{{ food.name }}</p>
+                  <p class="food-reason">{{ food.reason }}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- 차트 섹션 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- 일별 점수 차트 -->
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
-              <h2 class="text-xl font-semibold text-white flex items-center">
-                <span class="mr-2">📊</span>
-                일자별 점수 추이
-              </h2>
-            </div>
-            <div class="p-6">
-              <canvas ref="dailyChartRef" class="w-full h-64"></canvas>
-            </div>
+      <!-- 차트 섹션 -->
+      <div class="charts-section">
+        <!-- 일별 점수 차트 -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">
+              <span class="chart-icon">📊</span>
+              일자별 점수 추이
+            </h3>
           </div>
-
-          <!-- 영양소 비율 차트 -->
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
-              <h2 class="text-xl font-semibold text-white flex items-center">
-                <span class="mr-2">🥘</span>
-                영양소 비율
-              </h2>
-            </div>
-            <div class="p-6">
-              <div class="mb-4">
-                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                  <p class="text-sm text-amber-800">
-                    💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
-                  </p>
-                </div>
-                <select
-                  v-model="selectedDay"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                >
-                  <option disabled value="">날짜를 선택하세요</option>
-                  <option v-for="row in dailyStats" :key="row.day" :value="row.day">
-                    {{ row.day }}
-                  </option>
-                </select>
-              </div>
-              <div class="flex justify-center">
-                <canvas ref="pieChartRef" class="max-w-xs max-h-xs"></canvas>
-              </div>
-            </div>
+          <div class="chart-content">
+            <canvas ref="dailyChartRef" class="chart-canvas"></canvas>
           </div>
         </div>
 
-        <!-- 상세 통계 테이블 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white flex items-center">
-              <span class="mr-2">📋</span>
-              상세 일별 데이터
-            </h2>
+        <!-- 영양소 비율 차트 -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3 class="chart-title">
+              <span class="chart-icon">🥘</span>
+              영양소 비율
+            </h3>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">날짜</th>
-                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AI 점수</th>
-                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">트레이너 점수</th>
-                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">식사 수</th>
-                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">평균 칼로리</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="row in dailyStats" :key="row.day" class="hover:bg-gray-50 transition-colors">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ row.day }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {{ row.autoScore ?? '-' }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      {{ row.trainerScore ?? '-' }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.mealCount }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.avgCalories }} kcal</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="chart-content">
+            <div class="nutrition-info">
+              <p class="nutrition-guide">
+                💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
+              </p>
+            </div>
+            <div class="day-selector-wrapper">
+              <select
+                v-model="selectedDay"
+                class="day-selector"
+              >
+                <option disabled value="">날짜를 선택하세요</option>
+                <option v-for="row in dailyStats" :key="row.day" :value="row.day">
+                  {{ row.day }}
+                </option>
+              </select>
+            </div>
+            <div class="pie-chart-wrapper">
+              <canvas ref="pieChartRef" class="pie-chart"></canvas>
+            </div>
           </div>
+        </div>
+      </div>
+
+      <!-- 상세 통계 테이블 -->
+      <div class="table-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="card-icon">📋</span>
+            상세 일별 데이터
+          </h3>
+        </div>
+        <div class="table-wrapper">
+          <table class="stats-table">
+            <thead class="table-header">
+              <tr>
+                <th class="table-th">날짜</th>
+                <th class="table-th">AI 점수</th>
+                <th class="table-th">트레이너 점수</th>
+                <th class="table-th">식사 수</th>
+                <th class="table-th">평균 칼로리</th>
+              </tr>
+            </thead>
+            <tbody class="table-body">
+              <tr v-for="row in dailyStats" :key="row.day" class="table-row">
+                <td class="table-td font-medium">{{ row.day }}</td>
+                <td class="table-td">
+                  <span class="score-badge ai-score">
+                    {{ row.autoScore ?? '-' }}
+                  </span>
+                </td>
+                <td class="table-td">
+                  <span class="score-badge trainer-score">
+                    {{ row.trainerScore ?? '-' }}
+                  </span>
+                </td>
+                <td class="table-td">{{ row.mealCount }}</td>
+                <td class="table-td">{{ row.avgCalories }} kcal</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -372,26 +352,26 @@ function drawDailyChart() {
         {
           label: 'AI 점수',
           data: dailyStats.value.map(d => d.autoScore),
-          borderColor: '#8b5cf6',
-          backgroundColor: 'rgba(139, 92, 246, 0.1)',
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
           tension: 0.4,
           fill: true,
           pointRadius: 6,
           pointHoverRadius: 8,
-          pointBackgroundColor: '#8b5cf6',
+          pointBackgroundColor: '#f59e0b',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 2
         },
         {
           label: '트레이너 점수',
           data: dailyStats.value.map(d => d.trainerScore),
-          borderColor: '#ec4899',
-          backgroundColor: 'rgba(236, 72, 153, 0.1)',
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4,
           fill: true,
           pointRadius: 6,
           pointHoverRadius: 8,
-          pointBackgroundColor: '#ec4899',
+          pointBackgroundColor: '#10b981',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 2
         }
@@ -406,7 +386,11 @@ function drawDailyChart() {
           position: 'top',
           labels: {
             usePointStyle: true,
-            padding: 20
+            padding: 20,
+            font: {
+              size: 12,
+              weight: '600'
+            }
           }
         }
       },
@@ -414,12 +398,22 @@ function drawDailyChart() {
         y: {
           beginAtZero: true,
           grid: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgba(229, 231, 235, 0.5)'
+          },
+          ticks: {
+            font: {
+              size: 11
+            }
           }
         },
         x: {
           grid: {
-            color: 'rgba(0, 0, 0, 0.1)'
+            color: 'rgba(229, 231, 235, 0.5)'
+          },
+          ticks: {
+            font: {
+              size: 11
+            }
           }
         }
       }
@@ -438,8 +432,8 @@ function drawPieChart(stat) {
     ],
     datasets: [{
       data: [stat.avgCarbohydrates, stat.avgProtein, stat.avgFat],
-      backgroundColor: ['#fbbf24', '#60a5fa', '#f87171'],
-      borderColor: ['#f59e0b', '#3b82f6', '#ef4444'],
+      backgroundColor: ['#f59e0b', '#10b981', '#ef4444'],
+      borderColor: ['#d97706', '#059669', '#dc2626'],
       borderWidth: 2,
       hoverOffset: 4
     }]
@@ -452,7 +446,7 @@ function drawPieChart(stat) {
       legend: {
         position: 'bottom',
         labels: {
-          font: { size: 12 },
+          font: { size: 11, weight: '600' },
           usePointStyle: true,
           padding: 15
         }
@@ -483,5 +477,637 @@ function drawPieChart(stat) {
 </script>
 
 <style scoped>
-/* 필요한 경우 추가 스타일 */
+.my-meal-stats {
+  width: 100%;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* 헤더 섹션 */
+.header-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* 로딩 상태 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid rgba(245, 158, 11, 0.2);
+  border-top: 2px solid #f59e0b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.75rem;
+}
+
+.loading-text {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* 메인 컨텐츠 */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* 기간 선택 카드 */
+.period-selector-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selector-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.selector-icon-wrapper {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1));
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+
+.selector-icon {
+  font-size: 1.25rem;
+}
+
+.selector-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.week-selector {
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(229, 231, 235, 0.8);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  color: #374151;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.week-selector:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+/* 카드 공통 스타일 */
+.summary-card,
+.feedback-card,
+.chart-card,
+.table-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover,
+.feedback-card:hover,
+.chart-card:hover,
+.table-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+/* 카드 헤더 */
+.card-header {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  padding: 1.25rem 1.5rem;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.card-icon {
+  font-size: 1.25rem;
+}
+
+/* 주간 요약 */
+.summary-content {
+  padding: 1.5rem;
+}
+
+.empty-stats {
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.empty-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  background: rgba(249, 250, 251, 0.8);
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+  line-height: 1;
+}
+
+.stat-unit {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.stat-emoji {
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
+/* 통계별 색상 */
+.week-stat {
+  border-left: 4px solid #3b82f6;
+}
+
+.score-stat {
+  border-left: 4px solid #10b981;
+}
+
+.calorie-stat {
+  border-left: 4px solid #f59e0b;
+}
+
+.carb-stat {
+  border-left: 4px solid #eab308;
+}
+
+.protein-stat {
+  border-left: 4px solid #ef4444;
+}
+
+.fat-stat {
+  border-left: 4px solid #8b5cf6;
+}
+
+/* AI 피드백 */
+.feedback-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feedback-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border-left: 4px solid;
+}
+
+.warning-feedback {
+  background: rgba(254, 242, 242, 0.8);
+  border-left-color: #ef4444;
+}
+
+.tip-feedback {
+  background: rgba(239, 246, 255, 0.8);
+  border-left-color: #3b82f6;
+}
+
+.recommendation-feedback {
+  background: rgba(240, 253, 244, 0.8);
+  border-left-color: #10b981;
+}
+
+.feedback-icon-wrapper {
+  flex-shrink: 0;
+}
+
+.feedback-icon {
+  font-size: 1.25rem;
+}
+
+.feedback-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.25rem 0;
+}
+
+.feedback-description {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.recommended-foods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.food-recommendation {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.food-name {
+  font-weight: 600;
+  color: #047857;
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.food-reason {
+  font-size: 0.8rem;
+  color: #059669;
+  margin: 0;
+}
+
+/* 차트 섹션 */
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.chart-header {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  padding: 1.25rem 1.5rem;
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.chart-icon {
+  font-size: 1.1rem;
+}
+
+.chart-content {
+  padding: 1.5rem;
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 250px;
+}
+
+.nutrition-info {
+  margin-bottom: 1rem;
+}
+
+.nutrition-guide {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: #d97706;
+  margin: 0;
+}
+
+.day-selector-wrapper {
+  margin-bottom: 1rem;
+}
+
+.day-selector {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(229, 231, 235, 0.8);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #374151;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.day-selector:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.pie-chart-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.pie-chart {
+  max-width: 300px;
+  max-height: 300px;
+}
+
+/* 테이블 */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background: rgba(249, 250, 251, 0.8);
+}
+
+.table-th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.table-body {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.table-row {
+  transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+  background: rgba(249, 250, 251, 0.8);
+}
+
+.table-td {
+  padding: 1rem 1.5rem;
+  font-size: 0.9rem;
+  color: #374151;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+.font-medium {
+  font-weight: 600;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ai-score {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.trainer-score {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  
+  .period-selector-card {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .feedback-item {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .recommended-foods {
+    gap: 0.5rem;
+  }
+  
+  .chart-content {
+    padding: 1rem;
+  }
+  
+  .chart-canvas {
+    height: 200px;
+  }
+  
+  .table-th,
+  .table-td {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .summary-content,
+  .feedback-content,
+  .chart-content {
+    padding: 1rem;
+  }
+  
+  .period-selector-card {
+    padding: 1rem;
+  }
+  
+  .stat-item {
+    padding: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 1.25rem;
+  }
+  
+  .stat-emoji {
+    font-size: 1.25rem;
+  }
+  
+  .pie-chart {
+    max-width: 250px;
+    max-height: 250px;
+  }
+  
+  .table-th,
+  .table-td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  
+  .score-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 스크롤바 스타일링 */
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: rgba(249, 250, 251, 0.5);
+  border-radius: 3px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* 차트 반응형 조정 */
+@media (max-width: 480px) {
+  .chart-canvas {
+    height: 180px;
+  }
+  
+  .pie-chart {
+    max-width: 200px;
+    max-height: 200px;
+  }
+  
+  .nutrition-guide {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+}
 </style>

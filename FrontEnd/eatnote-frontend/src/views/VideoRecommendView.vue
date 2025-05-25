@@ -22,7 +22,7 @@
         <div class="goal-section">
           <div class="section-card">
             <!-- 섹션 헤더 -->
-            <div class="section-header">
+            <div class="section-header1">
               <div class="header-icon">🎯</div>
               <div class="header-content">
                 <h2 class="section-title">목표 기반 추천</h2>
@@ -299,6 +299,19 @@ onMounted(async () => {
 }
 
 /* 섹션 헤더 */
+.section-header1 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  padding-left: 1rem;
+  border-bottom: 2px solid rgba(245, 158, 11, 0.1);
+  min-height: 120px; /* 최소 높이 설정으로 두 섹션 헤더 높이 맞춤 */
+}
+
+/* 섹션 헤더 */
 .section-header {
   display: flex;
   align-items: center;
@@ -460,7 +473,7 @@ onMounted(async () => {
 /* 비디오 카드 */
 .video-card {
   background: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
+  border-radius: 16px; /* 모서리 둥근 정도 */
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.1);

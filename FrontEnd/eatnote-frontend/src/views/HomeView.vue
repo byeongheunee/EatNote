@@ -263,7 +263,7 @@ onMounted(fetchMeals)
 /* 페이지 전체 배경 */
 .home-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 50%, #faf7f2 100%);
 }
 
 .home-container {

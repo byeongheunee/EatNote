@@ -263,9 +263,9 @@ const goToDetail = () => {
   gap: 6px;
   margin-top: 8px;
   padding: 6px 10px;
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  background: linear-gradient(135deg, #f5f4f0, #f8f4e3);
   border-radius: 12px;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  border: 1.5px solid rgba(231, 126, 28, 0.3);
 }
 
 .calories-icon {
