@@ -147,7 +147,7 @@ public class MealController {
         return MyApiResponse.success(meals, "MY_RECENT_MEALS_SUCCESS", "최근 식단 조회 성공");
     }
     
-    @Operation(summary = "내가 받은 최근 피드백 5개 조회", description = "로그인한 사용자가 받은 최근 피드백 5개를 조회합니다.")
+    @Operation(summary = "내가 받은 최근 3일 동안 받은 피드백", description = "로그인한 사용자가 최근 3일간 받은 최근 피드백 조회합니다.")
     @GetMapping("/my/recent-feedbacks")
     public MyApiResponse<List<MealFeedbackListViewResponse>> getMyRecentFeedbacks(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getUserId();

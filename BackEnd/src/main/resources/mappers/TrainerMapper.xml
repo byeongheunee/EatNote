@@ -110,7 +110,8 @@
     JOIN users u ON uf.from_user_id = u.user_id
     WHERE uf.to_user_id = #{trainerId}
       AND uf.status = 'PENDING'
-</select>
+      ORDER BY uf.requested_at DESC
+	</select>
 	
     
 </mapper>

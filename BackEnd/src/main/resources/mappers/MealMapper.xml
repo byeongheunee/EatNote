@@ -406,8 +406,8 @@
 		JOIN users u ON m.user_id = u.user_id
 		WHERE
 		m.user_id = #{userId}
+			AND m.meal_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
 		ORDER BY m.meal_time DESC
-		LIMIT 9
 	</select>
 
 	<select id="findMealsWithoutFeedbackByTrainer"

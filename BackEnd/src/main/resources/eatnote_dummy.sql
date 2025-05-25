@@ -1510,3 +1510,20 @@ INSERT INTO content_like (content_like_id, user_id, content_type, content_id, li
 (613, 14, 'COMMENT', 253, 'LIKE', '2025-05-24 13:30:24'),
 (614, 1, 'COMMENT', 253, 'LIKE', '2025-05-24 13:30:24'),
 (615, 8, 'COMMENT', 253, 'LIKE', '2025-05-24 13:30:24');
+
+
+INSERT INTO article_file (file_id, article_id, original_name, saved_name, file_path, file_type, uploaded_at) VALUES
+(1, 1, '1.totenheum_win_europeancup.jpg', '1.totenheum_win_europeancup.jpg', '/uploads/article/1.totenheum_win_europeancup.jpg', 'image/jpeg', '2025-05-19 16:00:00'),
+(2, 2, '10.dietmeals_for_home_alone.jpeg', '10.dietmeals_for_home_alone.jpeg', '/uploads/article/10.dietmeals_for_home_alone.jpeg', 'image/jpeg', '2025-05-19 13:00:00'),
+(3, 3, '11.vegeterian.jpeg', '11.vegeterian.jpeg', '/uploads/article/11.vegeterian.jpeg', 'image/jpeg', '2025-05-16 15:00:00'),
+(4, 4, '12.meat_eater.jpeg', '12.meat_eater.jpeg', '/uploads/article/12.meat_eater.jpeg', 'image/jpeg', '2025-05-23 14:00:00'),
+(5, 5, '13.foods_for_pregnant.jpeg', '13.foods_for_pregnant.jpeg', '/uploads/article/13.foods_for_pregnant.jpeg', 'image/jpeg', '2025-05-24 14:00:00'),
+(6, 6, '14.difference_between_good_and_bad_colestrol.jpeg', '14.difference_between_good_and_bad_colestrol.jpeg', '/uploads/article/14.difference_between_good_and_bad_colestrol.jpeg', 'image/jpeg', '2025-05-19 11:00:00'),
+(7, 7, '2.sugar_in_foods.jpeg', '2.sugar_in_foods.jpeg', '/uploads/article/2.sugar_in_foods.jpeg', 'image/jpeg', '2025-05-16 9:00:00'),
+(8, 8, '3.mbti_issue.jpeg', '3.mbti_issue.jpeg', '/uploads/article/3.mbti_issue.jpeg', 'image/jpeg', '2025-05-18 14:00:00'),
+(9, 9, '4.girgroup_aespa.jpeg', '4.girgroup_aespa.jpeg', '/uploads/article/4.girgroup_aespa.jpeg', 'image/jpeg', '2025-05-21 10:00:00'),
+(10, 10, '5.travel_gyeongju.jpeg', '5.travel_gyeongju.jpeg', '/uploads/article/5.travel_gyeongju.jpeg', 'image/jpeg', '2025-05-17 13:00:00'),
+(11, 11, '6.my_weekly_meals.jpeg', '6.my_weekly_meals.jpeg', '/uploads/article/6.my_weekly_meals.jpeg', 'image/jpeg', '2025-05-13 17:00:00'),
+(12, 12, '7.foods_for_kids.jpeg', '7.foods_for_kids.jpeg', '/uploads/article/7.foods_for_kids.jpeg', 'image/jpeg', '2025-05-22 15:00:00'),
+(13, 13, '8.bulkup_meals.jpeg', '8.bulkup_meals.jpeg', '/uploads/article/8.bulkup_meals.jpeg', 'image/jpeg', '2025-05-13 8:00:00'),
+(14, 14, '9.greensalad.jpeg', '9.greensalad.jpeg', '/uploads/article/9.greensalad.jpeg', 'image/jpeg', '2025-05-22 12:00:00');

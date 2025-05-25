@@ -31,8 +31,8 @@
       <main class="article-body">
         <!-- 메인 이미지 -->
         <div v-if="article.imageUrl" class="main-image-container">
-          <img 
-            :src="getImageUrl(article.imageUrl)" 
+          <img
+            :src="getImageUrl(article.imageUrl)"
             :alt="article.title"
             class="main-image"
           />
@@ -47,14 +47,14 @@
         <div v-if="additionalImages.length" class="additional-images">
           <h4 class="images-title">첨부 이미지</h4>
           <div class="images-grid">
-            <div 
-              v-for="(img, index) in additionalImages" 
-              :key="index" 
+            <div
+              v-for="(img, index) in additionalImages"
+              :key="index"
               class="image-item"
             >
-              <img 
+              <img
                 :src="getImageUrl(img.filePath)"
-                :alt="img.originalName" 
+                :alt="img.originalName"
                 class="attachment-image"
               />
             </div>
@@ -204,7 +204,7 @@ const openAuthorProfile = async () => {
   console.log('isMyArticle:', isMyArticle.value)
   console.log('article.userId:', article.value?.userId)
   console.log('currentUser.userId:', currentUser.value?.userId)
-  
+
   // 내가 작성한 글이면 모달 열지 않음
   if (isMyArticle.value) {
     console.log('내가 작성한 글이므로 모달을 열지 않습니다')
