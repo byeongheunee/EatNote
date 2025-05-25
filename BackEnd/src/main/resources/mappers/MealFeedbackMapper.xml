@@ -97,8 +97,8 @@
 	  JOIN users t ON mf.trainer_id = t.user_id
 	  LEFT JOIN trainer_details td ON t.user_id = td.user_id
 	  WHERE m.user_id = #{userId}
+	  	 AND mf.created_at >= DATE_SUB(NOW(), INTERVAL 3 DAY)
 	  ORDER BY mf.created_at DESC
-	  LIMIT 5
 	</select>
 	
 	<!-- 트레이너가 작성한 피드백 수 -->
