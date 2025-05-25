@@ -278,7 +278,7 @@ onMounted(fetchMeals)
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
   backdrop-filter: blur(10px);
   border-radius: 24px;
-  padding: 20px 60px; /* 좌우에 충분한 공간 확보 */
+  padding: 10px 10px; /* 좌우에 공간 확보 */
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.5);
   overflow: hidden;

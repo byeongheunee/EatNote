@@ -17,9 +17,9 @@
         :slides-per-view="3"
         :space-between="15" 
         :breakpoints="{
-          640: { slidesPerView: 2, spaceBetween: 10 },
-          768: { slidesPerView: 2, spaceBetween: 12 },
-          1024: { slidesPerView: 2, spaceBetween: 14 }
+          640: { slidesPerView: 3, spaceBetween: 10 },
+          768: { slidesPerView: 3, spaceBetween: 12 },
+          1024: { slidesPerView: 3, spaceBetween: 14 }
         }"
         navigation
         class="follow-requests-swiper"
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation } from 'swiper/modules'
 import 'swiper/css'
@@ -51,6 +51,9 @@ import { useAuthStore } from '@/stores/auth'
 const auth = useAuthStore()
 const users = ref([])
 const loading = ref(true)
+
+// emit 정의
+const emit = defineEmits(['update-count'])
 
 const fetchRequests = async () => {
   try {
@@ -99,6 +102,11 @@ const rejectRequest = async (followId) => {
     alert('팔로우 거절에 실패했습니다.')
   }
 }
+
+// users 배열 변화 감지하여 부모에 개수 전달
+watch(users, (newUsers) => {
+  emit('update-count', newUsers.length)
+}, { immediate: true })
 
 onMounted(fetchRequests)
 </script>

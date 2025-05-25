@@ -48,10 +48,10 @@
 
           <!-- 피드백 내용 -->
           <div class="feedback-content">
-            <div class="content-label">
+            <!-- <div class="content-label">
               <span class="label-icon">💬</span>
               <span class="label-text">피드백</span>
-            </div>
+            </div> -->
             <p class="content-text">{{ feedback.content }}</p>
           </div>
 

@@ -43,8 +43,15 @@
               </div>
             </div>
             <div class="card-container">
+              <!-- 빈 상태 -->
+              <div v-if="recentMeals.length === 0" class="empty-state">
+                <div class="empty-icon">🍽️</div>
+                <p class="empty-text">최근 등록 식단이 없습니다</p>
+                <p class="empty-subtext">새로운 식단을 등록해 보세요!</p>
+              </div>
+              
               <!-- Swiper로 변경 -->
-              <div class="swiper-section">
+              <div v-else class="swiper-section">
                 <Swiper 
                   :modules="[Navigation]" 
                   :slides-per-view="2"
@@ -71,29 +78,21 @@
           <section class="content-section">
             <div class="section-header">
               <h2 class="section-title">팔로우 요청</h2>
-              <div class="section-icon">👥</div>
+              <div class="section-badge">
+                <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                <span class="badge-text">{{ followRequestCount }}개</span>
+              </div>
             </div>
             <div class="card-container">
-              <PendingFollowRequests />
+              <PendingFollowRequests @update-count="updateFollowRequestCount" />
             </div>
           </section>
         </div>
 
         <!-- 오른쪽 열 -->
         <div class="right-column">
-          <!-- 빠른 메뉴 -->
-          <!-- <section class="quick-menu-section">
-            <div class="section-header">
-              <h2 class="section-title">빠른 메뉴</h2>
-              <div class="section-icon">⚡</div>
-            </div>
-            <div class="card-container">
-              <QuickMenuCard />
-            </div>
-          </section> -->
-
           <!-- 최근 받은 피드백 -->
-          <section class="content-section">
+          <section class="feedback-section">
             <div class="section-header">
               <h2 class="section-title">최근 받은 피드백</h2>
               <div class="section-badge">
@@ -101,7 +100,7 @@
                 <span class="badge-text">{{ recentFeedbacks.length }}개</span>
               </div>
             </div>
-            <div class="card-container feedback-card">
+            <div class="feedback-card-container">
               <RecentFeedbackCard :feedbacks="recentFeedbacks" />
             </div>
           </section>
@@ -122,7 +121,6 @@ import Header from '@/components/common/Header.vue'
 import MealStatsCard from '@/components/member/MealStatsCard.vue'
 import RecentMealsCard from '@/components/member/RecentMealsCard.vue'
 import RecentFeedbackCard from '@/components/member/RecentFeedbackCard.vue'
-import QuickMenuCard from '@/components/member/QuickMenuCard.vue'
 import PendingFollowRequests from '@/components/PendingFollowRequests.vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
@@ -134,6 +132,7 @@ const userNickname = computed(() => auth.user?.nickname || '회원')
 const mealStats = ref(null)
 const recentMeals = ref([])
 const recentFeedbacks = ref([])
+const followRequestCount = ref(0) // 팔로우 요청 개수 추가
 
 const fetchDashboardData = async () => {
   try {
@@ -157,6 +156,11 @@ const fetchDashboardData = async () => {
   }
 }
 
+// 팔로우 요청 개수 업데이트 함수
+const updateFollowRequestCount = (count) => {
+  followRequestCount.value = count
+}
+
 onMounted(fetchDashboardData)
 </script>
 
@@ -168,7 +172,7 @@ onMounted(fetchDashboardData)
 }
 
 .dashboard-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -198,20 +202,6 @@ onMounted(fetchDashboardData)
   width: 100%;
 }
 
-.quick-menu-section {
-  flex: 3;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.quick-menu-section .card-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 .stats-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
   backdrop-filter: blur(10px);
@@ -224,10 +214,12 @@ onMounted(fetchDashboardData)
 /* 대시보드 그리드 */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 6.6fr 3.4fr;
+  grid-template-columns: 6.5fr 3.5fr;
   gap: 2rem;
   margin-bottom: 2rem;
   width: 100%;
+  align-items: start;
+  grid-template-rows: min-content;
 }
 
 /* 반응형 대응 */
@@ -275,7 +267,7 @@ onMounted(fetchDashboardData)
   color: #f59e0b;
 }
 
-/* 콘텐츠 섹션 */
+/* 왼쪽 열 */
 .left-column {
   display: flex;
   flex-direction: column;
@@ -283,14 +275,45 @@ onMounted(fetchDashboardData)
   min-width: 0;
 }
 
+/* 오른쪽 열 - 피드백 전용 */
 .right-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
   min-width: 0;
-  height: fit-content; /* 또는 특정 높이 설정 */
 }
 
+/* 피드백 섹션 - 고정 높이로 제한 */
+.feedback-section {
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 0.6s ease-out;
+  max-height: 1400px; /* 최대 높이 제한 */
+}
+
+/* 피드백 카드 컨테이너 - 스크롤 가능 */
+.feedback-card-container {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px; /* 최소 높이 설정 */
+  max-height: 990px; /* 최대 높이 설정 */
+}
+
+.feedback-card-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* 일반 콘텐츠 섹션 */
 .content-section {
   animation: fadeInUp 0.6s ease-out;
 }
@@ -299,18 +322,33 @@ onMounted(fetchDashboardData)
   animation-delay: 0.1s;
 }
 
-/* 피드백 카드 높이 조정 */
-.feedback-card {
-  height: 450px; /* 고정 높이 설정 */
+/* 빈 상태 */
+.empty-state {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  min-height: 200px;
 }
 
-.feedback-card .card-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* 넘치는 부분 숨김 */
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.empty-subtext {
+  font-size: 0.9rem;
+  color: #6b7280;
 }
 
 /* 카드 컨테이너 */
@@ -335,7 +373,7 @@ onMounted(fetchDashboardData)
   position: relative;
   background: transparent;
   border-radius: 0;
-  padding: 0 40px; /* 좌우 패딩을 줄임 */
+  padding: 0 40px;
   box-shadow: none;
   border: none;
   overflow: hidden;
@@ -423,7 +461,8 @@ onMounted(fetchDashboardData)
   }
   
   .card-container,
-  .stats-card {
+  .stats-card,
+  .feedback-card-container {
     padding: 1.25rem;
   }
 }
