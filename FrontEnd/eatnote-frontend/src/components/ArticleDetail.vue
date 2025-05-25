@@ -522,14 +522,11 @@ onMounted(async () => {
 .main-image {
   width: 100%;
   max-height: 500px;
-  object-fit: cover;
+  object-fit: contain; /* ✅ 변경 */
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-}
-
-.main-image:hover {
-  transform: scale(1.02);
+  background-color: #f9fafb; /* 빈 여백이 생길 수 있으므로 배경색도 추가 추천 */
 }
 
 .content-text {
@@ -542,7 +539,10 @@ onMounted(async () => {
 
 /* 추가 이미지 */
 .additional-images {
-  margin-top: 2rem;
+  width: 100%;
+  height: 200px;
+  object-fit: contain; /* ✅ cover → contain 으로 변경 */
+  background-color: #f9fafb; /* ✅ 비는 공간 대비 배경색 추가 */
 }
 
 .images-title {
@@ -562,7 +562,7 @@ onMounted(async () => {
 
 .images-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 최대 5개 기준으로 간격 유지 */
   gap: 1rem;
 }
 

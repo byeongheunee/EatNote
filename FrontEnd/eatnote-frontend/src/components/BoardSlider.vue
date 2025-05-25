@@ -2,7 +2,7 @@
   <div class="board-slider-container">
     <div class="board-slider-wrapper">
       <!-- 왼쪽 화살표 버튼 -->
-      <button 
+      <button
         v-show="showLeftArrow"
         @click="scrollLeft"
         class="nav-button nav-button-left"
@@ -14,7 +14,7 @@
       </button>
 
       <!-- 슬라이더 콘텐츠 -->
-      <div 
+      <div
         ref="sliderContainer"
         class="slider-content"
         @scroll="handleScroll"
@@ -34,22 +34,22 @@
             >
               <span class="board-icon">{{ getBoardIcon(board.name) }}</span>
               <span class="board-name">{{ board.name }}</span>
-            </button>
-            
-            <!-- 툴팁 -->
-            <div class="tooltip">
-              <div class="tooltip-content">
-                <h4 class="tooltip-title">{{ board.name }}</h4>
-                <p class="tooltip-description">{{ board.description }}</p>
+
+              <!-- ✨ 툴팁: 버튼 내부로 이동 -->
+              <div class="tooltip">
+                <div class="tooltip-content">
+                  <h4 class="tooltip-title">{{ board.name }}</h4>
+                  <p class="tooltip-description">{{ board.description }}</p>
+                </div>
+                <div class="tooltip-arrow"></div>
               </div>
-              <div class="tooltip-arrow"></div>
-            </div>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- 오른쪽 화살표 버튼 -->
-      <button 
+      <button
         v-show="showRightArrow"
         @click="scrollRight"
         class="nav-button nav-button-right"
@@ -63,8 +63,8 @@
 
     <!-- 인디케이터 -->
     <div v-if="showIndicators" class="slider-indicators">
-      <div 
-        v-for="(indicator, index) in indicators" 
+      <div
+        v-for="(indicator, index) in indicators"
         :key="index"
         :class="[
           'indicator-dot',
@@ -74,6 +74,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
@@ -85,77 +86,62 @@ const props = defineProps({
 
 const emit = defineEmits(['selectBoard'])
 
-// 슬라이더 관련 refs
+const hoveredBoardId = ref(null)
+
 const sliderContainer = ref(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 const showLeftArrow = ref(false)
 const showRightArrow = ref(false)
 
-// 슬라이더 상태
-const scrollAmount = 200 // 한 번에 스크롤할 픽셀 수
+const scrollAmount = 200
 
-// 인디케이터 표시 여부
 const showIndicators = computed(() => {
   return props.boards && props.boards.length > 4
 })
 
-// 인디케이터 상태
 const indicators = computed(() => {
   if (!props.boards || props.boards.length <= 4) return []
-  
   const totalPages = Math.ceil(props.boards.length / 4)
   const currentPage = Math.floor(getCurrentScrollPage())
-  
   return Array.from({ length: totalPages }, (_, index) => ({
     active: index === currentPage
   }))
 })
 
-// 현재 스크롤 페이지 계산
 const getCurrentScrollPage = () => {
   if (!sliderContainer.value) return 0
   const scrollLeft = sliderContainer.value.scrollLeft
   const containerWidth = sliderContainer.value.clientWidth
-  return scrollLeft / (containerWidth * 0.8) // 80% 기준으로 페이지 계산
+  return scrollLeft / (containerWidth * 0.8)
 }
 
-// 스크롤 상태 업데이트
 const updateScrollState = () => {
   if (!sliderContainer.value) return
-  
   const container = sliderContainer.value
   const scrollLeft = container.scrollLeft
   const maxScrollLeft = container.scrollWidth - container.clientWidth
-  
   canScrollLeft.value = scrollLeft > 5
   canScrollRight.value = scrollLeft < maxScrollLeft - 5
-  
-  // 항상 버튼 표시 여부 확인 (콘텐츠가 넘칠 때만)
   const hasOverflow = container.scrollWidth > container.clientWidth
   showLeftArrow.value = hasOverflow && canScrollLeft.value
   showRightArrow.value = hasOverflow && canScrollRight.value
 }
 
-// 초기 버튼 표시 상태 설정
 const checkInitialOverflow = () => {
   if (!sliderContainer.value) return
-  
   const container = sliderContainer.value
   const hasOverflow = container.scrollWidth > container.clientWidth
-  
   if (hasOverflow) {
-    showRightArrow.value = true // 오른쪽 버튼은 처음에 표시
-    showLeftArrow.value = false // 왼쪽 버튼은 스크롤 후 표시
+    showRightArrow.value = true
+    showLeftArrow.value = false
   }
 }
 
-// 스크롤 이벤트 핸들러
 const handleScroll = () => {
   updateScrollState()
 }
 
-// 왼쪽으로 스크롤
 const scrollLeft = () => {
   if (!sliderContainer.value) return
   sliderContainer.value.scrollBy({
@@ -164,7 +150,6 @@ const scrollLeft = () => {
   })
 }
 
-// 오른쪽으로 스크롤
 const scrollRight = () => {
   if (!sliderContainer.value) return
   sliderContainer.value.scrollBy({
@@ -173,28 +158,20 @@ const scrollRight = () => {
   })
 }
 
-// 게시판 선택
 const selectBoard = (boardId) => {
   emit('selectBoard', boardId)
-  
-  // 선택된 탭이 보이도록 스크롤 조정
   nextTick(() => {
     scrollToActiveTab()
   })
 }
 
-// 활성 탭으로 스크롤
 const scrollToActiveTab = () => {
   if (!sliderContainer.value) return
-  
   const activeTab = sliderContainer.value.querySelector('.board-tab-active')
   if (!activeTab) return
-  
   const container = sliderContainer.value
   const tabRect = activeTab.getBoundingClientRect()
   const containerRect = container.getBoundingClientRect()
-  
-  // 탭이 화면 밖에 있으면 스크롤
   if (tabRect.right > containerRect.right) {
     container.scrollBy({
       left: tabRect.right - containerRect.right + 20,
@@ -208,13 +185,11 @@ const scrollToActiveTab = () => {
   }
 }
 
-// 리사이즈 이벤트 핸들러
 const handleResize = () => {
   checkInitialOverflow()
   updateScrollState()
 }
 
-// 게시판 아이콘 매핑
 const getBoardIcon = (boardName) => {
   const iconMap = {
     '설문조사': '📊',
@@ -234,7 +209,6 @@ const getBoardIcon = (boardName) => {
   return iconMap[boardName] || '📝'
 }
 
-// 컴포넌트 마운트 시 초기화
 onMounted(() => {
   nextTick(() => {
     checkInitialOverflow()
@@ -244,11 +218,11 @@ onMounted(() => {
   window.addEventListener('resize', handleResize)
 })
 
-// 컴포넌트 언마운트 시 이벤트 리스너 제거
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 </script>
+
 
 <style scoped>
 /* 슬라이더 컨테이너 */

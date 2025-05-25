@@ -34,9 +34,9 @@
             <div class="goal-selector">
               <h3 class="selector-title">목표 변경</h3>
               <div class="goal-buttons">
-                <button 
-                  v-for="item in goals" 
-                  :key="item.code" 
+                <button
+                  v-for="item in goals"
+                  :key="item.code"
                   @click="selectGoal(item)"
                   :class="[
                     'goal-btn',
@@ -51,16 +51,16 @@
             <!-- 목표 기반 영상 리스트 -->
             <div class="videos-container">
               <div class="videos-grid">
-                <div 
-                  v-for="video in visibleGoalVideos" 
+                <div
+                  v-for="video in visibleGoalVideos"
                   :key="video.videoId"
                   class="video-card"
                 >
                   <div class="video-thumbnail">
-                    <iframe 
-                      :src="`https://www.youtube.com/embed/${video.videoId}`" 
+                    <iframe
+                      :src="`https://www.youtube.com/embed/${video.videoId}`"
                       title="YouTube video"
-                      frameborder="0" 
+                      frameborder="0"
                       allowfullscreen
                       class="video-iframe"
                     ></iframe>
@@ -71,12 +71,12 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- 더보기 버튼 -->
               <div class="show-more-container">
-                <button 
+                <button
                   v-if="goalBasedVideos.length > 4 && !showAllGoalVideos"
-                  @click="showAllGoalVideos = true" 
+                  @click="showAllGoalVideos = true"
                   class="show-more-btn"
                 >
                   <svg class="show-more-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,9 +107,9 @@
             <div class="exercise-selector">
               <h3 class="selector-title">추천 운동 목록</h3>
               <div class="exercise-buttons">
-                <button 
-                  v-for="exercise in gptExercises" 
-                  :key="exercise" 
+                <button
+                  v-for="exercise in gptExercises"
+                  :key="exercise"
                   @click="searchExerciseVideo(exercise)"
                   :class="[
                     'exercise-btn',
@@ -124,16 +124,16 @@
             <!-- AI 추천 영상 리스트 -->
             <div class="videos-container">
               <div class="videos-grid">
-                <div 
-                  v-for="video in visibleExerciseVideos" 
+                <div
+                  v-for="video in visibleExerciseVideos"
                   :key="video.videoId"
                   class="video-card"
                 >
                   <div class="video-thumbnail">
-                    <iframe 
-                      :src="`https://www.youtube.com/embed/${video.videoId}`" 
+                    <iframe
+                      :src="`https://www.youtube.com/embed/${video.videoId}`"
                       title="YouTube video"
-                      frameborder="0" 
+                      frameborder="0"
                       allowfullscreen
                       class="video-iframe"
                     ></iframe>
@@ -144,12 +144,12 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- 더보기 버튼 -->
               <div class="show-more-container">
-                <button 
+                <button
                   v-if="exerciseVideos.length > 4 && !showAllExerciseVideos"
-                  @click="showAllExerciseVideos = true" 
+                  @click="showAllExerciseVideos = true"
                   class="show-more-btn"
                 >
                   <svg class="show-more-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,12 +310,19 @@ onMounted(async () => {
 }
 
 .header-icon {
+  width: 56px;
+  height: 56px;
   font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .nomi-icon {
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -332,6 +339,7 @@ onMounted(async () => {
 }
 
 .header-content {
+  margin-left: 18px;
   flex: 1;
 }
 
@@ -552,11 +560,11 @@ onMounted(async () => {
   .grid.lg\\:grid-cols-2 {
     grid-template-columns: 1fr;
   }
-  
+
   .section-card {
     padding: 1.5rem;
   }
-  
+
   .videos-grid {
     gap: 1.25rem;
   }

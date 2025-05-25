@@ -10,10 +10,17 @@
         </button>
       </div>
 
-      <h1 class="text-2xl font-bold mb-6">{{ isEditMode ? '게시글 수정' : '게시글 작성' }}</h1>
+      <h1 class="text-2xl font-bold mb-2">{{ isEditMode ? '게시글 수정' : '게시글 작성' }}</h1>
 
-      <input v-model="title" type="text" placeholder="제목을 입력하세요" class="w-full border p-3 rounded mb-4 text-lg" />
-
+      <!-- 제목 입력란 + 글자 수 표시 -->
+      <div class="mb-4">
+      <!-- 글자 수 -->
+      <div class="text-sm text-gray-500 text-right mb-1">
+          {{ title.length }}/200자
+      </div>
+      <!-- 제목 input -->
+      <input v-model="title" type="text" placeholder="제목을 입력하세요" class="w-full border p-3 rounded text-lg" maxlength="200"/>
+      </div>
       <textarea v-model="content" placeholder="내용을 입력하세요" class="w-full border p-3 rounded h-60 mb-4"></textarea>
 
       <!-- 기존 이미지 목록 -->
@@ -74,6 +81,7 @@ const deletedFileIds = ref([])
 
 const getImageUrl = (path) => `http://localhost:8080${path}`
 
+
 const goToBoard = () => {
   router.push(`/community/${boardId}`)
 }
@@ -94,7 +102,15 @@ const removeExistingImage = (index) => {
 }
 
 const handleFileChange = (event) => {
-  files.value = Array.from(event.target.files)
+  const selectedFiles = Array.from(event.target.files)
+
+  const totalImages = existingImages.value.length + selectedFiles.length
+  if (totalImages > 5) {
+    toast.warning('첨부 이미지는 최대 5개까지만 업로드할 수 있습니다.')
+    return
+  }
+
+  files.value = selectedFiles
   fileNames.value = files.value.map(file => file.name)
   previewUrls.value = files.value.map(file => URL.createObjectURL(file))
 }
