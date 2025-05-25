@@ -304,7 +304,7 @@ onMounted(fetchDashboardData)
   display: flex;
   flex-direction: column;
   min-height: 400px; /* 최소 높이 설정 */
-  max-height: 990px; /* 최대 높이 설정 */
+  max-height: 993px; /* 최대 높이 설정 */
 }
 
 .feedback-card-container:hover {
@@ -373,7 +373,7 @@ onMounted(fetchDashboardData)
   position: relative;
   background: transparent;
   border-radius: 0;
-  padding: 0 40px;
+  padding: 0 0px;
   box-shadow: none;
   border: none;
   overflow: hidden;
