@@ -11,12 +11,11 @@
         </h1>
       </section>
 
-      <!-- 메인 콘텐츠: 좌우 2열 레이아웃 -->
-      <div class="main-content">
-        <!-- 왼쪽 컬럼: 나의 식단 현황 + 최근 등록 식단 + 팔로우 요청 -->
+      <div class="dashboard-grid">
+        <!-- 왼쪽 열 -->
         <div class="left-column">
           <!-- 나의 식단 현황 -->
-          <section class="content-section stats-section" v-if="mealStats">
+          <section class="stats-section" v-if="mealStats">
             <div class="section-header">
               <h2 class="section-title">나의 식단 현황</h2>
               <RouterLink 
@@ -29,7 +28,6 @@
                 새 식단 등록
               </RouterLink>
             </div>
-            
             <div class="stats-card">
               <MealStatsCard :stats="mealStats" />
             </div>
@@ -44,9 +42,28 @@
                 <span class="badge-text">{{ recentMeals.length }}개</span>
               </div>
             </div>
-            
             <div class="card-container">
-              <RecentMealsCard :meals="recentMeals" />
+              <!-- Swiper로 변경 -->
+              <div class="swiper-section">
+                <Swiper 
+                  :modules="[Navigation]" 
+                  :slides-per-view="2"
+                  :space-between="8" 
+                  :breakpoints="{
+                    640: { slidesPerView: 3, spaceBetween: 10 },
+                    768: { slidesPerView: 3, spaceBetween: 12 },
+                    1024: { slidesPerView: 3, spaceBetween: 14 }
+                  }"
+                  navigation
+                  class="recent-meal-swiper"
+                >
+                  <SwiperSlide v-for="meal in recentMeals" :key="meal.mealId">
+                    <div class="meal-card-wrapper">
+                      <RecentMealsCard :meal="meal" />
+                    </div>
+                  </SwiperSlide>
+                </Swiper>
+              </div>
             </div>
           </section>
 
@@ -56,26 +73,24 @@
               <h2 class="section-title">팔로우 요청</h2>
               <div class="section-icon">👥</div>
             </div>
-            
             <div class="card-container">
               <PendingFollowRequests />
             </div>
           </section>
         </div>
 
-        <!-- 오른쪽 컬럼: 빠른 메뉴 + 최근 받은 피드백 -->
+        <!-- 오른쪽 열 -->
         <div class="right-column">
           <!-- 빠른 메뉴 -->
-          <section class="content-section quick-menu-section">
+          <!-- <section class="quick-menu-section">
             <div class="section-header">
               <h2 class="section-title">빠른 메뉴</h2>
               <div class="section-icon">⚡</div>
             </div>
-            
             <div class="card-container">
               <QuickMenuCard />
             </div>
-          </section>
+          </section> -->
 
           <!-- 최근 받은 피드백 -->
           <section class="content-section">
@@ -86,7 +101,6 @@
                 <span class="badge-text">{{ recentFeedbacks.length }}개</span>
               </div>
             </div>
-            
             <div class="card-container feedback-card">
               <RecentFeedbackCard :feedbacks="recentFeedbacks" />
             </div>
@@ -99,12 +113,17 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+
 import Header from '@/components/common/Header.vue'
 import MealStatsCard from '@/components/member/MealStatsCard.vue'
 import RecentMealsCard from '@/components/member/RecentMealsCard.vue'
 import RecentFeedbackCard from '@/components/member/RecentFeedbackCard.vue'
 import QuickMenuCard from '@/components/member/QuickMenuCard.vue'
-import PendingFollowRequests from '@/components/Trainer/PendingFollowRequests.vue'
+import PendingFollowRequests from '@/components/PendingFollowRequests.vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
@@ -174,30 +193,50 @@ onMounted(fetchDashboardData)
   -webkit-text-fill-color: transparent;
 }
 
-/* 메인 콘텐츠 레이아웃 */
-.main-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* 왼쪽 2, 오른쪽 1 비율 */
-  gap: 2rem;
-  align-items: start;
+/* 통계 섹션 */
+.stats-section {
+  width: 100%;
 }
 
-/* 컬럼 스타일 */
-.left-column,
-.right-column {
+.quick-menu-section {
+  flex: 3;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+}
+
+.quick-menu-section .card-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.stats-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* 대시보드 그리드 */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 6.6fr 3.4fr;
   gap: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
 }
 
-/* 콘텐츠 섹션 */
-.content-section {
-  animation: fadeInUp 0.6s ease-out;
+/* 반응형 대응 */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.content-section:nth-child(1) { animation-delay: 0.1s; }
-.content-section:nth-child(2) { animation-delay: 0.2s; }
-.content-section:nth-child(3) { animation-delay: 0.3s; }
 .section-header {
   display: flex;
   align-items: center;
@@ -236,19 +275,42 @@ onMounted(fetchDashboardData)
   color: #f59e0b;
 }
 
-/* 섹션별 스타일 */
-.stats-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+/* 콘텐츠 섹션 */
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+  height: fit-content; /* 또는 특정 높이 설정 */
+}
+
+.content-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.content-section:nth-child(even) {
+  animation-delay: 0.1s;
 }
 
 /* 피드백 카드 높이 조정 */
 .feedback-card {
-  height: 100%; /* 부모 컨테이너 높이에 맞춤 */
+  height: 450px; /* 고정 높이 설정 */
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback-card .card-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 넘치는 부분 숨김 */
 }
 
 /* 카드 컨테이너 */
@@ -266,6 +328,63 @@ onMounted(fetchDashboardData)
   transform: translateY(-2px);
   box-shadow: 0 12px 35px rgba(245, 158, 11, 0.12);
   border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* 스위퍼 섹션 */
+.swiper-section {
+  position: relative;
+  background: transparent;
+  border-radius: 0;
+  padding: 0 40px; /* 좌우 패딩을 줄임 */
+  box-shadow: none;
+  border: none;
+  overflow: hidden;
+}
+
+/* 최근 식단 스위퍼 스타일 */
+.recent-meal-swiper {
+  padding: 0;
+  margin: 0;
+}
+
+.recent-meal-swiper :deep(.swiper-button-prev),
+.recent-meal-swiper :deep(.swiper-button-next) {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border-radius: 50%;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  color: #f59e0b;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  z-index: 10;
+}
+
+.recent-meal-swiper :deep(.swiper-button-prev:hover),
+.recent-meal-swiper :deep(.swiper-button-next:hover) {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 5px 18px rgba(245, 158, 11, 0.4);
+}
+
+.recent-meal-swiper :deep(.swiper-button-prev) {
+  left: 10px;
+}
+
+.recent-meal-swiper :deep(.swiper-button-next) {
+  right: 10px;
+}
+
+.recent-meal-swiper :deep(.swiper-button-prev::after),
+.recent-meal-swiper :deep(.swiper-button-next::after) {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.meal-card-wrapper {
+  padding: 0;
+  width: 100%;
 }
 
 /* 새 식단 등록 버튼 */
@@ -294,17 +413,6 @@ onMounted(fetchDashboardData)
 }
 
 /* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .main-content {
-    grid-template-columns: 1fr; /* 모바일에서 1열로 변경 */
-    gap: 1.5rem;
-  }
-  
-  .welcome-title {
-    font-size: 1.75rem;
-  }
-}
-
 @media (max-width: 768px) {
   .dashboard-container {
     padding: 16px;
@@ -354,9 +462,7 @@ onMounted(fetchDashboardData)
 }
 
 /* 스크롤 애니메이션 */
-.left-column .content-section:nth-child(1) { animation-delay: 0.1s; }
-.left-column .content-section:nth-child(2) { animation-delay: 0.2s; }
-.left-column .content-section:nth-child(3) { animation-delay: 0.3s; }
-.right-column .content-section:nth-child(1) { animation-delay: 0.4s; }
-.right-column .content-section:nth-child(2) { animation-delay: 0.5s; }
+.content-section:nth-child(1) { animation-delay: 0.2s; }
+.content-section:nth-child(2) { animation-delay: 0.3s; }
+.content-section:nth-child(3) { animation-delay: 0.4s; }
 </style>

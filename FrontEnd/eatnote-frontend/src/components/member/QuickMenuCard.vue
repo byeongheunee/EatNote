@@ -64,12 +64,16 @@ const getMenuClass = (index) => {
 <style scoped>
 .quick-menu-container {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .menu-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
+  flex: 1;
 }
 
 .menu-item {

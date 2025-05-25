@@ -1,376 +1,150 @@
 <template>
-  <div class="recent-meals-container">
-    <!-- 헤더 -->
-    <div class="meals-header">
-      <h2 class="meals-title">최근 식단</h2>
-      <RouterLink to="/meals" class="view-all-link">
-        <span>전체보기</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
-      </RouterLink>
+  <div 
+    class="recent-meal-card group"
+    @click="goToDetail"
+  >
+    <!-- 이미지 컨테이너 -->
+    <div class="image-container">
+      <img 
+        :src="getImageUrl(meal.imageUrl)" 
+        :alt="meal.detectedFoods"
+        class="meal-image" 
+        @error="handleImageError"
+      />
+      
+      <!-- 호버 오버레이 -->
+      <div class="image-overlay">
+        <div class="overlay-content">
+          <div class="view-icon">👀</div>
+          <span class="view-text">자세히 보기</span>
+        </div>
+      </div>
+      
+      <!-- 식사 시간 뱃지 -->
+      <div class="meal-time-badge">
+        <span class="meal-time-emoji">{{ getMealTypeEmoji(meal.mealType) }}</span>
+      </div>
     </div>
 
-    <!-- 식단 슬라이더 -->
-    <div class="meals-content">
-      <div v-if="meals.length === 0" class="empty-state">
-        <div class="empty-icon">🍽️</div>
-        <p class="empty-text">아직 등록된 식단이 없어요</p>
-        <RouterLink to="/meal/upload" class="empty-action">
-          첫 식단 등록하기
-        </RouterLink>
-      </div>
-
-      <div v-else class="slider-wrapper">
-        <!-- 왼쪽 화살표 -->
-        <button
-          v-if="meals.length > visibleCount && canScrollLeft"
-          class="nav-button nav-left"
-          @click="scrollLeft"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
-
-        <!-- 가로 슬라이드 카드 리스트 -->
-        <div 
-          ref="scrollContainer" 
-          class="meals-slider" 
-          @scroll="checkScroll"
-        >
-          <div class="meals-track">
-            <div
-              v-for="meal in meals"
-              :key="meal.mealId"
-              class="meal-card"
-              @click="goToMealDetail(meal.mealId)"
-            >
-              <!-- 이미지 컨테이너 -->
-              <div class="meal-image-container">
-                <img
-                  :src="getImageUrl(meal.imageUrl)"
-                  :alt="meal.detectedFoods"
-                  class="meal-image"
-                  @error="handleImageError"
-                />
-                
-                <!-- 호버 오버레이 -->
-                <div class="meal-overlay">
-                  <div class="overlay-icon">👀</div>
-                </div>
-                
-                <!-- 식사 시간 뱃지 -->
-                <div class="meal-badge">
-                  <span class="badge-emoji">{{ getMealTypeEmoji(meal.mealType) }}</span>
-                </div>
-              </div>
-
-              <!-- 카드 내용 -->
-              <div class="meal-content">
-                <h4 class="meal-title">{{ meal.detectedFoods }}</h4>
-                
-                <div class="meal-meta">
-                  <div class="meta-item">
-                    <span class="meta-icon">📅</span>
-                    <span class="meta-text">{{ formatDate(meal.mealTime) }}</span>
-                  </div>
-                  
-                  <div v-if="meal.totalCalories" class="meta-item calories">
-                    <span class="meta-icon">🔥</span>
-                    <span class="meta-text">{{ Math.round(meal.totalCalories) }}kcal</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <!-- 카드 내용 -->
+    <div class="card-content">
+      <!-- 감지된 음식 -->
+      <h3 class="food-title">{{ meal.detectedFoods }}</h3>
+      
+      <!-- 정보 섹션 -->
+      <div class="info-section">
+        <div class="date-calories-row">
+          <div class="date-info">
+            <span class="date-icon">📅</span>
+            <span class="date-text">{{ formatDate(meal.mealTime) }}</span>
+          </div>
+          
+          <div v-if="meal.totalCalories" class="calories-info">
+            <span class="calories-icon">🔥</span>
+            <span class="calories-text">{{ Math.round(meal.totalCalories) }}kcal</span>
           </div>
         </div>
-
-        <!-- 오른쪽 화살표 -->
-        <button
-          v-if="meals.length > visibleCount && canScrollRight"
-          class="nav-button nav-right"
-          @click="scrollRight"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 18l6-6 6-6"/>
-          </svg>
-        </button>
       </div>
     </div>
+
+    <!-- 카드 테두리 효과 -->
+    <div class="card-border"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, computed } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-const props = defineProps({
-  meals: {
-    type: Array,
-    default: () => []
-  }
-})
-
+const props = defineProps(['meal'])
 const router = useRouter()
-const scrollContainer = ref(null)
-const canScrollLeft = ref(false)
-const canScrollRight = ref(false)
 
-// 화면 크기에 따른 보이는 카드 수 계산
-const visibleCount = computed(() => {
-  if (typeof window === 'undefined') return 3
-  const width = window.innerWidth
-  if (width >= 1200) return 3  // 대형 화면
-  if (width >= 768) return 2   // 중간 화면
-  return 1                     // 작은 화면
-})
-
-const scrollLeft = () => {
-  const cardWidth = 220 // 카드 너비 + 간격
-  scrollContainer.value?.scrollBy({ left: -cardWidth, behavior: 'smooth' })
+// 날짜 포맷
+const formatDate = (datetime) => {
+  const date = new Date(datetime)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  return `${year}.${month}.${day}`
 }
 
-const scrollRight = () => {
-  const cardWidth = 220 // 카드 너비 + 간격
-  scrollContainer.value?.scrollBy({ left: cardWidth, behavior: 'smooth' })
+// 식사 타입에 따른 이모티콘
+const getMealTypeEmoji = (mealType) => {
+  switch (mealType) {
+    case 'breakfast': return '☀️' // 아침
+    case 'lunch': return '🍽️' // 점심  
+    case 'dinner': return '🌙' // 저녁
+    case 'extra': return '🍩' // 간식
+    default: return '🍽️'
+  }
 }
 
-const checkScroll = () => {
-  const el = scrollContainer.value
-  if (!el) return
-  canScrollLeft.value = el.scrollLeft > 5 // 5px 여유
-  canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 5
+/* 식사 타입 번역 - 제거됨 */
+
+// 이미지 URL
+const getImageUrl = (path) => {
+  return path ? `http://localhost:8080${path}` : '/images/default-meal.png'
 }
 
-onMounted(() => {
-  nextTick(() => {
-    if (props.meals.length > visibleCount.value) {
-      checkScroll()
-    }
-    
-    // 윈도우 리사이즈 이벤트 리스너
-    window.addEventListener('resize', checkScroll)
-  })
-})
-
-const goToMealDetail = (mealId) => {
-  router.push(`/meal/${mealId}`)
-}
-
-const getImageUrl = (url) => {
-  return url ? `http://localhost:8080${url}` : '/images/default-meal.png'
-}
-
+// 이미지 로드 에러 처리
 const handleImageError = (event) => {
   event.target.src = '/images/default-meal.png'
 }
 
-const formatDate = (datetime) => {
-  const date = new Date(datetime)
-  return `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`
-}
-
-const getMealTypeEmoji = (type) => {
-  switch (type) {
-    case 'breakfast': return '☀️'
-    case 'lunch': return '🍽️'
-    case 'dinner': return '🌙'
-    case 'extra': return '🍩'
-    default: return '🍽️'
-  }
+// 상세 페이지 이동
+const goToDetail = () => {
+  router.push(`/meal/${props.meal.mealId}`)
 }
 </script>
 
 <style scoped>
-.recent-meals-container {
-  width: 100%;
-  overflow: hidden; /* 컨테이너 범위 제한 */
-}
-
-/* 헤더 */
-.meals-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.2rem;
-}
-
-.meals-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #374151;
-  margin: 0;
-}
-
-.view-all-link {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
-  color: #6b7280;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
-}
-
-.view-all-link:hover {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
-}
-
-/* 컨텐츠 */
-.meals-content {
-  width: 100%;
-}
-
-/* 빈 상태 */
-.empty-state {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: #6b7280;
-}
-
-.empty-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-.empty-text {
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-}
-
-.empty-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  text-decoration: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
-}
-
-.empty-action:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
-}
-
-/* 슬라이더 래퍼 */
-.slider-wrapper {
+.recent-meal-card {
   position: relative;
   width: 100%;
-  overflow: hidden;
-}
-
-/* 네비게이션 버튼 */
-.nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  color: #f59e0b;
-}
-
-.nav-button:hover {
-  background: #f59e0b;
-  color: white;
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-}
-
-.nav-left {
-  left: -5px;
-}
-
-.nav-right {
-  right: -5px;
-}
-
-/* 슬라이더 */
-.meals-slider {
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  width: 100%;
-}
-
-.meals-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.meals-track {
-  display: flex;
-  gap: 1rem;
-  padding: 0.5rem 0;
-  width: max-content; /* 콘텐츠 크기에 맞춤 */
-}
-
-/* 식단 카드 */
-.meal-card {
-  flex: 0 0 200px; /* 고정 너비 */
-  background: #ffffff;
-  border: 1px solid #f1f5f9;
-  border-radius: 12px;
+  max-width: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  height: 240px; /* 고정 높이 */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
 }
 
-.meal-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.3);
+.recent-meal-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.4);
 }
 
 /* 이미지 컨테이너 */
-.meal-image-container {
+.image-container {
   position: relative;
   width: 100%;
-  height: 130px;
+  height: 140px;
   overflow: hidden;
+  border-radius: 12px 12px 0 0;
 }
 
 .meal-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
 
-.meal-card:hover .meal-image {
-  transform: scale(1.05);
+.recent-meal-card:hover .meal-image {
+  transform: scale(1.08);
 }
 
 /* 호버 오버레이 */
-.meal-overlay {
+.image-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.8) 0%, rgba(245, 158, 11, 0.8) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -378,145 +152,169 @@ const getMealTypeEmoji = (type) => {
   transition: opacity 0.3s ease;
 }
 
-.meal-card:hover .meal-overlay {
+.recent-meal-card:hover .image-overlay {
   opacity: 1;
 }
 
-.overlay-icon {
-  font-size: 1.2rem;
+.overlay-content {
+  text-align: center;
   color: white;
+  transform: translateY(8px);
+  transition: transform 0.3s ease;
+}
+
+.recent-meal-card:hover .overlay-content {
+  transform: translateY(0);
+}
+
+.view-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.view-text {
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 /* 식사 시간 뱃지 */
-.meal-badge {
+.meal-time-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.badge-emoji {
-  font-size: 0.8rem;
+.recent-meal-card:hover .meal-time-badge {
+  transform: scale(1.1);
+}
+
+.meal-time-emoji {
+  font-size: 1rem;
 }
 
 /* 카드 내용 */
-.meal-content {
-  padding: 1rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+.card-content {
+  padding: 14px;
+  position: relative;
+  z-index: 2;
 }
 
-.meal-title {
-  font-size: 0.85rem;
-  font-weight: 600;
+.food-title {
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #374151;
+  margin-bottom: 10px;
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  flex: 1;
+  min-height: 2.6rem;
 }
 
-/* 메타 정보 */
-.meal-meta {
+/* 정보 섹션 */
+.info-section {
+  margin-bottom: 6px;
+}
+
+.date-calories-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.meta-item {
+.date-info,
+.calories-info {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.75rem;
+  gap: 6px;
+  font-size: 0.85rem;
 }
 
-.meta-icon {
-  font-size: 0.8rem;
-  opacity: 0.7;
+.date-icon,
+.calories-icon {
+  font-size: 1rem;
+  opacity: 0.8;
 }
 
-.meta-text {
+.date-text {
   color: #6b7280;
-  font-weight: 500;
-}
-
-.meta-item.calories .meta-text {
-  color: #f59e0b;
   font-weight: 600;
 }
 
+.calories-text {
+  color: #d97706;
+  font-weight: 700;
+}
+
+/* 카드 테두리 효과 */
+.card-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, transparent 0%, rgba(251, 191, 36, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.recent-meal-card:hover .card-border {
+  opacity: 1;
+}
+
 /* 반응형 디자인 */
-@media (max-width: 768px) {
-  .meals-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+@media (max-width: 640px) {
+  .recent-meal-card {
+    max-width: 100%;
   }
   
-  .meal-card {
-    flex: 0 0 180px;
-    height: 220px;
-  }
-  
-  .meal-image-container {
+  .image-container {
     height: 120px;
   }
   
-  .meal-content {
-    padding: 0.8rem;
+  .card-content {
+    padding: 12px;
   }
   
-  .nav-button {
-    width: 28px;
-    height: 28px;
+  .food-title {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 640px) {
-  .meal-card {
-    flex: 0 0 160px;
-    height: 200px;
-  }
-  
-  .meal-image-container {
-    height: 110px;
-  }
-  
-  .meal-title {
-    font-size: 0.8rem;
-  }
-  
-  .meta-item {
-    font-size: 0.7rem;
-  }
+/* 포커스 상태 (접근성) */
+.recent-meal-card:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
 }
 
 /* 애니메이션 */
-@keyframes slideInLeft {
+@keyframes cardEnter {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
-.slider-wrapper {
-  animation: slideInLeft 0.5s ease-out;
+.recent-meal-card {
+  animation: cardEnter 0.5s ease-out;
 }
 </style>

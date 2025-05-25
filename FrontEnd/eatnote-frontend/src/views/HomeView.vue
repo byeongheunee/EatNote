@@ -14,7 +14,7 @@
           <Swiper 
             :modules="[Navigation]" 
             :slides-per-view="1"
-            :space-between="6" 
+            :space-between="10" 
             :breakpoints="{
               640: { slidesPerView: 2, spaceBetween: 8 },
               768: { slidesPerView: 3, spaceBetween: 10 },
@@ -43,7 +43,7 @@
           <Swiper 
             :modules="[Navigation]" 
             :slides-per-view="1"
-            :space-between="6" 
+            :space-between="10" 
             :breakpoints="{
               640: { slidesPerView: 2, spaceBetween: 8 },
               768: { slidesPerView: 3, spaceBetween: 10 },

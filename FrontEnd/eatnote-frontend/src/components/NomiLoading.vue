@@ -154,7 +154,7 @@ const startLoading = () => {
         currentProgress += Math.random() * 0.8 // 더 작은 증가량
         progress.value = Math.min(currentProgress, 85)
       }
-    }, 600) // 100ms → 600ms로 변경
+    }, 200) // 100ms → 600ms로 변경
   }
   
   // 초기 메시지 설정

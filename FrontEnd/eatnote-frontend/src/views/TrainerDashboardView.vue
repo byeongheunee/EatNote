@@ -10,7 +10,7 @@
 
 <script setup>
 import TodayPendingMeals from '@/components/Trainer/TodayPendingMeals.vue'
-import PendingFollowRequests from '@/components/Trainer/PendingFollowRequests.vue'
+import PendingFollowRequests from '@/components/PendingFollowRequests.vue'
 import FeedbackCalendar from '@/components/Trainer/FeedbackCalendar.vue'
 import Header from '@/components/common/Header.vue'
 
