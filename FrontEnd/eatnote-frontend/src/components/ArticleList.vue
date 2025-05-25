@@ -2,17 +2,17 @@
   <div class="article-list-container">
     <!-- 게시글 목록 -->
     <div class="articles-grid">
-      <article 
-        v-for="article in articles" 
-        :key="article.articleId" 
+      <article
+        v-for="article in articles"
+        :key="article.articleId"
         class="article-card"
         @click="$emit('open-detail', article.articleId)"
       >
         <!-- 이미지 영역 -->
         <div class="article-image-container">
           <div v-if="article.imageUrl" class="article-image-wrapper">
-            <img 
-              :src="getImageUrl(article.imageUrl)" 
+            <img
+              :src="getImageUrl(article.imageUrl)"
               :alt="article.title"
               class="article-image"
             />
@@ -55,11 +55,11 @@
               <span class="read-more">자세히 보기</span>
             </div>
             <div class="footer-right">
-              <LikeButton 
-                contentType="ARTICLE" 
-                :contentId="article.articleId" 
+              <LikeButton
+                contentType="ARTICLE"
+                :contentId="article.articleId"
                 :likeCount="article.likeCount"
-                :myReaction="article.myReaction" 
+                :myReaction="article.myReaction"
                 @onUpdated="$emit('refresh')"
                 class="like-button-custom"
               />
@@ -77,8 +77,8 @@
 <script setup>
 import LikeButton from '@/components/LikeButton.vue'
 
-const props = defineProps({ 
-  articles: Array 
+const props = defineProps({
+  articles: Array
 })
 
 defineEmits(['open-detail', 'refresh'])
@@ -169,7 +169,7 @@ const getImageUrl = (path) => `http://localhost:8080${path}`
 
 .article-image {
   width: 100%;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
@@ -361,11 +361,11 @@ const getImageUrl = (path) => `http://localhost:8080${path}`
   .articles-grid {
     gap: 1.25rem;
   }
-  
+
   .article-image-container {
     width: 240px;
   }
-  
+
   .article-content {
     padding: 1.25rem;
   }
@@ -376,30 +376,30 @@ const getImageUrl = (path) => `http://localhost:8080${path}`
     flex-direction: column;
     min-height: auto;
   }
-  
+
   .article-image-container {
     width: 100%;
     height: 200px;
   }
-  
+
   .article-content {
     padding: 1rem;
   }
-  
+
   .article-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .article-stats {
     align-self: flex-end;
   }
-  
+
   .article-title {
     font-size: 1.1rem;
   }
-  
+
   .article-excerpt {
     font-size: 0.9rem;
     -webkit-line-clamp: 2;
@@ -410,32 +410,32 @@ const getImageUrl = (path) => `http://localhost:8080${path}`
   .articles-grid {
     gap: 1rem;
   }
-  
+
   .article-content {
     padding: 0.75rem;
     gap: 0.75rem;
   }
-  
+
   .article-title {
     font-size: 1rem;
   }
-  
+
   .article-meta {
     font-size: 0.8rem;
   }
-  
+
   .article-excerpt {
     font-size: 0.85rem;
   }
-  
+
   .empty-state {
     padding: 3rem 1rem;
   }
-  
+
   .empty-icon {
     font-size: 3rem;
   }
-  
+
   .empty-title {
     font-size: 1.25rem;
   }

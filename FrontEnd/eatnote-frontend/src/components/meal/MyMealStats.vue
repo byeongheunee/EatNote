@@ -166,8 +166,37 @@
               일자별 점수 추이
             </h3>
           </div>
-          <div class="chart-content">
-            <canvas ref="dailyChartRef" class="chart-canvas"></canvas>
+
+          <!-- 영양소 비율 차트 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
+              <h2 class="text-xl font-semibold text-white flex items-center">
+                <span class="mr-2">🥘</span>
+                영양소 비율
+              </h2>
+            </div>
+            <div class="p-6">
+              <div class="mb-6">
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm text-amber-800">
+                    💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
+                  </p>
+                </div>
+                <select
+                  v-model="selectedDay"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                >
+                  <option v-for="row in dailyStats" :key="row.day" :value="row.day">
+                    {{ row.day }}
+                  </option>
+                </select>
+              </div>
+              <div class="flex justify-center">
+                <div class="w-64 h-64">
+                  <canvas ref="pieChartRef" class="w-full h-full"></canvas>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -260,6 +289,7 @@ const selectedDay = ref('')
 const loading = ref(true)
 const dailyChartRef = ref(null)
 const pieChartRef = ref(null)
+let dailyChartInstance = null
 let pieChartInstance = null
 
 function getCurrentWeekString() {
@@ -311,16 +341,17 @@ watch(selectedWeek, async (newWeek) => {
   const selected = weekList.value.find(w => w.week === newWeek)
   weekly.value = selected || {}
 
-  const aiRes = await axios.get('/api/users/statistics/weekly/ai-feedback', { headers })
-  aiFeedback.value = aiRes.data.data || {}
+  try {
+    const aiRes = await axios.get('/api/users/statistics/weekly/ai-feedback', { headers })
+    aiFeedback.value = aiRes.data.data || {}
+  } catch (err) {
+    console.error('AI 피드백 불러오기 실패:', err)
+  }
 
   await fetchDailyStats(headers)
 })
 
 watch(selectedDay, (newDay) => {
-  if (!selectedDay.value && dailyStats.value.length > 0) {
-    selectedDay.value = dailyStats.value[0].day
-  }
   const stat = dailyStats.value.find(d => d.day === newDay)
   if (stat) drawPieChart(stat)
 })
@@ -332,8 +363,18 @@ async function fetchDailyStats(headers) {
       params: { week: selectedWeek.value }
     })
     dailyStats.value = res.data.data || []
+
+    // 가장 최근 날짜로 자동 선택
+    if (dailyStats.value.length > 0) {
+      selectedDay.value = dailyStats.value[0].day
+    }
+
     await nextTick()
-    if (dailyStats.value.length > 0) drawDailyChart()
+    if (dailyStats.value.length > 0) {
+      drawDailyChart()
+      // 자동으로 첫 번째 데이터의 파이차트 그리기
+      drawPieChart(dailyStats.value[0])
+    }
   } catch (err) {
     console.error('일별 통계 불러오기 실패:', err)
     dailyStats.value = []
@@ -344,7 +385,13 @@ function drawDailyChart() {
   const ctx = dailyChartRef.value?.getContext('2d')
   if (!ctx || dailyStats.value.length === 0) return
 
-  new Chart(ctx, {
+  // 기존 차트 인스턴스 제거
+  if (dailyChartInstance) {
+    dailyChartInstance.destroy()
+    dailyChartInstance = null
+  }
+
+  dailyChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
       labels: dailyStats.value.map(d => d.day),
@@ -422,6 +469,15 @@ function drawDailyChart() {
 }
 
 function drawPieChart(stat) {
+  const ctx = pieChartRef.value?.getContext('2d')
+  if (!ctx) return
+
+  // 기존 차트 인스턴스 제거
+  if (pieChartInstance) {
+    pieChartInstance.destroy()
+    pieChartInstance = null
+  }
+
   const total = stat.avgCarbohydrates + stat.avgProtein + stat.avgFat
 
   const data = {
@@ -448,7 +504,7 @@ function drawPieChart(stat) {
         labels: {
           font: { size: 11, weight: '600' },
           usePointStyle: true,
-          padding: 15
+          padding: 12
         }
       },
       tooltip: {
@@ -463,16 +519,11 @@ function drawPieChart(stat) {
     }
   }
 
-  if (pieChartInstance) pieChartInstance.destroy()
-
-  const ctx = pieChartRef.value?.getContext('2d')
-  if (ctx) {
-    pieChartInstance = new Chart(ctx, {
-      type: 'pie',
-      data,
-      options
-    })
-  }
+  pieChartInstance = new Chart(ctx, {
+    type: 'pie',
+    data,
+    options
+  })
 }
 </script>
 

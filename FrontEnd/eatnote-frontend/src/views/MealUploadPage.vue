@@ -6,7 +6,7 @@
       <!-- 노미 캐릭터 섹션 -->
       <div class="text-center mb-8">
         <!-- 로딩 중일 때는 애니메이션 노미, 아닐 때는 기본 노미 -->
-        <NomiLoading 
+        <NomiLoading
           v-if="uploading"
           size="xl"
           :is-loading="uploading"
@@ -17,11 +17,11 @@
             '거의 다 끝났어요! ✨'
           ]"
         />
-        <NomiBasic 
+        <NomiBasic
           v-else
-          size="xl" 
-          :show-message="true" 
-          :message="{ line1: '환영해요!', line2: '식단을 기록해봐요 📝' }" 
+          size="xl"
+          :show-message="true"
+          :message="{ line1: '환영해요!', line2: '식단을 기록해봐요 📝' }"
         />
       </div>
 
@@ -39,17 +39,17 @@
 
       <!-- 메인 업로드 카드 -->
       <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden">
-        
+
         <!-- 이미지 미리보기 섹션 -->
         <div v-if="imagePreviewUrl" class="relative">
           <div class="aspect-w-16 aspect-h-12 bg-gray-100">
-            <img 
-              :src="imagePreviewUrl" 
-              alt="미리보기" 
+            <img
+              :src="imagePreviewUrl"
+              alt="미리보기"
               class="w-full h-64 object-cover"
             />
           </div>
-          <button 
+          <button
             @click="clearImage"
             class="absolute top-4 right-4 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors"
           >
@@ -60,15 +60,15 @@
         <!-- 업로드 폼 -->
         <div class="p-8">
           <form v-if="!uploading && !uploadComplete" @submit.prevent="handleUpload" class="space-y-6">
-            
+
             <!-- 파일 업로드 영역 -->
             <div class="space-y-3">
               <label class="block text-lg font-semibold text-gray-800">
                 📸 식단 사진 선택
               </label>
-              
+
               <!-- 드래그 앤 드롭 영역 -->
-              <div 
+              <div
                 class="relative border-2 border-dashed border-yellow-300 rounded-2xl p-8 text-center hover:border-yellow-400 transition-colors group cursor-pointer"
                 :class="{ 'bg-yellow-50': !imagePreviewUrl }"
                 @click="$refs.fileInput.click()"
@@ -76,16 +76,16 @@
                 @dragover.prevent
                 @dragenter.prevent
               >
-                <input 
+                <input
                   ref="fileInput"
-                  type="file" 
+                  type="file"
                   id="image"
-                  @change="onFileChange" 
-                  accept="image/*" 
-                  required 
+                  @change="onFileChange"
+                  accept="image/*"
+                  required
                   class="hidden"
                 />
-                
+
                 <div v-if="!imagePreviewUrl" class="space-y-3">
                   <div class="text-6xl">📷</div>
                   <div>
@@ -93,7 +93,7 @@
                     <p class="text-sm text-gray-500">JPG, PNG 파일을 지원합니다</p>
                   </div>
                 </div>
-                
+
                 <div v-else class="space-y-2">
                   <div class="text-4xl">✅</div>
                   <p class="text-lg font-medium text-green-700">사진이 선택되었습니다!</p>
@@ -103,8 +103,8 @@
             </div>
 
             <!-- 업로드 버튼 -->
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               :disabled="!imageFile"
               class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 disabled:from-gray-300 disabled:to-gray-400 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] disabled:scale-100 shadow-lg hover:shadow-xl disabled:cursor-not-allowed text-lg"
             >
@@ -123,9 +123,9 @@
                 </div>
                 <h3 class="text-xl font-bold text-gray-800">분석 완료!</h3>
               </div>
-              
+
               <div class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div class="bg-white/60 rounded-xl p-4">
                     <div class="text-sm text-gray-600 font-medium mb-1">감지된 음식</div>
                     <div class="text-lg font-semibold text-gray-800">{{ result.detectedFoods }}</div>
@@ -134,15 +134,19 @@
                     <div class="text-sm text-gray-600 font-medium mb-1">총 칼로리</div>
                     <div class="text-lg font-semibold text-gray-800">{{ result.totalCalories }} kcal</div>
                   </div>
+                  <div class="bg-white/60 rounded-xl p-4">
+                    <div class="text-sm text-gray-600 font-medium mb-1">AI 점수</div>
+                    <div class="text-lg font-semibold text-gray-800">{{ result.autoScore }} / 10</div>
+                  </div>
                 </div>
-                
+
                 <div class="bg-white/60 rounded-xl p-4">
                   <div class="text-sm text-gray-600 font-medium mb-2">AI 피드백</div>
                   <div class="text-gray-700 leading-relaxed">{{ result.aiFeedback }}</div>
                 </div>
               </div>
 
-              <button 
+              <button
                 @click="goToMealDetail(result.mealId)"
                 class="w-full mt-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
               >
@@ -156,7 +160,7 @@
                 <div class="text-2xl">💡</div>
                 <div class="text-sm text-blue-800 leading-relaxed">
                   <strong class="font-semibold">EatNote AI 건강 점수란?</strong><br>
-                  개인정보(성별, 연령, 신체지수)를 바탕으로 권장 섭취량 대비 평가됩니다. 
+                  개인정보(성별, 연령, 신체지수)를 바탕으로 권장 섭취량 대비 평가됩니다.
                   열량 적정성, 영양소 균형, 나트륨·당류 등을 종합 분석하여 10점 만점으로 산정합니다.
                 </div>
               </div>
@@ -167,15 +171,15 @@
 
       <!-- 하단 네비게이션 -->
       <div class="flex gap-4 mt-8">
-        <button 
-          @click="goToDashboard" 
+        <button
+          @click="goToDashboard"
           class="flex-1 bg-white/60 hover:bg-white/80 backdrop-blur-sm text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-gray-300 cursor-pointer"
         >
           📋 식단 목록으로
         </button>
-        
-        <button 
-          v-if="uploadComplete" 
+
+        <button
+          v-if="uploadComplete"
           @click="resetForm"
           class="flex-1 bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl cursor-pointer"
         >
@@ -252,9 +256,9 @@ const goToMealDetail = (mealId) => {
 onMounted(() => {
   const now = new Date()
   const hour = now.getHours()
-  if (hour >= 5 && hour < 11) mealType.value = 'breakfast'
+  if (hour >= 4 && hour < 11) mealType.value = 'breakfast'
   else if (hour < 16) mealType.value = 'lunch'
-  else if (hour < 21) mealType.value = 'dinner'
+  else if (hour < 23) mealType.value = 'dinner'
   else mealType.value = 'extra'
 })
 

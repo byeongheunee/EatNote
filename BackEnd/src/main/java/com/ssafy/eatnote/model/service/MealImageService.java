@@ -76,7 +76,7 @@ public class MealImageService {
 			return "breakfast";
 		} else if (now.isBefore(LocalTime.of(16, 0))) {
 			return "lunch";
-		} else if (now.isBefore(LocalTime.of(24, 0))) {
+		} else if (now.isBefore(LocalTime.of(23, 0))) {
 			return "dinner";
 		} else {
 			return "extra";
