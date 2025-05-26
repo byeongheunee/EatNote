@@ -203,7 +203,7 @@ onMounted(fetchMyInfo)
 
 .edit-button-active {
   width: 100%;
-  background: #10b981;
+  background: #0aa674;
   color: white;
   padding: 12px 24px;
   border-radius: 8px;

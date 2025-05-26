@@ -205,12 +205,14 @@ const goToMealDetail = (mealId) => {
   position: relative;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(212, 211, 211, 0.3);
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  margin-top: 10px;
+  margin-left: 5px;
 }
 
 .feedback-item:hover {

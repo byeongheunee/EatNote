@@ -1,20 +1,21 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 flex items-center justify-center p-4">
+    style="min-height: 100vh; background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);"
+    class="flex items-center justify-center p-4"
+  >
     <!-- 메인 컨테이너 -->
     <div class="w-full max-w-lg">
       <!-- 로고 및 제목 -->
       <div class="text-center mb-8">
         <div class="inline-flex items-center gap-3 mb-4">
-          <div
-            class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl flex items-center justify-center shadow-lg">
-            <span class="text-white text-2xl">🍽️</span>
-          </div>
-          <h1 @click="goHome"
-            class="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent cursor-pointer hover:from-orange-700 hover:to-amber-700 transition-all duration-300">
-            EatNote
-          </h1>
+          <img
+            @click="goHome"
+            src="@/assets/icons/EatNoteLogo.png"  
+            alt="EatNote 로고"
+            class="h-18 cursor-pointer hover:opacity-80 transition-all duration-300"
+          />
         </div>
+        
         <p class="text-gray-600 text-lg">새로운 시작을 위한 첫 걸음</p>
       </div>
 

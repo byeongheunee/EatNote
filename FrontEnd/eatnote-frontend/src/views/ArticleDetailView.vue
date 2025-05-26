@@ -1,9 +1,10 @@
 <template>
-  <div class="article-detail-page">
+  <div class="community-page">
     <Header />
 
-    <div class="container mx-auto px-6 py-12 max-w-7xl">
-      
+    <!-- 메인 컨테이너 -->
+    <div class="main-container">
+
       <!-- 페이지 헤더 -->
       <div class="page-header">
         <div class="header-content">
@@ -13,7 +14,7 @@
       </div>
 
       <!-- 게시판 슬라이더 -->
-      <div class="board-slider-wrapper">
+      <div class="slider-wrapper">
         <BoardSlider
           :boards="filteredBoards"
           :selectedBoardId="selectedBoardId"
@@ -21,31 +22,28 @@
         />
       </div>
 
-      <!-- 게시글 상세 컨테이너 -->
-      <div class="article-detail-container">
-        <div class="article-wrapper">
-          <!-- 상단 네비게이션 -->
-          <div class="article-navigation">
+      <!-- 게시글 상세 내용 -->
+      <div class="content-card">
+        <!-- 상단 네비게이션 -->
+        <div class="content-header">
+          <div class="header-top">
             <div class="breadcrumb">
               <span class="breadcrumb-item">커뮤니티</span>
               <span class="breadcrumb-separator">›</span>
               <span class="breadcrumb-item current">게시글 상세</span>
             </div>
             <div class="article-actions">
-              <button 
-                @click="goBack"
-                class="action-button list"
-              >
+              <button @click="goBack" class="action-button">
                 <span class="action-icon">📋</span>
                 <span>목록으로</span>
               </button>
             </div>
           </div>
+        </div>
 
-          <!-- 게시글 내용 -->
-          <div class="article-content-wrapper">
-            <ArticleDetail :articleId="articleId" />
-          </div>
+        <!-- 게시글 내용 -->
+        <div class="article-content-wrapper">
+          <ArticleDetail :articleId="articleId" />
         </div>
       </div>
     </div>
@@ -90,10 +88,6 @@ const goBack = () => {
   router.push(`/community/${selectedBoardId.value}`)
 }
 
-const goToWrite = () => {
-  router.push(`/community/${selectedBoardId.value}/write`)
-}
-
 const filteredBoards = computed(() => {
   const type = userType.value
 
@@ -112,36 +106,24 @@ onMounted(() => {
 
 <style scoped>
 /* 페이지 전체 배경 */
-.article-detail-page {
+.community-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
-  position: relative;
 }
 
-.article-detail-page::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(255, 107, 71, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.container {
+/* 메인 컨테이너 - 1400px로 설정 */
+.main-container {
   max-width: 1400px;
-  position: relative;
-  z-index: 1;
+  margin: 0 auto;
+  padding: 32px 16px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 /* 페이지 헤더 */
 .page-header {
   margin-bottom: 48px;
   padding-bottom: 24px;
-  border-bottom: 2px solid rgba(245, 158, 11, 0.2);
+  border-bottom: 2px solid #f59e0b;
 }
 
 .header-content {
@@ -161,72 +143,36 @@ onMounted(() => {
   line-height: 1.6;
 }
 
-/* 네비게이션 버튼 */
-.nav-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-  min-width: 140px;
-  justify-content: center;
+/* 슬라이더 래퍼 */
+.slider-wrapper {
+  margin-bottom: 32px;
 }
 
-.nav-button.secondary {
-  background: rgba(255, 255, 255, 0.9);
-  color: #5D4037;
-  border: 2px solid rgba(255, 140, 105, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-.nav-button.secondary:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: #FF8C69;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 140, 105, 0.3);
-}
-
-.button-icon {
-  font-size: 18px;
-}
-
-/* 게시판 슬라이더 래퍼 */
-.board-slider-wrapper {
-  margin-bottom: 40px;
-}
-
-/* 게시글 상세 컨테이너 */
-.article-detail-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  box-shadow: 
-    0 12px 40px rgba(255, 107, 71, 0.15),
-    0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 140, 105, 0.2);
+/* 콘텐츠 카드 */
+.content-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
   overflow: hidden;
 }
 
-.article-wrapper {
-  position: relative;
+/* 콘텐츠 헤더 */
+.content-header {
+  background: linear-gradient(to right, #f9fafb, #f3f4f6);
+  padding: 24px;
+  border-bottom: 1px solid #d1d5db;
 }
 
-/* 상단 네비게이션 */
-.article-navigation {
+/* 헤더 상단 */
+.header-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 24px 32px;
-  background: linear-gradient(135deg, #FFF8E7 0%, #FFFBF0 100%);
-  border-bottom: 1px solid rgba(255, 140, 105, 0.2);
+  justify-content: space-between;
 }
 
+/* 브레드크럼 */
 .breadcrumb {
   display: flex;
   align-items: center;
@@ -235,44 +181,46 @@ onMounted(() => {
 }
 
 .breadcrumb-item {
-  color: #8D6E63;
+  color: #4b5563;
   font-weight: 500;
 }
 
 .breadcrumb-item.current {
-  color: #FF6B47;
+  color: #f59e0b;
   font-weight: 600;
 }
 
 .breadcrumb-separator {
-  color: #8D6E63;
+  color: #4b5563;
   font-size: 16px;
 }
 
+/* 액션 버튼 */
 .article-actions {
   display: flex;
   gap: 12px;
 }
 
 .action-button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 140, 105, 0.3);
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(to right, #4b5563, #374151);
+  color: white;
+  border: none;
   border-radius: 8px;
-  color: #5D4037;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
 }
 
 .action-button:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: #FF8C69;
+  background: linear-gradient(to right, #374151, #1f2937);
   transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(100, 116, 139, 0.15);
 }
 
 .action-icon {
@@ -281,14 +229,11 @@ onMounted(() => {
 
 /* 게시글 내용 래퍼 */
 .article-content-wrapper {
-  padding: 0;
+  border-top: 1px solid #e5e7eb;
+  padding: 8px;
 }
 
-/* 애니메이션 */
-.container {
-  animation: fadeInUp 0.6s ease-out;
-}
-
+/* 애니메이션 - 헤더 제외 */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -301,9 +246,26 @@ onMounted(() => {
 }
 
 /* 반응형 디자인 */
-@media (max-width: 768px) {
-  .container {
+@media (max-width: 1024px) {
+  .main-container {
     padding: 24px 16px;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .article-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 16px 12px;
   }
   
   .page-header {
@@ -318,31 +280,32 @@ onMounted(() => {
     font-size: 16px;
   }
   
-  .board-slider-wrapper {
-    margin-bottom: 32px;
+  .content-header {
+    padding: 16px;
   }
   
-  .article-navigation {
+  .header-top {
     flex-direction: column;
-    gap: 16px;
     align-items: flex-start;
-    padding: 20px;
+    gap: 8px;
   }
   
   .article-actions {
     width: 100%;
-    justify-content: flex-end;
   }
 }
 
-@media (max-width: 480px) {
-  .article-navigation {
-    padding: 16px;
+@media (max-width: 640px) {
+  .main-title {
+    font-size: 28px;
   }
   
-  .action-button {
-    padding: 6px 12px;
-    font-size: 13px;
+  .main-subtitle {
+    font-size: 16px;
+  }
+  
+  .content-header {
+    padding: 12px;
   }
 }
 </style>

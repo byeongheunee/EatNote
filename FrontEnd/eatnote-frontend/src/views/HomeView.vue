@@ -263,7 +263,7 @@ onMounted(fetchMeals)
 /* 페이지 전체 배경 */
 .home-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 50%, #faf7f2 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
 .home-container {
@@ -494,7 +494,7 @@ onMounted(fetchMeals)
 
 /* CTA 버튼 */
 .cta-button {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #ecad3e, #eb9b41);
   color: white;
   font-size: 1.2rem;
   font-weight: 700;

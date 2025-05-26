@@ -3,68 +3,69 @@
     <Header @go-feature="scrollToFeature" @go-usage="scrollToUsage" />
 
     <!-- 메인 컨테이너 -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="main-container">
+
       <!-- 페이지 헤더 -->
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
-          <span class="bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">
-            커뮤니티
-          </span>
-        </h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          다양한 주제로 소통하고 정보를 공유해보세요
-        </p>
+      <div class="page-header">
+        <div class="header-content">
+          <h1 class="main-title">커뮤니티</h1>
+          <p class="main-subtitle">다양한 주제로 소통하고 정보를 공유해보세요</p>
+        </div>
       </div>
 
+
       <!-- 게시판 슬라이더 -->
-      <div class="mb-8">
+      <div class="slider-wrapper">
         <BoardSlider :boards="filteredBoards" :selectedBoardId="selectedBoardId" @selectBoard="selectBoard" />
       </div>
 
       <!-- 게시글 목록 -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      <div class="content-card">
         <!-- 게시글 헤더 + 검색 영역 통합 -->
-        <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-6 border-b border-gray-300">
+        <div class="content-header">
           <!-- 상단: 게시판 제목과 게시글 수 -->
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">
-              {{ selectedBoard?.name || 게시판 }}
+          <div class="header-top">
+            <h2 class="board-title">
+              {{ selectedBoard?.name || '게시판' }}
             </h2>
-            <p v-if="selectedBoard?.description" class="text-sm text-gray-600 sm:ml-4">
+            <p v-if="selectedBoard?.description" class="board-description">
               {{ selectedBoard.description }}
             </p>
-            <div class="text-sm text-gray-600 font-medium">
+            <div class="article-count">
               총 {{ articles.length }}개의 게시글
             </div>
           </div>
 
           <!-- 하단: 검색 및 필터 영역 -->
-          <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
+          <div class="search-controls">
             <!-- 왼쪽: 검색 컨트롤들 -->
-            <div class="flex flex-1 gap-3 items-center">
+            <div class="search-left">
               <!-- 검색 기준 선택 -->
-              <div class="relative flex-shrink-0">
-                <select v-model="searchField"
-                  class="appearance-none bg-white/90 border border-gray-300 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200">
+              <div class="select-wrapper">
+                <select v-model="searchField" class="search-select">
                   <option value="ALL">🔍 전체</option>
                   <option value="TITLE">📝 제목</option>
                   <option value="CONTENT">📄 내용</option>
                   <option value="NICKNAME">👤 작성자</option>
                 </select>
-                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="select-arrow">
+                  <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </div>
               </div>
 
-              <!-- 검색어 입력 - 더 넓게 -->
-              <div class="relative flex-1">
-                <input v-model="keyword" type="text" placeholder="검색어를 입력하세요"
-                  class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200 bg-white/90"
-                  @keyup.enter="handleSearch" />
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <!-- 검색어 입력 -->
+              <div class="input-wrapper">
+                <input 
+                  v-model="keyword" 
+                  type="text" 
+                  placeholder="검색어를 입력하세요"
+                  class="search-input"
+                  @keyup.enter="handleSearch" 
+                />
+                <div class="input-icon">
+                  <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
@@ -72,14 +73,13 @@
               </div>
 
               <!-- 정렬 기준 선택 -->
-              <div class="relative flex-shrink-0">
-                <select v-model="sort"
-                  class="appearance-none bg-white/90 border border-gray-300 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200">
+              <div class="select-wrapper">
+                <select v-model="sort" class="search-select">
                   <option value="createdAt">🕒 최신순</option>
                   <option value="viewCnt">👁️ 조회순</option>
                 </select>
-                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="select-arrow">
+                  <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </div>
@@ -87,12 +87,10 @@
             </div>
 
             <!-- 오른쪽: 버튼들 -->
-            <div class="flex gap-3 flex-shrink-0">
+            <div class="search-right">
               <!-- 검색 버튼 -->
-              <button
-                class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-gray-600 to-gray-700 text-white text-sm font-medium rounded-lg hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                @click="handleSearch">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button class="search-button" @click="handleSearch">
+                <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
@@ -100,10 +98,8 @@
               </button>
 
               <!-- 글쓰기 버튼 -->
-              <button v-if="canWriteArticle"
-                class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                @click="goToWrite">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button v-if="canWriteArticle" class="write-button" @click="goToWrite">
+                <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 글쓰기
@@ -113,24 +109,23 @@
         </div>
 
         <!-- 게시글 리스트 -->
-        <div class="divide-y divide-gray-200">
+        <div class="article-list-wrapper">
           <ArticleList :articles="pagedArticles" @open-detail="openDetail" @refresh="handleRefresh" />
         </div>
 
         <!-- 빈 상태 -->
-        <div v-if="articles.length === 0" class="text-center py-16">
-          <div class="w-24 h-24 mx-auto mb-4 text-gray-400">
+        <div v-if="articles.length === 0" class="empty-state">
+          <div class="empty-icon">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
               </path>
             </svg>
           </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">게시글이 없습니다</h3>
-          <p class="text-gray-600 mb-6">첫 번째 게시글을 작성해보세요!</p>
-          <button v-if="canWriteArticle" @click="goToWrite"
-            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="empty-title">게시글이 없습니다</h3>
+          <p class="empty-description">첫 번째 게시글을 작성해보세요!</p>
+          <button v-if="canWriteArticle" @click="goToWrite" class="empty-write-button">
+            <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             글쓰기
@@ -139,10 +134,9 @@
       </div>
 
       <!-- 더보기 버튼 -->
-      <div v-if="pagedArticles.length < articles.length" class="text-center mt-8">
-        <button @click="loadMore"
-          class="inline-flex items-center px-8 py-3 bg-white/80 backdrop-blur-sm text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-white/90 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-if="pagedArticles.length < articles.length" class="load-more-wrapper">
+        <button @click="loadMore" class="load-more-button">
+          <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
           더보기 ({{ articles.length - pagedArticles.length }}개 남음)
@@ -324,178 +318,427 @@ onMounted(fetchBoards)
 </script>
 
 <style scoped>
-/* 페이지 전체 배경 - 회색톤으로 변경 */
+/* 페이지 전체 배경 */
 .community-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
-/* 그라데이션 텍스트 */
-.bg-clip-text {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* 메인 컨테이너 - 1400px로 설정 */
+.main-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-/* 백드롭 블러 효과 */
-.backdrop-blur-sm {
+/* 페이지 헤더 */
+.page-header {
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f59e0b;
+}
+
+.header-content {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 42px;
+  font-weight: 600;
+  color: #2D1810;
+  margin-bottom: 12px;
+}
+
+.main-subtitle {
+  font-size: 18px;
+  color: #5D4037;
+  line-height: 1.6;
+}
+
+/* 슬라이더 래퍼 */
+.slider-wrapper {
+  margin-bottom: 32px;
+}
+
+/* 콘텐츠 카드 */
+.content-card {
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
 }
 
-/* 커스텀 스크롤바 */
-::-webkit-scrollbar {
-  width: 6px;
+/* 콘텐츠 헤더 */
+.content-header {
+  background: linear-gradient(to right, #f9fafb, #f3f4f6);
+  padding: 24px;
+  border-bottom: 1px solid #d1d5db;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
+/* 헤더 상단 */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #64748b;
-  border-radius: 3px;
+.board-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+.board-description {
+  font-size: 14px;
+  color: #4b5563;
+  margin-left: 16px;
 }
 
-/* 애니메이션 */
-.community-page {
-  animation: fadeIn 0.5s ease-out;
+.article-count {
+  font-size: 14px;
+  color: #4b5563;
+  font-weight: 500;
 }
 
-@keyframes fadeIn {
+/* 검색 컨트롤 */
+.search-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.search-left {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  align-items: center;
+}
+
+.search-right {
+  display: flex;
+  gap: 12px;
+}
+
+/* 셀렉트 래퍼 */
+.select-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.search-select {
+  appearance: none;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 32px 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.search-select:hover {
+  border-color: #9ca3af;
+}
+
+.search-select:focus {
+  outline: none;
+  border-color: #6b7280;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+.select-arrow {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  pointer-events: none;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+/* 인풋 래퍼 */
+.input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-input:hover {
+  border-color: #9ca3af;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #6b7280;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+}
+
+.input-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+.search-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+/* 버튼 스타일 */
+.search-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(to right, #4b5563, #374151);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
+}
+
+.search-button:hover {
+  background: linear-gradient(to right, #374151, #1f2937);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(100, 116, 139, 0.15);
+}
+
+.write-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
+}
+
+.write-button:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(100, 116, 139, 0.15);
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 게시글 리스트 래퍼 */
+.article-list-wrapper {
+  border-top: 1px solid #e5e7eb;
+  padding: 8px;
+}
+
+/* 빈 상태 */
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+}
+
+.empty-icon {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 16px;
+  color: #9ca3af;
+}
+
+.empty-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.empty-description {
+  color: #4b5563;
+  margin-bottom: 24px;
+}
+
+.empty-write-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px -1px rgba(100, 116, 139, 0.06);
+}
+
+.empty-write-button:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+}
+
+/* 더보기 버튼 래퍼 */
+.load-more-wrapper {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.load-more-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px -1px rgba(100, 116, 139, 0.06);
+}
+
+.load-more-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
+}
+
+/* 애니메이션 - 헤더 제외 */
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* 호버 효과 */
-.hover\:scale-105:hover {
-  transform: scale(1.05);
-}
-
-/* 포커스 효과 - 그레이 색상으로 변경 */
-input:focus,
-select:focus {
-  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
-}
-
 /* 반응형 디자인 */
-@media (max-width: 768px) {
-  .community-page {
-    padding: 1rem;
+@media (max-width: 1024px) {
+  .main-container {
+    padding: 24px 16px;
   }
-
-  .max-w-7xl {
-    padding: 0 1rem;
-  }
-
-  /* 모바일에서 검색 영역 세로 정렬 */
-  .flex.flex-1.gap-3.items-center {
+  
+  .search-controls {
     flex-direction: column;
     align-items: stretch;
   }
-
-  .flex.gap-3.flex-shrink-0 {
+  
+  .search-left {
     flex-direction: column;
   }
+  
+  .search-right {
+    flex-direction: column;
+  }
+}
 
-  .relative.flex-shrink-0 {
+@media (max-width: 768px) {
+  .main-container {
+    padding: 16px 12px;
+  }
+  
+  .page-header {
+    margin-bottom: 32px;
+  }
+  
+  .main-title {
+    font-size: 32px;
+  }
+  
+  .main-subtitle {
+    font-size: 16px;
+  }
+  
+  .content-header {
+    padding: 16px;
+  }
+  
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .board-description {
+    margin-left: 0;
+  }
+  
+  .search-left {
+    gap: 8px;
+  }
+  
+  .search-right {
+    gap: 8px;
+  }
+  
+  .select-wrapper {
     width: 100%;
   }
-
-  .relative.flex-1 {
+  
+  .search-select {
     width: 100%;
   }
 }
 
 @media (max-width: 640px) {
-  .text-4xl {
-    font-size: 2rem;
+  .main-title {
+    font-size: 28px;
   }
-
-  .px-6 {
-    padding-left: 1rem;
-    padding-right: 1rem;
+  
+  .main-subtitle {
+    font-size: 16px;
   }
-
-  .py-8 {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+  
+  .content-header {
+    padding: 12px;
   }
-}
-
-/* 그림자 효과 개선 - 그레이 색상으로 변경 */
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
-}
-
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1), 0 2px 4px -1px rgba(100, 116, 139, 0.06);
-}
-
-/* 버튼 호버 효과 개선 */
-button:hover {
-  transform: translateY(-1px);
-}
-
-/* 테두리 및 배경 투명도 조정 */
-.bg-white\/80 {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-.bg-white\/90 {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-.bg-white\/60 {
-  background-color: rgba(255, 255, 255, 0.6);
-}
-
-/* 그레이 테마 색상 변수들 */
-.border-gray-200 {
-  border-color: #e5e7eb;
-}
-
-.border-gray-300 {
-  border-color: #d1d5db;
-}
-
-.border-gray-400 {
-  border-color: #9ca3af;
-}
-
-.text-gray-400 {
-  color: #9ca3af;
-}
-
-.text-gray-500 {
-  color: #6b7280;
-}
-
-.text-gray-600 {
-  color: #4b5563;
-}
-
-.from-gray-50 {
-  --tw-gradient-from: #f9fafb;
-}
-
-.to-gray-100 {
-  --tw-gradient-to: #f3f4f6;
-}
-
-.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
-  border-color: #e5e7eb;
 }
 </style>

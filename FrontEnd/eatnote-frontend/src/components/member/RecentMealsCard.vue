@@ -101,6 +101,8 @@ const goToDetail = () => {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+  margin-top: 10px;
+  margin-left: 5px;
 }
 
 .recent-meal-card:hover {

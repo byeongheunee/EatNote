@@ -174,7 +174,7 @@ onMounted(fetchDashboardData)
 /* 페이지 전체 배경 */
 .member-dashboard-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
 .dashboard-container {
@@ -253,11 +253,12 @@ onMounted(fetchDashboardData)
   font-size: 1.5rem;
   font-weight: 700;
   color: #374151;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #272727, #222221);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
+  border-bottom: 3px solid #f59e0b;
 }
 
 /* 툴팁 스타일 */
@@ -434,7 +435,10 @@ onMounted(fetchDashboardData)
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 1.5rem;
+  padding-right: 15px;
+  padding-left: 10px;
+  padding-top: 4px;
+  padding-bottom: 10px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.4);
   transition: all 0.3s ease;
@@ -508,7 +512,7 @@ onMounted(fetchDashboardData)
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #0aa674, #0aa674);
   color: white;
   border: none;
   border-radius: 12px;
@@ -517,8 +521,9 @@ onMounted(fetchDashboardData)
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(176, 179, 178, 0.3);
   text-decoration: none;
+  height: 42px;
 }
 
 .new-meal-button:hover {

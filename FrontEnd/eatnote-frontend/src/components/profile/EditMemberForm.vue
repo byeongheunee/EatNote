@@ -508,6 +508,7 @@ onMounted(() => {
   font-size: 14px;
   font-weight: 500;
   color: #6b7280;
+  margin-right: 20px;
 }
 
 .info-input,

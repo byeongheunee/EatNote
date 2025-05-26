@@ -3,59 +3,58 @@
     <!-- 상단 헤더 -->
     <Header />
 
-    <div class="meal-container">
+    <!-- 메인 컨테이너 -->
+    <div class="main-container">
       <!-- 페이지 헤더 -->
-      <section class="page-header">
-        <h1 class="page-title">🍽️ 식단 관리</h1>
-        <p class="page-subtitle">나의 식단을 기록하고 분석해보세요</p>
-      </section>
+      <div class="page-header">
+        <div class="header-content">
+          <h1 class="main-title">식단 관리</h1>
+          <p class="main-subtitle">나의 식단을 기록하고 분석해보세요</p>
+        </div>
+      </div>
 
       <!-- 탭 메뉴 -->
-      <section class="tab-section">
-        <div class="tab-menu-container">
-          <div class="tab-menu">
-            <button 
-              :class="{ active: tab === 'my' }" 
-              @click="tab = 'my'"
-              class="tab-button"
-            >
-              <span class="tab-icon">📝</span>
-              <span class="tab-text">나의 식단</span>
-            </button>
-            
-            <button 
-              :class="{ active: tab === 'followers' }" 
-              @click="tab = 'followers'"
-              class="tab-button"
-            >
-              <span class="tab-icon">👥</span>
-              <span class="tab-text">팔로워 식단</span>
-            </button>
-            
-            <button 
-              :class="{ active: tab === 'stats' }" 
-              @click="tab = 'stats'"
-              class="tab-button"
-            >
-              <span class="tab-icon">📊</span>
-              <span class="tab-text">나의 식단 통계</span>
-            </button>
-          </div>
+      <div class="tab-wrapper">
+        <div class="tab-container">
+          <button 
+            :class="{ active: tab === 'my' }" 
+            @click="tab = 'my'"
+            class="tab-button"
+          >
+            <span class="tab-icon">📝</span>
+            <span class="tab-text">나의 식단</span>
+          </button>
+          
+          <button 
+            :class="{ active: tab === 'followers' }" 
+            @click="tab = 'followers'"
+            class="tab-button"
+          >
+            <span class="tab-icon">👥</span>
+            <span class="tab-text">팔로워 식단</span>
+          </button>
+          
+          <button 
+            :class="{ active: tab === 'stats' }" 
+            @click="tab = 'stats'"
+            class="tab-button"
+          >
+            <span class="tab-icon">📊</span>
+            <span class="tab-text">나의 식단 통계</span>
+          </button>
         </div>
-      </section>
+      </div>
 
-      <!-- 탭별 내용 -->
-      <section class="content-section">
-        <div class="tab-content-wrapper">
-          <Transition name="tab-fade" mode="out-in">
-            <div :key="tab" class="tab-content">
-              <MyMealList v-if="tab === 'my'" />
-              <FollowerMealList v-if="tab === 'followers'" />
-              <MyMealStats v-if="tab === 'stats'" />
-            </div>
-          </Transition>
-        </div>
-      </section>
+      <!-- 콘텐츠 영역 -->
+      <div class="content-card">
+        <Transition name="tab-fade" mode="out-in">
+          <div :key="tab" class="tab-content">
+            <MyMealList v-if="tab === 'my'" />
+            <FollowerMealList v-if="tab === 'followers'" />
+            <MyMealStats v-if="tab === 'stats'" />
+          </div>
+        </Transition>
+      </div>
     </div>
   </div>
 </template>
@@ -91,134 +90,115 @@ const handleLogout = () => {
 /* 페이지 전체 배경 */
 .meal-view-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
-.meal-container {
+/* 메인 컨테이너 - 1400px로 설정 */
+.main-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 32px 16px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 /* 페이지 헤더 */
 .page-header {
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f59e0b;
+}
+
+.header-content {
   text-align: center;
-  margin-bottom: 3rem;
-  animation: fadeInUp 0.6s ease-out;
 }
 
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.main-title {
+  font-size: 42px;
+  font-weight: 600;
+  color: #2D1810;
+  margin-bottom: 12px;
 }
 
-.page-subtitle {
-  font-size: 1.1rem;
-  color: #6b7280;
-  font-weight: 500;
-  margin: 0;
+.main-subtitle {
+  font-size: 18px;
+  color: #5D4037;
+  line-height: 1.6;
 }
 
-/* 탭 섹션 */
-.tab-section {
-  margin-bottom: 2rem;
-  animation: fadeInUp 0.6s ease-out;
-  animation-delay: 0.2s;
+/* 탭 래퍼 */
+.tab-wrapper {
+  margin-bottom: 32px;
 }
 
-.tab-menu-container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
+.tab-container {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
   border-radius: 16px;
-  padding: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.tab-menu {
+  padding: 8px;
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0;
-  background: rgba(249, 250, 251, 0.6);
-  border-radius: 12px;
-  padding: 0.25rem;
-  border: 1px solid rgba(229, 231, 235, 0.3);
-  position: relative;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
 }
 
 .tab-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
+  gap: 8px;
+  padding: 16px 24px;
   border: none;
   background: transparent;
   color: #6b7280;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  border-radius: 8px;
+  transition: all 0.3s ease;
+  border-radius: 12px;
   white-space: nowrap;
-  min-height: 60px;
+  position: relative;
 }
 
 .tab-button:hover {
   color: #374151;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(249, 250, 251, 0.8);
+  transform: translateY(-1px);
 }
 
 .tab-button.active {
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: white;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  transform: translateY(-2px);
 }
 
 .tab-button.active:hover {
   background: linear-gradient(135deg, #d97706, #b45309);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
 }
 
 .tab-icon {
-  font-size: 1.1rem;
+  font-size: 20px;
 }
 
 .tab-text {
   font-weight: inherit;
 }
 
-/* 콘텐츠 섹션 */
-.content-section {
-  animation: fadeInUp 0.6s ease-out;
-  animation-delay: 0.4s;
-}
-
-.tab-content-wrapper {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
+/* 콘텐츠 카드 */
+.content-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
   border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease;
-  min-height: 500px;
-}
-
-.tab-content-wrapper:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  min-height: 600px;
 }
 
 .tab-content {
+  padding: 32px;
   width: 100%;
 }
 
@@ -244,64 +224,7 @@ const handleLogout = () => {
   transform: translateY(0) scale(1);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .tab-button {
-    padding: 0.875rem 1.25rem;
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .meal-container {
-    padding: 1rem;
-  }
-  
-  .page-title {
-    font-size: 2rem;
-  }
-  
-  .page-subtitle {
-    font-size: 1rem;
-  }
-  
-  .tab-menu {
-    grid-template-columns: 1fr;
-    gap: 0.25rem;
-  }
-  
-  .tab-button {
-    justify-content: center;
-    padding: 1rem 1.25rem;
-    min-height: auto;
-  }
-  
-  .tab-content-wrapper {
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .page-header {
-    margin-bottom: 2rem;
-  }
-  
-  .tab-menu-container {
-    padding: 0.75rem;
-  }
-  
-  .tab-button {
-    font-size: 0.85rem;
-    padding: 0.875rem 1rem;
-  }
-  
-  .tab-content-wrapper {
-    padding: 1.25rem;
-    min-height: 400px;
-  }
-}
-
-/* 애니메이션 */
+/* 애니메이션 - 헤더 제외 */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -313,24 +236,118 @@ const handleLogout = () => {
   }
 }
 
-/* 호버 효과 강화 */
-.tab-menu-container:hover {
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .main-container {
+    padding: 24px 16px;
+  }
+
+  .tab-container {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .tab-button {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 16px 12px;
+  }
+  
+  .page-header {
+    margin-bottom: 32px;
+  }
+  
+  .main-title {
+    font-size: 32px;
+  }
+  
+  .main-subtitle {
+    font-size: 16px;
+  }
+
+  .tab-container {
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .tab-button {
+    padding: 12px 16px;
+    font-size: 14px;
+    gap: 6px;
+  }
+  
+  .tab-icon {
+    font-size: 18px;
+  }
+
+  .tab-content {
+    padding: 24px;
+  }
+
+  .content-card {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-title {
+    font-size: 28px;
+  }
+  
+  .main-subtitle {
+    font-size: 16px;
+  }
+
+  .tab-button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .tab-content {
+    padding: 20px;
+  }
+
+  .content-card {
+    min-height: 400px;
+  }
+}
+
+/* 탭 버튼 애니메이션 지연 */
+.tab-button:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.tab-button:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.tab-button:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* 호버 효과 */
+.tab-container:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 25px rgba(245, 158, 11, 0.08);
-  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 12px 20px -3px rgba(100, 116, 139, 0.12), 0 6px 8px -2px rgba(100, 116, 139, 0.07);
 }
 
-/* 로딩 애니메이션 */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.content-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -3px rgba(100, 116, 139, 0.12), 0 6px 8px -2px rgba(100, 116, 139, 0.07);
 }
 
-.loading {
-  animation: pulse 2s infinite;
+/* 접근성 */
+.tab-button:focus {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+.tab-button:focus:not(:focus-visible) {
+  outline: none;
 }
 </style>

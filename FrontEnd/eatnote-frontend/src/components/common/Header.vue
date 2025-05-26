@@ -5,7 +5,13 @@
         
         <!-- 왼쪽: 로고 -->
         <div class="logo-section" @click="goHome">
-          <span class="logo-text">EatNote</span>
+          <!-- <span class="logo-text">EatNote</span> -->
+          <img
+            @click="goHome"
+            src="@/assets/icons/EatNoteLogo.png"
+            alt="EatNote 로고"
+            class="h-10 mt-8 mb-5 cursor-pointer hover:opacity-80 transition-all duration-300"
+          />
         </div>
 
         <!-- 가운데: 네비게이션 메뉴 -->
@@ -445,9 +451,9 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 }
 
 .profile-button {
-  background: #3b82f6;
+  background: #6496ee;
   color: white;
-  border-color: #3b82f6;
+  border-color: #6496ee;
 }
 
 .profile-button:hover {

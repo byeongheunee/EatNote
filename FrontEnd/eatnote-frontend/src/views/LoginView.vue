@@ -1,21 +1,19 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center px-4">
+    style="min-height: 100vh; background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);"
+    class="flex items-center justify-center px-4">
     <div
       class="max-w-md w-full bg-white/80 backdrop-blur-sm shadow-2xl rounded-3xl p-8 space-y-6 border border-orange-100">
       <!-- 헤더 -->
       <div class="text-center space-y-2">
-        <div
-          class="w-20 h-20 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full mx-auto flex items-center justify-center mb-4 p-1 shadow-lg">
-          <!-- PNG 로고 이미지를 넣으려면 아래 img 태그 주석을 해제하고 src에 이미지 경로를 입력하세요 -->
-          <img src="@/assets/icons/favicon.png" alt="EatNote Logo" class="w-full h-full object-contain rounded-full" />
-
-          <!-- 현재는 이모지 사용 (PNG 사용시 위 img 태그 활성화하고 아래 span 삭제) -->
-          <!-- <span class="text-2xl">🍽️</span> -->
+        <div class="flex justify-center">
+          <img
+            @click="goHome"
+            src="@/assets/icons/EatNoteLogo.png"
+            alt="EatNote 로고"
+            class="h-18 mt-8 mb-5 cursor-pointer hover:opacity-80 transition-all duration-300"
+          />
         </div>
-        <h2 class="text-3xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
-          EatNote 로그인
-        </h2>
         <p class="text-gray-600 text-sm">건강한 식습관 관리의 시작</p>
       </div>
 

@@ -114,12 +114,6 @@
               </div>
             </div>
 
-            <!-- 담당 트레이너 -->
-            <!-- <div v-if="memberDetails.trainerNickname" class="trainer-info">
-              <h4 class="subsection-title">담당 트레이너</h4>
-              <p class="trainer-name">{{ memberDetails.trainerNickname }}</p>
-            </div> -->
-
             <!-- 알레르기 정보 -->
             <div class="allergy-section">
               <h4 class="subsection-title">알레르기</h4>
@@ -201,16 +195,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- 자격증 이미지 (기존 섹션 제거) -->
-            <!-- <div v-if="trainerDetails.certificationImage" class="cert-image-section">
-              <h4 class="subsection-title">자격증</h4>
-              <img 
-                :src="getProfileImage(trainerDetails.certificationImage)" 
-                alt="자격증" 
-                class="cert-image"
-              />
-            </div> -->
 
             <!-- 소개 -->
             <div class="intro-section">
@@ -305,13 +289,28 @@
       </div>
     </div>
 
-    <!-- 프로필 모달 -->
-    <UserProfileModal 
-      :visible="profileModalVisible" 
-      :profile="selectedProfile" 
-      @close="profileModalVisible = false"
-      @follow-requested="handleFollowRequested" 
-    />
+    <!-- 프로필 모달 - 개선된 버전 -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="profileModalVisible" class="profile-modal-overlay" @click="closeProfileModal">
+          <div 
+            class="profile-modal-container" 
+            @click.stop
+            :style="{
+              '--origin-x': modalOrigin.x,
+              '--origin-y': modalOrigin.y
+            }"
+          >
+            <UserProfileModal
+              :visible="profileModalVisible"
+              :profile="selectedProfile"
+              @close="closeProfileModal"
+              @follow-requested="handleFollowRequested"
+            />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -327,7 +326,7 @@ import UserProfileModal from '@/components/UserProfileModal.vue'
 import { useToast } from 'vue-toastification'
 
 const showGymPreview = ref(false)
-const showCertPreview = ref(false)  // 자격증 미리보기 상태 추가
+const showCertPreview = ref(false)
 const toast = useToast()
 const myArticles = ref([])
 const auth = useAuthStore()
@@ -346,6 +345,16 @@ const trainerFollowListRef = ref(null)
 
 const profileModalVisible = ref(false)
 const selectedProfile = ref(null)
+const modalOrigin = ref({ x: '50%', y: '50%' }) // 모달 시작 위치
+
+// 모달 닫기 함수 개선
+const closeProfileModal = () => {
+  profileModalVisible.value = false
+  // 약간의 딜레이 후 데이터 정리
+  setTimeout(() => {
+    selectedProfile.value = null
+  }, 300)
+}
 
 const handleFollowRequested = async () => {
   if (selectedProfile.value?.followStatus === 'ACCEPTED') {
@@ -360,10 +369,22 @@ const handleFollowRequested = async () => {
     await memberFollowListRef.value.refresh()
   }
 
-  profileModalVisible.value = false
+  closeProfileModal()
 }
 
-const openProfileModal = async (otherUser) => {
+const openProfileModal = async (otherUser, event) => {
+  // 클릭 위치 계산
+  if (event) {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    
+    modalOrigin.value = {
+      x: `${centerX}px`,
+      y: `${centerY}px`
+    }
+  }
+
   try {
     const token = auth.accessToken
     const res = await axios.get(`/api/users/${otherUser.userId}/profile`, {
@@ -611,15 +632,15 @@ onMounted(async () => {
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;  /* 기존 20px에서 24px로 증가 */
-  margin-bottom: 40px;  /* 기존 32px에서 40px로 증가 */
+  gap: 24px;
+  margin-bottom: 40px;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;  /* 기존 4px에서 8px로 증가 */
-  margin-bottom: 20px;  /* 항목 간 간격 추가 */
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .info-label {
@@ -632,7 +653,7 @@ onMounted(async () => {
   font-size: 16px;
   font-weight: 600;
   color: #111827;
-  line-height: 1.5;  /* 줄 간격 추가 */
+  line-height: 1.5;
 }
 
 .verified {
@@ -647,38 +668,34 @@ onMounted(async () => {
 .trainer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;  /* 기존 32px에서 40px로 증가 */
-  margin-bottom: 40px;  /* 기존 32px에서 40px로 증가 */
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
-/* 트레이너 기본 정보와 자격증 정보 */
 .trainer-basic,
 .trainer-cert {
-  padding: 24px;  /* 내부 패딩 추가 */
-  background: rgba(249, 250, 251, 0.5);  /* 배경색으로 구분 */
-  border-radius: 12px;  /* 둥근 모서리 */
-  border: 1px solid rgba(229, 231, 235, 0.3);  /* 테두리 추가 */
+  padding: 24px;
+  background: rgba(249, 250, 251, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(229, 231, 235, 0.3);
 }
 
-/* 자격증 링크 스타일 */
 .cert-links {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* 자격증 모달 전용 스타일 */
 .cert-modal-content {
   background: white;
   border-radius: 16px;
   width: 90%;
-  max-width: 900px;  /* 600px에서 900px로 증가 */
-  max-height: 90vh;  /* 80vh에서 90vh로 증가 */
+  max-width: 900px;
+  max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-/* 자격증 모달 스타일 */
 .cert-image-modal {
   padding: 20px;
   text-align: center;
@@ -686,19 +703,18 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 600px;  /* 400px에서 600px로 증가 */
+  min-height: 600px;
 }
 
 .cert-modal-image {
   max-width: 100%;
-  max-height: 75vh;  /* 60vh에서 75vh로 증가 */
+  max-height: 75vh;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   object-fit: contain;
-  background: white;  /* 이미지 배경 */
+  background: white;
 }
 
-/* 웹사이트 링크 */
 .website-links {
   display: flex;
   gap: 12px;
@@ -730,42 +746,39 @@ onMounted(async () => {
   background: #f9fafb;
 }
 
-/* 자격증 이미지 */
 .cert-image-section {
-  margin-bottom: 40px;  /* 기존 32px에서 40px로 증가 */
-  padding: 24px;  /* 패딩 추가 */
-  background: rgba(249, 250, 251, 0.3);  /* 배경색 추가 */
-  border-radius: 12px;  /* 둥근 모서리 */
+  margin-bottom: 40px;
+  padding: 24px;
+  background: rgba(249, 250, 251, 0.3);
+  border-radius: 12px;
 }
 
 .cert-image {
   max-width: 300px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 12px;  /* 제목과 이미지 사이 간격 */
+  margin-top: 12px;
 }
 
-/* 소개 섹션 */
 .intro-section {
-  margin-top: 40px;  /* 상단 간격 증가 */
+  margin-top: 40px;
 }
 
 .intro-item {
-  margin-bottom: 32px;  /* 기존 24px에서 32px로 증가 */
-  padding: 24px;  /* 패딩 추가 */
-  background: rgba(249, 250, 251, 0.3);  /* 배경색 추가 */
-  border-radius: 12px;  /* 둥근 모서리 */
-  border: 1px solid rgba(229, 231, 235, 0.3);  /* 테두리 추가 */
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(249, 250, 251, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(229, 231, 235, 0.3);
 }
 
 .intro-text {
   color: #374151;
-  line-height: 1.8;  /* 기존 1.6에서 1.8로 증가 */
-  margin-top: 12px;  /* 제목과 내용 사이 간격 */
-  font-size: 15px;  /* 폰트 크기 약간 증가 */
+  line-height: 1.8;
+  margin-top: 12px;
+  font-size: 15px;
 }
 
-/* 트레이너 정보 */
 .trainer-info {
   margin-bottom: 24px;
 }
@@ -775,7 +788,6 @@ onMounted(async () => {
   color: #111827;
 }
 
-/* 알레르기 */
 .allergy-section {
   margin-bottom: 24px;
 }
@@ -796,7 +808,6 @@ onMounted(async () => {
   border: 1px solid #fecaca;
 }
 
-/* 팔로우 섹션 (전체 폭) */
 .follow-section-full {
   background: white;
   border-radius: 16px;
@@ -806,7 +817,6 @@ onMounted(async () => {
   margin-bottom: 24px;
 }
 
-/* 알레르기 섹션 스타일 */
 .no-allergy {
   text-align: center;
   padding: 20px;
@@ -820,7 +830,6 @@ onMounted(async () => {
   font-style: italic;
 }
 
-/* 빈 게시글 상태 */
 .empty-articles {
   text-align: center;
   padding: 4rem 2rem;
@@ -848,7 +857,6 @@ onMounted(async () => {
   font-weight: 500;
 }
 
-/* 게시글 섹션 */
 .articles-section {
   background: white;
   border-radius: 16px;
@@ -857,7 +865,6 @@ onMounted(async () => {
   padding: 32px;
 }
 
-/* 모달 */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -968,6 +975,55 @@ onMounted(async () => {
   font-size: 14px;
 }
 
+/* 프로필 모달 스타일 개선 */
+.profile-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.profile-modal-container {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
+}
+
+/* 모달 트랜지션 */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+}
+
+.modal-enter-active .profile-modal-container,
+.modal-leave-active .profile-modal-container {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from .profile-modal-container,
+.modal-leave-to .profile-modal-container {
+  transform: scale(0.3) translate(-50%, -50%);
+  opacity: 0;
+}
+
 /* 반응형 */
 @media (max-width: 1280px) {
   .trainer-grid {
@@ -990,6 +1046,16 @@ onMounted(async () => {
   
   .info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .profile-modal-overlay {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-modal-overlay {
+    padding: 5px;
   }
 }
 </style>

@@ -51,12 +51,18 @@
               v-for="(img, index) in additionalImages"
               :key="index"
               class="image-item"
+              @click="openImageModal(img)"
             >
               <img
                 :src="getImageUrl(img.filePath)"
                 :alt="img.originalName"
                 class="attachment-image"
               />
+              <div class="image-overlay">
+                <svg class="zoom-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -88,7 +94,7 @@
             </svg>
             <span>조회 {{ article.viewCnt }}</span>
           </div>
-          <div class="reaction-buttons">
+          <div class="reaction-buttons scaled-down">
             <LikeDislikeButtons
               contentType="ARTICLE"
               :contentId="articleId"
@@ -143,13 +149,28 @@
       </div>
     </section>
 
-    <!-- 프로필 모달 -->
-    <UserProfileModal
-      :visible="isUserProfileOpen"
-      :profile="selectedProfile"
-      @close="isUserProfileOpen = false"
-      @follow-requested="handleFollowRequested"
-    />
+    <!-- 프로필 모달 - 개선된 버전 -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="isUserProfileOpen" class="modal-overlay" @click="closeModal">
+          <div 
+            class="modal-container" 
+            @click.stop
+            :style="{
+              '--origin-x': modalOrigin.x,
+              '--origin-y': modalOrigin.y
+            }"
+          >
+            <UserProfileModal
+              :visible="isUserProfileOpen"
+              :profile="selectedProfile"
+              @close="closeModal"
+              @follow-requested="handleFollowRequested"
+            />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -182,6 +203,16 @@ const currentUser = computed(() => auth.user)
 
 const isUserProfileOpen = ref(false)
 const selectedProfile = ref(null)
+const modalOrigin = ref({ x: '50%', y: '50%' }) // 모달 시작 위치
+
+// 모달 닫기 함수 개선
+const closeModal = () => {
+  isUserProfileOpen.value = false
+  // 약간의 딜레이 후 데이터 정리
+  setTimeout(() => {
+    selectedProfile.value = null
+  }, 300)
+}
 
 const handleFollowRequested = () => {
   // 팔로우 요청 → 'PENDING' 으로
@@ -198,8 +229,14 @@ const handleFollowRequested = () => {
   }
 }
 
+// 이미지 모달 열기 함수 (필요시 구현)
+const openImageModal = (image) => {
+  // 이미지 확대 모달 로직 구현 가능
+  console.log('이미지 클릭:', image)
+}
+
 // 작성자 프로필 열기
-const openAuthorProfile = async () => {
+const openAuthorProfile = async (event) => {
   console.log('openAuthorProfile 호출됨')
   console.log('isMyArticle:', isMyArticle.value)
   console.log('article.userId:', article.value?.userId)
@@ -209,6 +246,16 @@ const openAuthorProfile = async () => {
   if (isMyArticle.value) {
     console.log('내가 작성한 글이므로 모달을 열지 않습니다')
     return
+  }
+
+  // 클릭 위치 계산
+  const rect = event.currentTarget.getBoundingClientRect()
+  const centerX = rect.left + rect.width / 2
+  const centerY = rect.top + rect.height / 2
+  
+  modalOrigin.value = {
+    x: `${centerX}px`,
+    y: `${centerY}px`
   }
 
   try {
@@ -522,37 +569,36 @@ onMounted(async () => {
 .main-image {
   width: 100%;
   max-height: 500px;
-  object-fit: contain; /* ✅ 변경 */
+  object-fit: contain;
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  background-color: #f9fafb; /* 빈 여백이 생길 수 있으므로 배경색도 추가 추천 */
+  background-color: #f9fafb;
 }
 
 .content-text {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   line-height: 1.8;
   color: #374151;
   white-space: pre-line;
   margin-bottom: 2rem;
 }
 
-/* 추가 이미지 */
+/* 추가 이미지 섹션 개선 */
 .additional-images {
-  width: 100%;
-  height: 200px;
-  object-fit: contain; /* ✅ cover → contain 으로 변경 */
-  background-color: #f9fafb; /* ✅ 비는 공간 대비 배경색 추가 */
+  margin-bottom: 2rem;
 }
 
 .images-title {
   font-size: 1.2rem;
   font-weight: 700;
   color: #374151;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(245, 158, 11, 0.2);
 }
 
 .images-title::before {
@@ -560,27 +606,63 @@ onMounted(async () => {
   font-size: 1.1rem;
 }
 
+/* 이미지 그리드 - 고정 4열 */
 .images-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 최대 5개 기준으로 간격 유지 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+  margin-top: 1rem;
 }
 
 .image-item {
+  position: relative;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  aspect-ratio: 1;
 }
 
 .image-item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .attachment-image {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-item:hover .attachment-image {
+  transform: scale(1.1);
+}
+
+/* 이미지 오버레이 */
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-item:hover .image-overlay {
+  opacity: 1;
+}
+
+.zoom-icon {
+  width: 24px;
+  height: 24px;
+  color: white;
 }
 
 /* 게시글 푸터 */
@@ -600,13 +682,13 @@ onMounted(async () => {
   align-items: center;
   gap: 0.5rem;
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 500;
 }
 
 .stat-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 /* 댓글 섹션 */
@@ -677,7 +759,67 @@ onMounted(async () => {
   margin: 0;
 }
 
+.scaled-down {
+  transform: scale(0.9);
+  transform-origin: center right;
+}
+
+/* 프로필 모달 스타일 개선 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(241, 238, 238, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-container {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  transform-origin: var(--origin-x, 50%) var(--origin-y, 50%);
+}
+
+/* 모달 트랜지션 */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+}
+
+.modal-enter-active .modal-container,
+.modal-leave-active .modal-container {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+  transform: scale(0.3) translate(-50%, -50%);
+  opacity: 0;
+}
+
 /* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .images-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .article-content,
   .comments-section {
@@ -711,13 +853,18 @@ onMounted(async () => {
   }
 
   .images-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
   .stats-container {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+
+  .modal-overlay {
+    padding: 10px;
   }
 }
 
@@ -741,6 +888,17 @@ onMounted(async () => {
     font-size: 0.8rem;
   }
 
+  .images-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .modal-overlay {
+    padding: 5px;
+  }
+}
+
+@media (max-width: 480px) {
   .images-grid {
     grid-template-columns: 1fr;
   }
@@ -766,4 +924,18 @@ onMounted(async () => {
 .comments-section {
   animation-delay: 0.1s;
 }
+
+/* 이미지 그리드 애니메이션 */
+.image-item {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.image-item:nth-child(1) { animation-delay: 0.1s; }
+.image-item:nth-child(2) { animation-delay: 0.2s; }
+.image-item:nth-child(3) { animation-delay: 0.3s; }
+.image-item:nth-child(4) { animation-delay: 0.4s; }
+.image-item:nth-child(5) { animation-delay: 0.5s; }
+.image-item:nth-child(6) { animation-delay: 0.6s; }
+.image-item:nth-child(7) { animation-delay: 0.7s; }
+.image-item:nth-child(8) { animation-delay: 0.8s; }
 </style>

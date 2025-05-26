@@ -250,20 +250,22 @@ const getImageUrl = (path) => `http://localhost:8080${path}`
 .article-stats {
   display: flex;
   gap: 1rem;
+  margin-right: 15px;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: #9ca3af;
   font-weight: 500;
 }
 
 .stat-icon {
-  width: 14px;
-  height: 14px;
+  margin-top: 5px;
+  width: 18px;
+  height: 18px;
 }
 
 /* 제목 */

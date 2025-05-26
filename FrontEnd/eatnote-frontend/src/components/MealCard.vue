@@ -91,6 +91,7 @@ const goToDetail = () => {
 </script>
 
 <style scoped>
+
 .meal-card {
   position: relative;
   width: 100%;
@@ -102,7 +103,8 @@ const goToDetail = () => {
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(240, 237, 237, 0.08);
+  margin-top: 10px;
 }
 
 .meal-card:hover {
