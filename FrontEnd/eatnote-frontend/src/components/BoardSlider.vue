@@ -2,59 +2,30 @@
   <div class="board-slider-container">
     <div class="board-slider-wrapper">
       <!-- 왼쪽 화살표 버튼 -->
-      <button
-        v-show="showLeftArrow"
-        @click="scrollLeft"
-        class="nav-button nav-button-left"
-        :disabled="!canScrollLeft"
-      >
+      <button v-show="showLeftArrow" @click="scrollLeft" class="nav-button nav-button-left" :disabled="!canScrollLeft">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
         </svg>
       </button>
 
       <!-- 슬라이더 콘텐츠 -->
-      <div
-        ref="sliderContainer"
-        class="slider-content"
-        @scroll="handleScroll"
-      >
+      <div ref="sliderContainer" class="slider-content" @scroll="handleScroll">
         <div class="slider-track">
-          <div
-            v-for="board in boards"
-            :key="board.boardId"
-            class="tooltip-container"
-          >
-            <button
-              @click="selectBoard(board.boardId)"
-              :class="[
-                'board-tab',
-                board.boardId === selectedBoardId ? 'board-tab-active' : 'board-tab-inactive'
-              ]"
-            >
+          <div v-for="board in boards" :key="board.boardId" class="tooltip-container">
+            <button @click="selectBoard(board.boardId)" :class="[
+              'board-tab',
+              board.boardId === selectedBoardId ? 'board-tab-active' : 'board-tab-inactive'
+            ]">
               <span class="board-icon">{{ getBoardIcon(board.name) }}</span>
               <span class="board-name">{{ board.name }}</span>
-
-              <!-- ✨ 툴팁: 버튼 내부로 이동 -->
-              <div class="tooltip">
-                <div class="tooltip-content">
-                  <h4 class="tooltip-title">{{ board.name }}</h4>
-                  <p class="tooltip-description">{{ board.description }}</p>
-                </div>
-                <div class="tooltip-arrow"></div>
-              </div>
             </button>
           </div>
         </div>
       </div>
 
       <!-- 오른쪽 화살표 버튼 -->
-      <button
-        v-show="showRightArrow"
-        @click="scrollRight"
-        class="nav-button nav-button-right"
-        :disabled="!canScrollRight"
-      >
+      <button v-show="showRightArrow" @click="scrollRight" class="nav-button nav-button-right"
+        :disabled="!canScrollRight">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
         </svg>
@@ -63,14 +34,10 @@
 
     <!-- 인디케이터 -->
     <div v-if="showIndicators" class="slider-indicators">
-      <div
-        v-for="(indicator, index) in indicators"
-        :key="index"
-        :class="[
-          'indicator-dot',
-          indicator.active ? 'indicator-active' : 'indicator-inactive'
-        ]"
-      ></div>
+      <div v-for="(indicator, index) in indicators" :key="index" :class="[
+        'indicator-dot',
+        indicator.active ? 'indicator-active' : 'indicator-inactive'
+      ]"></div>
     </div>
   </div>
 </template>
@@ -204,7 +171,6 @@ const getBoardIcon = (boardName) => {
     '식단 공유 게시판': '🍽️',
     '트레이너 전용 게시판': '💪',
     'Q&A 게시판': '❓',
-    '의학 게시판': '🏥'
   }
   return iconMap[boardName] || '📝'
 }
@@ -303,70 +269,6 @@ onUnmounted(() => {
   gap: 1rem;
   padding: 0 1rem;
   min-width: max-content;
-}
-
-/* 툴팁 컨테이너 */
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-/* 툴팁 */
-.tooltip {
-  position: absolute;
-  bottom: calc(100% + 12px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.tooltip-container:hover .tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(-4px);
-}
-
-.tooltip-content {
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(12px);
-  color: white;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  min-width: 200px;
-  max-width: 280px;
-}
-
-.tooltip-title {
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin: 0 0 0.5rem 0;
-  color: #f59e0b;
-}
-
-.tooltip-description {
-  font-size: 0.85rem;
-  line-height: 1.4;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.tooltip-arrow {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid rgba(17, 24, 39, 0.95);
 }
 
 /* 게시판 탭 */
@@ -550,6 +452,7 @@ onUnmounted(() => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

@@ -8,6 +8,7 @@ import com.ssafy.eatnote.model.dto.response.MealStatsResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerFeedbackResponse;
 import com.ssafy.eatnote.model.dto.response.TrainerMealDetailResponse;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface MealService {
 
     // 사진을 저장하고, Flask AI 분석 결과로 DB 저장까지 처리하는 메서드
-    Meal saveAnalyzedMeal(MultipartFile file, Long userId);
+    Meal saveAnalyzedMeal(MultipartFile file, Long userId, LocalDateTime mealTime);
     
     // 식사 관련 상세 정보 가저오는 메서드 
     MealPublicDetailResponse getPublicMealDetail(Long mealId, Long loginUserId);

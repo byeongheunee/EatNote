@@ -6,11 +6,12 @@
       <!-- 페이지 헤더 -->
       <section class="page-header">
         <div class="header-left">
-          <button @click="goBackToMealList" class="back-button">
+          <button @click="goBack" class="back-button">
             <span class="back-icon">←</span>
-            <span>목록으로 돌아가기</span>
+            <span>뒤로가기</span>
           </button>
         </div>
+
         <h1 class="page-title">🍽️ 식단 상세보기</h1>
         <div class="header-right"></div>
       </section>
@@ -38,11 +39,11 @@
                   <span class="meal-type-text">{{ getMealTypeText(meal.mealType) }}</span>
                 </div>
               </div>
-              
+
               <div class="card-container">
                 <div class="meal-image-section">
                   <img :src="getImageUrl(meal.imageUrl)" alt="식단 이미지" class="meal-image" />
-                  
+
                   <div class="meal-basic-info">
                     <div class="author-info">
                       <span class="author-label">작성자</span>
@@ -51,7 +52,7 @@
                         <span>{{ meal.userNickname }}</span>
                       </router-link>
                     </div>
-                    
+
                     <div class="ai-score-display">
                       <span class="score-label">AI 점수</span>
                       <span class="score-value">{{ meal.autoScore }}/10</span>
@@ -111,21 +112,17 @@
                   <span class="badge-text">{{ trainerFeedbacks.length }}개</span>
                 </div>
               </div>
-              
+
               <div class="card-container feedback-container">
                 <div v-if="trainerFeedbacks.length > 0" class="feedbacks-list">
-                  <div 
-                    v-for="feedback in trainerFeedbacks" 
-                    :key="feedback.feedbackId" 
-                    class="feedback-item"
-                    :class="{ 'my-feedback': feedback.isWrittenByMe }"
-                  >
+                  <div v-for="feedback in trainerFeedbacks" :key="feedback.feedbackId" class="feedback-item"
+                    :class="{ 'my-feedback': feedback.isWrittenByMe }">
                     <div class="feedback-header">
                       <div class="trainer-info">
                         <span class="trainer-name">👤 {{ feedback.trainerNickname }}</span>
                         <span v-if="feedback.isWrittenByMe" class="my-badge">내 피드백</span>
                       </div>
-                      
+
                       <div v-if="feedback.isWrittenByMe" class="feedback-actions">
                         <button @click="goToEditFeedback(feedback.feedbackId)" class="action-button edit">
                           <span class="action-icon">✏️</span>
@@ -150,7 +147,7 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <div v-else class="empty-feedback">
                   <div class="empty-icon">💬</div>
                   <p class="empty-text">작성된 트레이너 피드백이 없습니다</p>
@@ -169,15 +166,9 @@
               <!-- <div class="section-header">
                 <h2 class="section-title">👍 반응</h2>
               </div> -->
-              
-              <LikeDislikeButtons 
-                contentType="MEAL" 
-                :contentId="meal.mealId" 
-                :likeCount="meal.likeCount"
-                :dislikeCount="meal.dislikeCount" 
-                :myReaction="meal.myReaction" 
-                :onUpdated="loadMeal" 
-              />
+
+              <LikeDislikeButtons contentType="MEAL" :contentId="meal.mealId" :likeCount="meal.likeCount"
+                :dislikeCount="meal.dislikeCount" :myReaction="meal.myReaction" :onUpdated="loadMeal" />
 
 
               <!-- <div class="interaction-content">
@@ -197,33 +188,25 @@
               <div class="comments-header">
                 <h3 class="comments-title">
                   <svg class="title-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.906-1.294l-3.181.795.795-3.181A9.863 9.863 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.906-1.294l-3.181.795.795-3.181A9.863 9.863 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z">
+                    </path>
                   </svg>
                   댓글 {{ comments.length }}개
                 </h3>
               </div>
-              
+
               <div class="comments-content">
                 <div class="comment-input-section">
-                  <CommentInput 
-                    :parentCommentId="null" 
-                    :onSubmit="loadComments" 
-                    :targetType="targetType" 
-                    :targetId="mealId" 
-                  />
+                  <CommentInput :parentCommentId="null" :onSubmit="loadComments" :targetType="targetType"
+                    :targetId="mealId" />
                 </div>
-                
+
                 <div v-if="comments.length > 0" class="comments-list">
-                  <CommentItem 
-                    v-for="comment in comments" 
-                    :key="comment.commentId" 
-                    :comment="comment" 
-                    :onReload="loadComments"
-                    :targetType="targetType" 
-                    :targetId="mealId" 
-                  />
+                  <CommentItem v-for="comment in comments" :key="comment.commentId" :comment="comment"
+                    :onReload="loadComments" :targetType="targetType" :targetId="mealId" />
                 </div>
-                
+
                 <div v-else class="empty-comments">
                   <div class="empty-icon">💭</div>
                   <p class="empty-text">아직 댓글이 없습니다</p>
@@ -262,7 +245,7 @@ const error = ref(null)
 const targetType = "MEAL"
 
 const getImageUrl = (path) => `http://localhost:8080${path}`
-const goBackToMealList = () => router.push('/meals')
+const goBack = () => { router.back() }
 
 const formatDate = (datetime) => {
   const date = new Date(datetime)
@@ -414,7 +397,8 @@ onMounted(async () => {
   margin-bottom: 2rem;
 }
 
-.header-left, .header-right {
+.header-left,
+.header-right {
   display: flex;
 }
 
@@ -464,7 +448,8 @@ onMounted(async () => {
 }
 
 /* 로딩 및 에러 상태 */
-.loading-state, .error-state {
+.loading-state,
+.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -473,7 +458,8 @@ onMounted(async () => {
   text-align: center;
 }
 
-.loading-spinner, .error-icon {
+.loading-spinner,
+.error-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
@@ -482,7 +468,8 @@ onMounted(async () => {
   animation: pulse 2s infinite;
 }
 
-.loading-text, .error-text {
+.loading-text,
+.error-text {
   font-size: 1.1rem;
   color: #6b7280;
   font-weight: 500;
@@ -564,7 +551,10 @@ onMounted(async () => {
 }
 
 /* 섹션 공통 */
-.meal-section, .interaction-section, .feedback-section, .comments-section {
+.meal-section,
+.interaction-section,
+.feedback-section,
+.comments-section {
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -675,7 +665,8 @@ onMounted(async () => {
   gap: 1rem;
 }
 
-.author-info, .ai-score-display {
+.author-info,
+.ai-score-display {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
@@ -685,7 +676,8 @@ onMounted(async () => {
   gap: 0.5rem;
 }
 
-.author-label, .score-label {
+.author-label,
+.score-label {
   font-size: 0.8rem;
   color: #6b7280;
   font-weight: 600;
@@ -943,7 +935,8 @@ onMounted(async () => {
 }
 
 /* 빈 상태 */
-.empty-feedback, .empty-comments {
+.empty-feedback,
+.empty-comments {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1020,12 +1013,12 @@ onMounted(async () => {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .page-header {
     grid-template-columns: auto 1fr auto;
     gap: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.75rem;
   }
@@ -1035,26 +1028,26 @@ onMounted(async () => {
   .detail-container {
     padding: 1rem;
   }
-  
+
   .meal-image-section {
     grid-template-columns: 1fr;
   }
-  
+
   .nutrition-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .feedback-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
-  
+
   .feedback-actions {
     align-self: stretch;
     justify-content: flex-end;
   }
-  
+
   .feedback-meta {
     flex-direction: column;
     align-items: flex-start;
@@ -1068,17 +1061,17 @@ onMounted(async () => {
     text-align: center;
     gap: 1rem;
   }
-  
+
   .header-left {
     justify-content: center;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
-  
+
   .back-button {
     font-size: 0.8rem;
     padding: 0.625rem 0.875rem;
@@ -1091,6 +1084,7 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1098,18 +1092,29 @@ onMounted(async () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
 }
 
 /* 섹션별 애니메이션 지연 */
-.meal-section { animation-delay: 0.1s; }
-.feedback-section { animation-delay: 0.2s; }
-.interaction-comments-section { animation-delay: 0.4s; }
+.meal-section {
+  animation-delay: 0.1s;
+}
+
+.feedback-section {
+  animation-delay: 0.2s;
+}
+
+.interaction-comments-section {
+  animation-delay: 0.4s;
+}
 
 
 
@@ -1139,5 +1144,4 @@ onMounted(async () => {
   height: 20px;
   color: #f59e0b;
 }
-
 </style>

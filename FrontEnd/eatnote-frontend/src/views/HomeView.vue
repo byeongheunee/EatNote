@@ -539,7 +539,7 @@ onMounted(fetchMeals)
     font-size: 2.5rem;
   }
 }
-
+z
 /* 스크롤 애니메이션 */
 @keyframes fadeInUp {
   from {

@@ -5,10 +5,7 @@
     <div class="header-section">
       <div class="header-content">
         <h2 class="section-title">나의 식단 기록</h2>
-        <button
-          @click="router.push('/meal/upload')"
-          class="upload-button"
-        >
+        <button @click="router.push('/meal/upload')" class="upload-button">
           <span class="button-icon">📷</span>
           <span>새 식단 업로드</span>
         </button>
@@ -19,15 +16,10 @@
     <!-- 필터 섹션 -->
     <div class="filter-section">
       <div class="filter-buttons">
-        <button 
-          v-for="option in filterOptions" 
-          :key="option.label" 
-          @click="changeFilter(option.code)" 
-          :class="[
-            'filter-button',
-            selectedFilter === option.code ? 'active' : ''
-          ]"
-        >
+        <button v-for="option in filterOptions" :key="option.label" @click="changeFilter(option.code)" :class="[
+          'filter-button',
+          selectedFilter === option.code ? 'active' : ''
+        ]">
           <span class="filter-icon">{{ option.icon }}</span>
           <span>{{ option.label }}</span>
         </button>
@@ -36,17 +28,12 @@
 
     <!-- 식단 그리드 -->
     <div class="meals-grid" v-if="visibleMeals.length > 0">
-      <div 
-        v-for="meal in visibleMeals" 
-        :key="meal.mealId" 
-        class="meal-card"
-        @click="goToDetail(meal.mealId)"
-      >
+      <div v-for="meal in visibleMeals" :key="meal.mealId" class="meal-card" @click="goToDetail(meal.mealId)">
         <div class="meal-image-container">
           <img :src="getImageUrl(meal.imageUrl)" alt="meal" class="meal-image" />
           <div class="meal-type-badge">{{ mealTypeKor(meal.mealType) }}</div>
         </div>
-        
+
         <div class="meal-content">
           <h3 class="meal-title">{{ meal.detectedFoods }}</h3>
           <p class="meal-date">{{ formatDate(meal.mealTime) }}</p>
@@ -56,19 +43,14 @@
               <span class="calorie-text">{{ meal.totalCalories }}kcal</span>
             </div>
           </div>
-          
+
           <div class="meal-actions">
             <div class="feedback-count">
               <span class="feedback-icon"> 피드백 💬</span>
               <span>{{ meal.feedbackCount }}</span>
             </div>
-            <LikeButton
-              contentType="MEAL"
-              :contentId="meal.mealId"
-              :likeCount="meal.likeCount"
-              :myReaction="meal.myReaction || null"
-              @onUpdated="loadMyMeals"
-            />
+            <LikeButton contentType="MEAL" :contentId="meal.mealId" :likeCount="meal.likeCount"
+              :myReaction="meal.myReaction || null" @onUpdated="loadMyMeals" />
           </div>
         </div>
       </div>
@@ -79,10 +61,7 @@
       <div class="empty-icon">🍽️</div>
       <h3 class="empty-title">아직 등록된 식단이 없어요</h3>
       <p class="empty-description">첫 번째 식단을 업로드해보세요!</p>
-      <button
-        @click="router.push('/meal/upload')"
-        class="empty-upload-button"
-      >
+      <button @click="router.push('/meal/upload')" class="empty-upload-button">
         <span class="button-icon">📷</span>
         <span>식단 업로드하기</span>
       </button>
@@ -148,21 +127,33 @@ const loadMyMeals = async () => {
 }
 
 const filteredMeals = computed(() => {
-  const today = new Date()
+  const today = resetTime(new Date())
+  const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay()
+  const startOfWeek = new Date(today)
+  startOfWeek.setDate(today.getDate() - (dayOfWeek - 1))
+
+  const endOfWeek = new Date(startOfWeek)
+  endOfWeek.setDate(startOfWeek.getDate() + 6)
+
   return meals.value.filter(meal => {
-    const mealDate = new Date(meal.mealTime)
+    const mealDate = resetTime(new Date(meal.mealTime))
+
     switch (selectedFilter.value) {
       case 'today':
-        return mealDate.toDateString() === today.toDateString()
-      case 'week': {
-        const diffDays = (today - mealDate) / (1000 * 60 * 60 * 24)
-        return diffDays <= 7
-      }
+        return mealDate.getTime() === today.getTime()
+      case 'week':
+        return mealDate >= startOfWeek && mealDate <= endOfWeek
       default:
         return true
     }
   })
 })
+
+function resetTime(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate())
+}
+
+
 
 const goToDetail = (mealId) => router.push(`/meal/${mealId}`)
 
@@ -488,20 +479,20 @@ onMounted(loadMyMeals)
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .section-title {
     font-size: 1.25rem;
   }
-  
+
   .meals-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .filter-buttons {
     justify-content: center;
   }
-  
+
   .filter-button {
     flex: 1;
     justify-content: center;
@@ -513,20 +504,20 @@ onMounted(loadMyMeals)
     padding: 0.625rem 1rem;
     font-size: 0.85rem;
   }
-  
+
   .filter-button {
     padding: 0.625rem 1rem;
     font-size: 0.85rem;
   }
-  
+
   .meal-content {
     padding: 1rem;
   }
-  
+
   .empty-state {
     padding: 2rem 1rem;
   }
-  
+
   .empty-icon {
     font-size: 3rem;
   }
@@ -538,6 +529,7 @@ onMounted(loadMyMeals)
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

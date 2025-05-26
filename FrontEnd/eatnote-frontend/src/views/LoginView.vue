@@ -1,12 +1,15 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center px-4">
-    <div class="max-w-md w-full bg-white/80 backdrop-blur-sm shadow-2xl rounded-3xl p-8 space-y-6 border border-orange-100">
+  <div
+    class="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center px-4">
+    <div
+      class="max-w-md w-full bg-white/80 backdrop-blur-sm shadow-2xl rounded-3xl p-8 space-y-6 border border-orange-100">
       <!-- 헤더 -->
       <div class="text-center space-y-2">
-        <div class="w-20 h-20 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full mx-auto flex items-center justify-center mb-4 p-1 shadow-lg">
+        <div
+          class="w-20 h-20 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full mx-auto flex items-center justify-center mb-4 p-1 shadow-lg">
           <!-- PNG 로고 이미지를 넣으려면 아래 img 태그 주석을 해제하고 src에 이미지 경로를 입력하세요 -->
-          <img src="@/assets/icons/favicon.png" alt="EatNote Logo" class="w-full h-full object-contain rounded-full" />  
-          
+          <img src="@/assets/icons/favicon.png" alt="EatNote Logo" class="w-full h-full object-contain rounded-full" />
+
           <!-- 현재는 이모지 사용 (PNG 사용시 위 img 태그 활성화하고 아래 span 삭제) -->
           <!-- <span class="text-2xl">🍽️</span> -->
         </div>
@@ -16,95 +19,71 @@
         <p class="text-gray-600 text-sm">건강한 식습관 관리의 시작</p>
       </div>
 
-      <!-- 이메일 입력 -->
-      <div class="space-y-2">
-        <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
-          <span class="text-orange-500">📧</span>
-          이메일
-        </label>
-        <input 
-          v-model="email" 
-          type="email" 
-          placeholder="example@eatnote.com"
-          :class="[
+      <form @submit.prevent="handleLogin" class="space-y-6">
+        <!-- 이메일 입력 -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span class="text-orange-500">📧</span>
+            이메일
+          </label>
+          <input v-model="email" type="email" placeholder="example@eatnote.com" :class="[
             'w-full px-4 py-3 border-2 rounded-xl transition-all duration-300 bg-white/70',
             emailError ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-orange-400 focus:ring-orange-200',
             'focus:outline-none focus:ring-4 focus:ring-opacity-20'
-          ]"
-          @blur="validateEmail"
-          @input="clearEmailError"
-        />
-        <p v-if="emailError" class="text-red-500 text-sm flex items-center gap-1">
-          <span>⚠️</span>
-          {{ emailError }}
-        </p>
-      </div>
+          ]" @blur="validateEmail" @input="clearEmailError" />
+          <p v-if="emailError" class="text-red-500 text-sm flex items-center gap-1">
+            <span>⚠️</span>
+            {{ emailError }}
+          </p>
+        </div>
 
-      <!-- 비밀번호 입력 -->
-      <div class="space-y-2">
-        <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
-          <span class="text-orange-500">🔒</span>
-          비밀번호
-        </label>
-        <div class="relative">
-          <input 
-            v-model="password" 
-            :type="showPassword ? 'text' : 'password'"
-            placeholder="비밀번호를 입력하세요"
-            :class="[
+        <!-- 비밀번호 입력 -->
+        <div class="space-y-2">
+          <label class="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span class="text-orange-500">🔒</span>
+            비밀번호
+          </label>
+          <div class="relative">
+            <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="비밀번호를 입력하세요" :class="[
               'w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-300 bg-white/70',
               passwordError ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-orange-400 focus:ring-orange-200',
               'focus:outline-none focus:ring-4 focus:ring-opacity-20'
-            ]"
-            @blur="validatePassword"
-            @input="clearPasswordError"
-          />
-          <button 
-            type="button"
-            @click="togglePassword"
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            {{ showPassword ? '🙈' : '👁️' }}
-          </button>
+            ]" @blur="validatePassword" @input="clearPasswordError" />
+            <button type="button" @click="togglePassword"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <p v-if="passwordError" class="text-red-500 text-sm flex items-center gap-1">
+            <span>⚠️</span>
+            {{ passwordError }}
+          </p>
         </div>
-        <p v-if="passwordError" class="text-red-500 text-sm flex items-center gap-1">
-          <span>⚠️</span>
-          {{ passwordError }}
-        </p>
-      </div>
 
-      <!-- 로그인 버튼 -->
-      <button 
-        @click="handleLogin"
-        :disabled="isLoading"
-        :class="[
+        <!-- 로그인 버튼 -->
+        <button @click="handleLogin" :disabled="isLoading" :class="[
           'w-full py-3 rounded-xl font-semibold text-white transition-all duration-300 transform',
-          isLoading 
-            ? 'bg-gray-400 cursor-not-allowed' 
+          isLoading
+            ? 'bg-gray-400 cursor-not-allowed'
             : 'bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]'
-        ]"
-      >
-        <span v-if="isLoading" class="flex items-center justify-center gap-2">
-          <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          로그인 중...
-        </span>
-        <span v-else class="flex items-center justify-center gap-2">
-          🚀 로그인
-        </span>
-      </button>
-
+        ]">
+          <span v-if="isLoading" class="flex items-center justify-center gap-2">
+            <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            로그인 중...
+          </span>
+          <span v-else class="flex items-center justify-center gap-2">
+            🚀 로그인
+          </span>
+        </button>
+      </form>
       <!-- 하단 버튼들 -->
       <div class="flex gap-3 pt-4">
-        <button 
-          @click="goHome"
-          class="flex-1 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium flex items-center justify-center gap-2"
-        >
+        <button @click="goHome"
+          class="flex-1 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium flex items-center justify-center gap-2">
           🏠 홈으로
         </button>
-        <button 
-          @click="goRegister"
-          class="flex-1 py-2.5 border-2 border-orange-300 text-orange-600 rounded-xl hover:bg-orange-50 hover:border-orange-400 transition-all duration-300 font-medium flex items-center justify-center gap-2"
-        >
+        <button @click="goRegister"
+          class="flex-1 py-2.5 border-2 border-orange-300 text-orange-600 rounded-xl hover:bg-orange-50 hover:border-orange-400 transition-all duration-300 font-medium flex items-center justify-center gap-2">
           ✨ 회원가입
         </button>
       </div>
@@ -112,7 +91,7 @@
       <!-- 추가 링크 -->
       <div class="text-center pt-4 border-t border-gray-200">
         <p class="text-sm text-gray-500">
-          비밀번호를 잊으셨나요? 
+          비밀번호를 잊으셨나요?
           <a href="#" class="text-orange-500 hover:text-orange-600 font-medium underline">
             비밀번호 찾기
           </a>
@@ -147,13 +126,13 @@ const validateEmail = () => {
     emailError.value = '이메일을 입력해주세요'
     return false
   }
-  
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email.value)) {
     emailError.value = '올바른 이메일 형식을 입력해주세요'
     return false
   }
-  
+
   emailError.value = ''
   return true
 }
@@ -164,12 +143,12 @@ const validatePassword = () => {
     passwordError.value = '비밀번호를 입력해주세요'
     return false
   }
-  
+
   // if (password.value.length < 6) {
   //   passwordError.value = '비밀번호는 6자 이상 입력해주세요'
   //   return false
   // }
-  
+
   passwordError.value = ''
   return true
 }
@@ -193,20 +172,20 @@ const handleLogin = async () => {
   // 유효성 검사
   const isEmailValid = validateEmail()
   const isPasswordValid = validatePassword()
-  
+
   if (!isEmailValid || !isPasswordValid) {
     toast.error('입력 정보를 확인해주세요 😅')
     return
   }
-  
+
   try {
     isLoading.value = true
     console.log('[디버깅] 로그인 시도 이메일:', email.value)
     console.log('[디버깅] 로그인 시도 비밀번호:', password.value)
-    
+
     await auth.logout() // 이전 세션 정리
     const success = await auth.login(email.value, password.value)
-    
+
     if (success) {
       toast.success('로그인 성공! 🎉')
       auth.connectWebSocket(auth.user.userId) // 로그인된 사용자 ID로 WebSocket 연결
@@ -215,7 +194,7 @@ const handleLogin = async () => {
 
       console.log(auth)
       console.log(auth.user.userType)
-      
+
       if (auth.user.userType === 1) {
         console.log("트레이너")
         router.push('/trainer')
@@ -253,6 +232,7 @@ const goRegister = () => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

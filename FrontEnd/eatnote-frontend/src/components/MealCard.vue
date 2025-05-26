@@ -1,17 +1,9 @@
 <template>
-  <div 
-    class="meal-card group"
-    @click="goToDetail"
-  >
+  <div class="meal-card group" @click="goToDetail">
     <!-- 이미지 컨테이너 -->
     <div class="image-container">
-      <img 
-        :src="getImageUrl(meal.imageUrl)" 
-        :alt="meal.detectedFoods"
-        class="meal-image" 
-        @error="handleImageError"
-      />
-      
+      <img :src="getImageUrl(meal.imageUrl)" :alt="meal.detectedFoods" class="meal-image" @error="handleImageError" />
+
       <!-- 호버 오버레이 -->
       <div class="image-overlay">
         <div class="overlay-content">
@@ -19,7 +11,7 @@
           <span class="view-text">자세히 보기</span>
         </div>
       </div>
-      
+
       <!-- 식사 시간 뱃지 -->
       <div class="meal-time-badge">
         <span class="meal-time-emoji">{{ getMealTimeEmoji(meal.mealTime) }}</span>
@@ -30,7 +22,7 @@
     <div class="card-content">
       <!-- 감지된 음식 -->
       <h3 class="food-title">{{ meal.detectedFoods }}</h3>
-      
+
       <!-- 정보 섹션 -->
       <div class="info-section">
         <div class="name-date-row">
@@ -38,14 +30,14 @@
             <span class="author-icon">👤</span>
             <span class="author-text">{{ meal.nickname }}</span>
           </div>
-          
+
           <div class="date-info">
             <span class="date-icon">📅</span>
             <span class="date-text">{{ formatDate(meal.mealTime) }}</span>
           </div>
         </div>
       </div>
-      
+
       <!-- 추가 정보 (있는 경우) -->
       <div v-if="meal.totalCalories" class="calories-info">
         <span class="calories-icon">🔥</span>
@@ -146,7 +138,7 @@ const goToDetail = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.8) 0%, rgba(245, 158, 11, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(245, 158, 11, 0.8) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -301,15 +293,15 @@ const goToDetail = () => {
   .meal-card {
     max-width: 100%;
   }
-  
+
   .image-container {
     height: 140px;
   }
-  
+
   .card-content {
     padding: 12px;
   }
-  
+
   .food-title {
     font-size: 0.9rem;
   }
@@ -337,6 +329,7 @@ const goToDetail = () => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

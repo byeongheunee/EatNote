@@ -21,13 +21,8 @@
             </div>
           </div>
           <div class="card-container">
-            <TrainerFolloweeList 
-              :users="users" 
-              :selected-user-id="selectedUserId" 
-              :total-pending="pendingMeals.length"
-              :total-done="calendarStats.reduce((sum, s) => sum + s.written, 0)" 
-              @select="selectUser" 
-            />
+            <TrainerFolloweeList :users="users" :selected-user-id="selectedUserId" :total-pending="pendingMeals.length"
+              :total-done="calendarStats.reduce((sum, s) => sum + s.written, 0)" @select="selectUser" />
           </div>
         </section>
 
@@ -42,14 +37,8 @@
           </div>
           <div class="card-container">
             <div class="meals-grid">
-              <TrainerMealCard
-                v-for="meal in visiblePendingMeals"
-                :key="meal.mealId"
-                :meal="meal"
-                :highlightPending="true"
-                @feedback="goToFeedbackForm"
-                @edit="editFeedback"
-              />
+              <TrainerMealCard v-for="meal in visiblePendingMeals" :key="meal.mealId" :meal="meal"
+                :highlightPending="true" @feedback="goToFeedbackForm" @edit="editFeedback" />
             </div>
             <div v-if="visiblePendingMeals.length < pendingMeals.length" class="show-more-container">
               <button @click="showMorePending" class="show-more-button">
@@ -72,14 +61,8 @@
           <div class="card-container">
             <div v-if="meals.length > 0">
               <div class="meals-grid">
-                <TrainerMealCard 
-                  v-for="meal in visibleMeals" 
-                  :key="meal.mealId" 
-                  :meal="meal"
-                  :highlightPending="!meal.isFeedbackedByMe" 
-                  @feedback="goToFeedbackForm" 
-                  @view="goToMealDetail" 
-                />
+                <TrainerMealCard v-for="meal in visibleMeals" :key="meal.mealId" :meal="meal"
+                  :highlightPending="!meal.isFeedbackedByMe" @feedback="goToFeedbackForm" @view="goToMealDetail" />
               </div>
               <div v-if="visibleMeals.length < meals.length" class="show-more-container">
                 <button @click="showMore" class="show-more-button">
@@ -183,7 +166,7 @@ const selectUser = async (userId) => {
       })
 
     meals.value = sortedMeals
-    visibleCount.value = 4
+    visibleCount.value = 6
   } catch (e) {
     console.error('식단 조회 실패', e)
     toast.error('해당 회원의 식단을 불러오는 데 실패했습니다.')
@@ -398,22 +381,22 @@ onMounted(async () => {
   .feedback-container {
     padding: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.75rem;
   }
-  
+
   .meals-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
   }
-  
+
   .card-container {
     padding: 1.25rem;
   }
@@ -423,12 +406,12 @@ onMounted(async () => {
   .section-title {
     font-size: 1.25rem;
   }
-  
+
   .show-more-button {
     padding: 0.625rem 1.25rem;
     font-size: 0.85rem;
   }
-  
+
   .empty-state {
     padding: 2rem 1rem;
   }
@@ -440,6 +423,7 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -476,9 +460,12 @@ onMounted(async () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }

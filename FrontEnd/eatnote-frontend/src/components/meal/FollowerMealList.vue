@@ -11,24 +11,15 @@
     <div class="followers-section">
       <h3 class="followers-title">팔로우 중인 사람들</h3>
       <div class="followers-scroll">
-        <div 
-          class="follower-item all-followers"
-          :class="{ active: selectedUserId === null }"
-          @click="selectUser(null)"
-        >
+        <div class="follower-item all-followers" :class="{ active: selectedUserId === null }" @click="selectUser(null)">
           <div class="follower-avatar all-avatar">
             <span class="all-icon">👥</span>
           </div>
           <p class="follower-name">전체</p>
         </div>
-        
-        <div 
-          v-for="user in filteredFollowings" 
-          :key="user.userId" 
-          class="follower-item"
-          :class="{ active: selectedUserId === user.userId }"
-          @click="selectUser(user.userId)"
-        >
+
+        <div v-for="user in filteredFollowings" :key="user.userId" class="follower-item"
+          :class="{ active: selectedUserId === user.userId }" @click="selectUser(user.userId)">
           <div class="follower-avatar">
             <img :src="getImageUrl(user.profileImage)" alt="profile" class="follower-image" />
           </div>
@@ -40,24 +31,15 @@
     <!-- 필터 섹션 -->
     <div class="filter-section">
       <div class="filter-buttons">
-        <button 
-          @click="setFilter('all')" 
-          :class="['filter-button', { active: filter === 'all' }]"
-        >
+        <button @click="setFilter('all')" :class="['filter-button', { active: filter === 'all' }]">
           <span class="filter-icon">🍽️</span>
           <span>전체 식단</span>
         </button>
-        <button 
-          @click="setFilter('today')" 
-          :class="['filter-button', { active: filter === 'today' }]"
-        >
+        <button @click="setFilter('today')" :class="['filter-button', { active: filter === 'today' }]">
           <span class="filter-icon">📅</span>
           <span>오늘의 식단</span>
         </button>
-        <button 
-          @click="setFilter('week')" 
-          :class="['filter-button', { active: filter === 'week' }]"
-        >
+        <button @click="setFilter('week')" :class="['filter-button', { active: filter === 'week' }]">
           <span class="filter-icon">📊</span>
           <span>이번주 식단</span>
         </button>
@@ -77,12 +59,7 @@
 
     <!-- 식단 그리드 -->
     <div v-if="limitedMeals.length > 0" class="meals-grid">
-      <div 
-        v-for="meal in limitedMeals" 
-        :key="meal.mealId" 
-        class="meal-card"
-        @click="goToDetail(meal.mealId)"
-      >
+      <div v-for="meal in limitedMeals" :key="meal.mealId" class="meal-card" @click="goToDetail(meal.mealId)">
         <div class="meal-image-container">
           <img :src="getImageUrl(meal.imageUrl)" alt="meal" class="meal-image" />
           <div class="meal-type-badge">{{ mealTypeKor(meal.mealType) }}</div>
@@ -91,7 +68,7 @@
             <span class="author-name">{{ meal.user?.nickname }}</span>
           </div>
         </div>
-        
+
         <div class="meal-content">
           <h3 class="meal-title">{{ meal.detectedFoods }}</h3>
           <p class="meal-date">{{ formatDate(meal.mealTime) }}</p>
@@ -101,19 +78,14 @@
               <span class="calorie-text">{{ meal.totalCalories }}kcal</span>
             </div>
           </div>
-          
+
           <div class="meal-actions">
             <div class="feedback-count">
               <span class="feedback-icon">💬</span>
               <span>{{ meal.feedbackCount }}</span>
             </div>
-            <LikeButton
-              contentType="MEAL"
-              :contentId="meal.mealId"
-              :likeCount="meal.likeCount"
-              :myReaction="meal.myReaction || null"
-              @onUpdated="refreshMealList"
-            />
+            <LikeButton contentType="MEAL" :contentId="meal.mealId" :likeCount="meal.likeCount"
+              :myReaction="meal.myReaction || null" @onUpdated="refreshMealList" />
           </div>
         </div>
       </div>
@@ -671,36 +643,36 @@ onMounted(async () => {
   .followers-scroll {
     gap: 0.75rem;
   }
-  
+
   .follower-item {
     min-width: 70px;
     padding: 0.5rem;
   }
-  
+
   .follower-avatar {
     width: 50px;
     height: 50px;
   }
-  
+
   .follower-name {
     font-size: 0.75rem;
     max-width: 60px;
   }
-  
+
   .meals-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .filter-buttons {
     justify-content: center;
   }
-  
+
   .filter-button {
     flex: 1;
     justify-content: center;
   }
-  
+
   .user-info-card {
     flex-direction: column;
     text-align: center;
@@ -712,15 +684,15 @@ onMounted(async () => {
     padding: 0.625rem 1rem;
     font-size: 0.85rem;
   }
-  
+
   .meal-content {
     padding: 1rem;
   }
-  
+
   .empty-state {
     padding: 2rem 1rem;
   }
-  
+
   .empty-icon {
     font-size: 3rem;
   }
@@ -732,6 +704,7 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
