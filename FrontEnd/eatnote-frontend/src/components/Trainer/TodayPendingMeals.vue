@@ -7,27 +7,18 @@
 
     <div v-else class="relative">
       <!-- 왼쪽 화살표 -->
-      <button
-        v-if="canScrollLeft"
+      <button v-if="canScrollLeft"
         class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white px-2 py-1 shadow rounded-full hover:bg-gray-100"
-        @click="scrollLeft"
-      >
+        @click="scrollLeft">
         ←
       </button>
 
       <!-- 카드 리스트 (가로 스크롤) -->
-      <div
-        ref="scrollContainer"
-        class="overflow-x-auto scrollbar-hide"
-        @scroll="checkScroll"
-      >
+      <div ref="scrollContainer" class="overflow-x-auto scrollbar-hide" @scroll="checkScroll">
         <div class="flex gap-4 pb-2">
-          <div
-            v-for="meal in meals"
-            :key="meal.mealId"
+          <div v-for="meal in meals" :key="meal.mealId"
             class="w-[280px] flex-shrink-0 border rounded-lg p-3 shadow hover:bg-gray-50 cursor-pointer"
-            @click="goToMeal(meal.mealId)"
-          >
+            @click="goToMeal(meal.mealId)">
             <img :src="getImageUrl(meal.imageUrl)" class="w-full h-40 object-cover rounded" />
             <div class="mt-2">
               <p class="font-semibold text-lg truncate">{{ meal.nickname }}</p>
@@ -39,11 +30,9 @@
       </div>
 
       <!-- 오른쪽 화살표 -->
-      <button
-        v-if="canScrollRight"
+      <button v-if="canScrollRight"
         class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white px-2 py-1 shadow rounded-full hover:bg-gray-100"
-        @click="scrollRight"
-      >
+        @click="scrollRight">
         →
       </button>
     </div>
@@ -114,6 +103,7 @@ watch(meals, () => {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
