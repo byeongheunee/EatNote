@@ -42,98 +42,97 @@ public class MealServiceImpl implements MealService {
 	private final ChatGPTService chatGPTService;
 
 	@Transactional
-	public Meal saveAnalyzedMeal(MultipartFile file, Long userId) {
-		try {
-			Map<String, String> imageInfo = mealImageService.saveMealImage(file, userId);
-			String imagePath = imageInfo.get("absolutePath");
-			String mealType = imageInfo.get("mealType");
-			
-			String mealTypeKorean = switch (mealType) {
-		    case "breakfast" -> "아침";
-		    case "lunch" -> "점심";
-		    case "dinner" -> "저녁";
-		    case "extra" -> "간식";
-		    default -> mealType; // fallback 그대로
-			};
-		
-			Map<String, Object> result = mealImageService.analyzeMealImage(imagePath);
-			List<Map<String, Object>> detectedList = (List<Map<String, Object>>) result.get("results");
+	public Meal saveAnalyzedMeal(MultipartFile file, Long userId, LocalDateTime mealTime) {
+	    try {
+	    	if (mealTime == null) {
+	            mealTime = LocalDateTime.now();
+	        }
+	        String mealType = classifyMealTimeByHour(mealTime.getHour());
 
-			float totalCalories = 0f, carb = 0f, protein = 0f, fat = 0f, sugar = 0f, sodium = 0f;
-			List<String> foodNames = new ArrayList<>();
+	        Map<String, String> imageInfo = mealImageService.saveMealImage(file, userId, mealType);
+	        String imagePath = imageInfo.get("absolutePath");
 
-			for (Map<String, Object> item : detectedList) {
-				String foodCode = (String) item.get("foodCode");
-				String quantity = (String) item.get("quantity");
-				FoodInfo foodInfo = foodInfoDao.selectByFoodCode(foodCode);
-				if (foodInfo == null)
-					continue;
+	        String mealTypeKorean = switch (mealType) {
+	            case "breakfast" -> "아침";
+	            case "lunch" -> "점심";
+	            case "dinner" -> "저녁";
+	            case "extra" -> "간식";
+	            default -> mealType;
+	        };
 
-				float scale = quantityToScale(quantity);
-				totalCalories += foodInfo.getCalories() * scale;
-				carb += foodInfo.getCarbohydrates() * scale;
-				protein += foodInfo.getProtein() * scale;
-				fat += foodInfo.getFat() * scale;
-				sugar += foodInfo.getSugars() * scale;
-				sodium += foodInfo.getSodium() * scale;
-				foodNames.add(foodInfo.getName());
-			}
+	        Map<String, Object> result = mealImageService.analyzeMealImage(imagePath);
+	        List<Map<String, Object>> detectedList = (List<Map<String, Object>>) result.get("results");
 
-			User user = userDao.selectUserById(userId);
-			MemberDetails member = memberDao.findByUserId(userId);
-			String aiFeedback = "분석 중입니다";
+	        float totalCalories = 0f, carb = 0f, protein = 0f, fat = 0f, sugar = 0f, sodium = 0f;
+	        List<String> foodNames = new ArrayList<>();
 
-			if (!foodNames.isEmpty()) {
-				float autoScore = nutritionScorer.calculateScore(totalCalories, carb, protein, fat, sugar, sodium, user,
-						member, mealType);
-				
-				
+	        for (Map<String, Object> item : detectedList) {
+	            String foodCode = (String) item.get("foodCode");
+	            String quantity = (String) item.get("quantity");
+	            FoodInfo foodInfo = foodInfoDao.selectByFoodCode(foodCode);
+	            if (foodInfo == null) continue;
 
-				String gptPrompt = buildPrompt(user, member, mealTypeKorean, foodNames, carb, protein, fat, sodium, sugar);
-				aiFeedback = chatGPTService.ask(gptPrompt);
+	            float scale = quantityToScale(quantity);
+	            totalCalories += foodInfo.getCalories() * scale;
+	            carb += foodInfo.getCarbohydrates() * scale;
+	            protein += foodInfo.getProtein() * scale;
+	            fat += foodInfo.getFat() * scale;
+	            sugar += foodInfo.getSugars() * scale;
+	            sodium += foodInfo.getSodium() * scale;
+	            foodNames.add(foodInfo.getName());
+	        }
 
-				Meal savedMeal = saveMeal(userId, imageInfo.get("imagePath"), mealType, foodNames, totalCalories, carb,
-	                    protein, fat, sugar, sodium, autoScore, aiFeedback);
+	        User user = userDao.selectUserById(userId);
+	        MemberDetails member = memberDao.findByUserId(userId);
+	        String aiFeedback = "분석 중입니다";
 
-	            notifyTrainersOnMealPost(userId, savedMeal); // 알림 전송
+	        if (!foodNames.isEmpty()) {
+	            float autoScore = nutritionScorer.calculateScore(
+	                totalCalories, carb, protein, fat, sugar, sodium, user, member, mealType);
+
+	            String gptPrompt = buildPrompt(user, member, mealTypeKorean, foodNames, carb, protein, fat, sodium, sugar);
+	            aiFeedback = chatGPTService.ask(gptPrompt);
+
+	            Meal savedMeal = saveMeal(userId, imageInfo.get("imagePath"), mealType, foodNames, totalCalories, carb,
+	                protein, fat, sugar, sodium, autoScore, aiFeedback, mealTime);
+
+	            notifyTrainersOnMealPost(userId, savedMeal);
 	            return savedMeal;
-			}
+	        }
 
-			// YOLO 탐지 실패 시 GPT Vision 사용
-			String jsonResponse = chatGPTService.analyzeImageWithGPT(imagePath, user, member, mealTypeKorean);
-			Map<String, Object> gptParsed = chatGPTService.parseJsonResponse(jsonResponse);
-			
-			foodNames = (List<String>) gptParsed.get("foods");
-			    if (foodNames == null || foodNames.isEmpty()) {
-			        throw new IllegalArgumentException("감지된 음식이 없습니다. 사진을 확인해주세요.");
-			    }
+	        // GPT Vision fallback
+	        String jsonResponse = chatGPTService.analyzeImageWithGPT(imagePath, user, member, mealTypeKorean);
+	        Map<String, Object> gptParsed = chatGPTService.parseJsonResponse(jsonResponse);
+	        foodNames = (List<String>) gptParsed.get("foods");
 
-			    
-			totalCalories = ((Number) gptParsed.get("calories")).floatValue();
-			carb = ((Number) gptParsed.get("carbohydrates")).floatValue();
-			protein = ((Number) gptParsed.get("protein")).floatValue();
-			fat = ((Number) gptParsed.get("fat")).floatValue();
-			sugar = ((Number) gptParsed.get("sugars")).floatValue();
-			sodium = ((Number) gptParsed.get("sodium")).floatValue();
-			aiFeedback = (String) gptParsed.get("feedback");
-			
-			
-			
-			float autoScore = nutritionScorer.calculateScore(totalCalories, carb, protein, fat, sugar, sodium, user, member, mealType);
+	        if (foodNames == null || foodNames.isEmpty()) {
+	            throw new IllegalArgumentException("감지된 음식이 없습니다. 사진을 확인해주세요.");
+	        }
 
-			Meal savedMeal = saveMeal(userId, imageInfo.get("imagePath"), mealType, foodNames, totalCalories, carb,
-	                protein, fat, sugar, sodium, autoScore, aiFeedback);
+	        totalCalories = ((Number) gptParsed.get("calories")).floatValue();
+	        carb = ((Number) gptParsed.get("carbohydrates")).floatValue();
+	        protein = ((Number) gptParsed.get("protein")).floatValue();
+	        fat = ((Number) gptParsed.get("fat")).floatValue();
+	        sugar = ((Number) gptParsed.get("sugars")).floatValue();
+	        sodium = ((Number) gptParsed.get("sodium")).floatValue();
+	        aiFeedback = (String) gptParsed.get("feedback");
 
-	        notifyTrainersOnMealPost(userId, savedMeal); // 알림 전송
+	        float autoScore = nutritionScorer.calculateScore(
+	            totalCalories, carb, protein, fat, sugar, sodium, user, member, mealType);
+
+	        Meal savedMeal = saveMeal(userId, imageInfo.get("imagePath"), mealType, foodNames, totalCalories, carb,
+	            protein, fat, sugar, sodium, autoScore, aiFeedback, mealTime);
+
+	        notifyTrainersOnMealPost(userId, savedMeal);
 	        return savedMeal;
-		} catch (IllegalArgumentException e) {
-		    throw new RuntimeException("NO_FOOD_DETECTED: " + e.getMessage());
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("식사 분석 중 오류 발생", e);
-		}
+	    } catch (IllegalArgumentException e) {
+	        throw new RuntimeException("NO_FOOD_DETECTED: " + e.getMessage());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("식사 분석 중 오류 발생", e);
+	    }
 	}
+
 
 	private void notifyTrainersOnMealPost(Long userId, Meal savedMeal) {
 	    User user = userDao.selectUserById(userId);  // 닉네임 필요
@@ -155,16 +154,37 @@ public class MealServiceImpl implements MealService {
 	    }
 	}
 	
-	private Meal saveMeal(Long userId, String imagePath, String mealType, List<String> foodNames, float totalCalories,
-			float carb, float protein, float fat, float sugar, float sodium, float autoScore, String aiFeedback) {
+	public Meal saveMeal(
+		    Long userId, String imagePath, String mealType, List<String> foods,
+		    float totalCalories, float carb, float protein, float fat, float sugar, float sodium,
+		    float autoScore, String aiFeedback, LocalDateTime mealTime
+		) {
+		    Meal meal = new Meal();
+		    meal.setUserId(userId);
+		    meal.setImageUrl(imagePath);
+		    meal.setMealType(mealType);
+		    meal.setDetectedFoods(String.join(", ", foods));
+		    meal.setTotalCalories(totalCalories);
+		    meal.setCarbohydrates(carb);
+		    meal.setProtein(protein);
+		    meal.setFat(fat);
+		    meal.setSugars(sugar);
+		    meal.setSodium(sodium);
+		    meal.setAutoScore(autoScore);
+		    meal.setAiFeedback(aiFeedback);
+		    meal.setMealTime(mealTime); // 👈 추가
+		    meal.setCreatedAt(LocalDateTime.now());
 
-		Meal meal = Meal.builder().userId(userId).imageUrl(imagePath).mealType(mealType)
-				.detectedFoods(String.join(", ", foodNames)).totalCalories(totalCalories).carbohydrates(carb)
-				.protein(protein).fat(fat).sugars(sugar).sodium(sodium).autoScore(autoScore).aiFeedback(aiFeedback)
-				.createdAt(LocalDateTime.now()).mealTime(LocalDateTime.now()).build();
+		    mealDao.insertMeal(meal);
+		    return meal;
+		}
 
-		mealDao.insertMeal(meal);
-		return meal;
+	
+	public String classifyMealTimeByHour(int hour) {
+	    if (hour >= 4 && hour < 11) return "breakfast";
+	    if (hour < 16) return "lunch";
+	    if (hour < 23) return "dinner";
+	    return "extra";
 	}
 
 	private String buildPrompt(User user, MemberDetails member, String mealType, List<String> foodNames, float carb,

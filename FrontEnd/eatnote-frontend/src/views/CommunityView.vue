@@ -28,23 +28,24 @@
           <!-- 상단: 게시판 제목과 게시글 수 -->
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900">
-              {{ selectedBoard?.boardName || '게시판' }}
+              {{ selectedBoard?.name || 게시판 }}
             </h2>
+            <p v-if="selectedBoard?.description" class="text-sm text-gray-500 sm:ml-4">
+              {{ selectedBoard.description }}
+            </p>
             <div class="text-sm text-gray-500 font-medium">
               총 {{ articles.length }}개의 게시글
             </div>
           </div>
-          
+
           <!-- 하단: 검색 및 필터 영역 -->
           <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
             <!-- 왼쪽: 검색 컨트롤들 -->
             <div class="flex flex-1 gap-3 items-center">
               <!-- 검색 기준 선택 -->
               <div class="relative flex-shrink-0">
-                <select 
-                  v-model="searchField" 
-                  class="appearance-none bg-white/90 border border-orange-200 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
-                >
+                <select v-model="searchField"
+                  class="appearance-none bg-white/90 border border-orange-200 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                   <option value="ALL">🔍 전체</option>
                   <option value="TITLE">📝 제목</option>
                   <option value="CONTENT">📄 내용</option>
@@ -59,26 +60,21 @@
 
               <!-- 검색어 입력 - 더 넓게 -->
               <div class="relative flex-1">
-                <input 
-                  v-model="keyword" 
-                  type="text" 
-                  placeholder="검색어를 입력하세요" 
+                <input v-model="keyword" type="text" placeholder="검색어를 입력하세요"
                   class="w-full pl-10 pr-4 py-2.5 border border-orange-200 rounded-lg text-sm placeholder-gray-400 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white/90"
-                  @keyup.enter="handleSearch" 
-                />
+                  @keyup.enter="handleSearch" />
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
                 </div>
               </div>
 
               <!-- 정렬 기준 선택 -->
               <div class="relative flex-shrink-0">
-                <select 
-                  v-model="sort" 
-                  class="appearance-none bg-white/90 border border-orange-200 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
-                >
+                <select v-model="sort"
+                  class="appearance-none bg-white/90 border border-orange-200 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
                   <option value="createdAt">🕒 최신순</option>
                   <option value="viewCnt">👁️ 조회순</option>
                 </select>
@@ -93,22 +89,20 @@
             <!-- 오른쪽: 버튼들 -->
             <div class="flex gap-3 flex-shrink-0">
               <!-- 검색 버튼 -->
-              <button 
+              <button
                 class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:from-orange-600 hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                @click="handleSearch"
-              >
+                @click="handleSearch">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 검색
               </button>
 
               <!-- 글쓰기 버튼 -->
-              <button 
-                v-if="canWriteArticle"
+              <button v-if="canWriteArticle"
                 class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                @click="goToWrite"
-              >
+                @click="goToWrite">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -127,16 +121,15 @@
         <div v-if="articles.length === 0" class="text-center py-16">
           <div class="w-24 h-24 mx-auto mb-4 text-orange-300">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+              </path>
             </svg>
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">게시글이 없습니다</h3>
           <p class="text-gray-600 mb-6">첫 번째 게시글을 작성해보세요!</p>
-          <button 
-            v-if="canWriteArticle"
-            @click="goToWrite"
-            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 shadow-md"
-          >
+          <button v-if="canWriteArticle" @click="goToWrite"
+            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 shadow-md">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -147,10 +140,8 @@
 
       <!-- 더보기 버튼 -->
       <div v-if="pagedArticles.length < articles.length" class="text-center mt-8">
-        <button 
-          @click="loadMore" 
-          class="inline-flex items-center px-8 py-3 bg-white/80 backdrop-blur-sm text-gray-700 text-sm font-medium rounded-lg border border-orange-200 hover:bg-white/90 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
-        >
+        <button @click="loadMore"
+          class="inline-flex items-center px-8 py-3 bg-white/80 backdrop-blur-sm text-gray-700 text-sm font-medium rounded-lg border border-orange-200 hover:bg-white/90 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
@@ -381,6 +372,7 @@ onMounted(fetchBoards)
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -393,7 +385,8 @@ onMounted(fetchBoards)
 }
 
 /* 포커스 효과 - 오렌지 색상으로 변경 */
-input:focus, select:focus {
+input:focus,
+select:focus {
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
@@ -402,7 +395,7 @@ input:focus, select:focus {
   .community-page {
     padding: 1rem;
   }
-  
+
   .max-w-7xl {
     padding: 0 1rem;
   }
@@ -498,7 +491,7 @@ button:hover {
   --tw-gradient-to: #fffbeb;
 }
 
-.divide-orange-100 > :not([hidden]) ~ :not([hidden]) {
+.divide-orange-100> :not([hidden])~ :not([hidden]) {
   border-color: #fed7aa;
 }
 </style>

@@ -74,6 +74,9 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 }
+  }
 })
 
 // 최신 방식으로 변경한 네비게이션 가드

@@ -3,35 +3,14 @@
     <Header />
 
     <div class="container mx-auto px-4 py-8 max-w-2xl">
-      <!-- 노미 캐릭터 섹션 -->
-      <div class="text-center mb-8">
-        <!-- 로딩 중일 때는 애니메이션 노미, 아닐 때는 기본 노미 -->
-        <NomiLoading
-          v-if="uploading"
-          size="xl"
-          :is-loading="uploading"
-          :messages="[
-            '사진을 분석하고 있어요! 🔍',
-            '맛있는 음식을 찾고 있어요! 🍽️',
-            '영양 정보를 계산하고 있어요! 📊',
-            '거의 다 끝났어요! ✨'
-          ]"
-        />
-        <NomiBasic
-          v-else
-          size="xl"
-          :show-message="true"
-          :message="{ line1: '환영해요!', line2: '식단을 기록해봐요 📝' }"
-        />
-      </div>
-
       <!-- 페이지 제목 -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-gray-800 mb-2">
           <span class="text-4xl">🍽️</span> 식단 업로드
         </h1>
         <p class="text-lg text-gray-600 font-medium">{{ suggestedMessage }}</p>
-        <div class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-white/70 backdrop-blur-sm rounded-full border border-yellow-200">
+        <div
+          class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-white/70 backdrop-blur-sm rounded-full border border-yellow-200">
           <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
           <span class="text-sm font-medium text-gray-700">현재 시간 기준: {{ mealTypeLabel }} 식사</span>
         </div>
@@ -43,23 +22,74 @@
         <!-- 이미지 미리보기 섹션 -->
         <div v-if="imagePreviewUrl" class="relative">
           <div class="aspect-w-16 aspect-h-12 bg-gray-100">
-            <img
-              :src="imagePreviewUrl"
-              alt="미리보기"
-              class="w-full h-64 object-cover"
-            />
+            <img :src="imagePreviewUrl" alt="미리보기" class="w-full h-64 object-cover" />
           </div>
-          <button
-            @click="clearImage"
-            class="absolute top-4 right-4 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors"
-          >
+          <button @click="clearImage"
+            class="absolute top-4 right-4 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors">
             ✕
           </button>
         </div>
 
         <!-- 업로드 폼 -->
         <div class="p-8">
-          <form v-if="!uploading && !uploadComplete" @submit.prevent="handleUpload" class="space-y-6">
+          <form v-if="!uploadComplete" @submit.prevent="handleUpload" class="space-y-6">
+
+            <!-- 시간 설정 모드 선택 -->
+            <div class="space-y-4">
+              <label class="block text-lg font-semibold text-gray-800">
+                🕓 식사 시간 설정
+              </label>
+
+              <!-- 모드 선택 토글 -->
+              <div class="flex items-center gap-4 p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200">
+                <label class="flex items-center cursor-pointer">
+                  <input type="radio" :value="false" v-model="useCustomTime" class="sr-only" />
+                  <div class="relative">
+                    <div class="w-4 h-4 border-2 border-yellow-400 rounded-full"
+                      :class="!useCustomTime ? 'bg-yellow-400' : 'bg-white'"></div>
+                    <div v-if="!useCustomTime" class="absolute inset-0 flex items-center justify-center">
+                      <div class="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <span class="ml-2 text-gray-700 font-medium">🔄 현재 시간으로 자동 등록</span>
+                </label>
+
+                <label class="flex items-center cursor-pointer">
+                  <input type="radio" :value="true" v-model="useCustomTime" class="sr-only" />
+                  <div class="relative">
+                    <div class="w-4 h-4 border-2 border-yellow-400 rounded-full"
+                      :class="useCustomTime ? 'bg-yellow-400' : 'bg-white'"></div>
+                    <div v-if="useCustomTime" class="absolute inset-0 flex items-center justify-center">
+                      <div class="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                  </div>
+                  <span class="ml-2 text-gray-700 font-medium">✏️ 시간 직접 입력</span>
+                </label>
+              </div>
+
+
+              <!-- 직접 시간 입력 (커스텀 모드일 때만 표시) -->
+              <div v-if="useCustomTime" class="space-y-3">
+                <div class="relative">
+                  <input type="datetime-local" v-model="customMealTime" :max="maxDateTime" required
+                    class="w-full border-2 border-yellow-300 rounded-2xl px-4 py-3 text-gray-700 focus:border-yellow-400 focus:outline-none transition-colors bg-white/70 backdrop-blur-sm" />
+                  <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <span class="text-yellow-500">📅</span>
+                  </div>
+                </div>
+                <p class="text-sm text-gray-500">
+                  💡 원하는 날짜와 시간을 선택하세요
+                </p>
+              </div>
+
+              <!-- 현재 시간 정보 (자동 모드일 때만 표시) -->
+              <div v-else class="bg-blue-50/50 rounded-xl p-3 border border-blue-200">
+                <div class="flex items-center gap-2 text-sm text-blue-800">
+                  <span>⏰</span>
+                  <span><strong>{{ currentTimeDisplay }}</strong>로 등록됩니다</span>
+                </div>
+              </div>
+            </div>
 
             <!-- 파일 업로드 영역 -->
             <div class="space-y-3">
@@ -70,21 +100,10 @@
               <!-- 드래그 앤 드롭 영역 -->
               <div
                 class="relative border-2 border-dashed border-yellow-300 rounded-2xl p-8 text-center hover:border-yellow-400 transition-colors group cursor-pointer"
-                :class="{ 'bg-yellow-50': !imagePreviewUrl }"
-                @click="$refs.fileInput.click()"
-                @drop.prevent="handleDrop"
-                @dragover.prevent
-                @dragenter.prevent
-              >
-                <input
-                  ref="fileInput"
-                  type="file"
-                  id="image"
-                  @change="onFileChange"
-                  accept="image/*"
-                  required
-                  class="hidden"
-                />
+                :class="{ 'bg-yellow-50': !imagePreviewUrl }" @click="$refs.fileInput.click()"
+                @drop.prevent="handleDrop" @dragover.prevent @dragenter.prevent>
+                <input ref="fileInput" type="file" id="image" @change="onFileChange" accept="image/*" required
+                  class="hidden" />
 
                 <div v-if="!imagePreviewUrl" class="space-y-3">
                   <div class="text-6xl">📷</div>
@@ -103,11 +122,8 @@
             </div>
 
             <!-- 업로드 버튼 -->
-            <button
-              type="submit"
-              :disabled="!imageFile"
-              class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 disabled:from-gray-300 disabled:to-gray-400 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] disabled:scale-100 shadow-lg hover:shadow-xl disabled:cursor-not-allowed text-lg"
-            >
+            <button type="submit" :disabled="!imageFile || uploading"
+              class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 disabled:from-gray-300 disabled:to-gray-400 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] disabled:scale-100 shadow-lg hover:shadow-xl disabled:cursor-not-allowed text-lg">
               <span class="flex items-center justify-center gap-2">
                 <span>🚀</span> AI 분석 시작하기
               </span>
@@ -146,10 +162,8 @@
                 </div>
               </div>
 
-              <button
-                @click="goToMealDetail(result.mealId)"
-                class="w-full mt-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
-              >
+              <button @click="goToMealDetail(result.mealId)"
+                class="w-full mt-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
                 📊 상세 분석 결과 보기
               </button>
             </div>
@@ -171,35 +185,66 @@
 
       <!-- 하단 네비게이션 -->
       <div class="flex gap-4 mt-8">
-        <button
-          @click="goToDashboard"
-          class="flex-1 bg-white/60 hover:bg-white/80 backdrop-blur-sm text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-gray-300 cursor-pointer"
-        >
+        <button @click="goToDashboard"
+          class="flex-1 bg-white/60 hover:bg-white/80 backdrop-blur-sm text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all duration-300 border border-gray-200 hover:border-gray-300 cursor-pointer">
           📋 식단 목록으로
         </button>
 
-        <button
-          v-if="uploadComplete"
-          @click="resetForm"
-          class="flex-1 bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl cursor-pointer"
-        >
+        <button v-if="uploadComplete" @click="resetForm"
+          class="flex-1 bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl cursor-pointer">
           ➕ 새 식단 등록
         </button>
+      </div>
+    </div>
+
+    <!-- 업로드 중 모달 -->
+    <div v-if="uploading" class="modal-overlay">
+      <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 relative">
+        <!-- 모달 닫기 버튼 -->
+        <button @click="cancelUpload"
+          class="absolute top-4 right-4 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors z-10">
+          ✕
+        </button>
+
+        <!-- 노미 로딩 컴포넌트 -->
+        <div class="text-center">
+          <NomiLoading size="xl" :is-loading="uploading" :messages="[
+            '사진을 분석하고 있어요! 🔍',
+            `${nickname}님을\n위한 피드백 작성 중이에요! ✏️`,
+            '맛있는 음식을 찾고 있어요! 🍽️',
+            '영양 정보를 계산하고 있어요! 📊',
+            '거의 다 끝났어요! ✨'
+          ]" />
+          <div class="mt-4">
+            <p class="text-lg font-semibold text-gray-800 mb-2">AI가 식단을 분석하고 있어요</p>
+            <p class="text-sm text-gray-600">잠시만 기다려주세요...</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import NomiBasic from '@/components/NomiBasic.vue'
 import NomiLoading from '@/components/NomiLoading.vue'
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import Header from '@/components/common/Header.vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const nickname = computed(() => authStore.user?.nickname || '회원')
+
 
 const toast = useToast()
+const customMealTime = ref('')
+const showTimeInput = ref(false)
+
+const toggleTimeInput = () => {
+  showTimeInput.value = !showTimeInput.value
+}
 
 // 상태 변수
 const mealType = ref('breakfast')
@@ -209,6 +254,42 @@ const result = ref(null)
 const router = useRouter()
 const uploadComplete = ref(false)
 const imagePreviewUrl = ref(null)
+
+// 시간 관련 상태
+const useCustomTime = ref(false)  // true: 직접입력, false: 현재시간
+
+// AbortController for canceling requests
+let abortController = null
+
+// 업로드 취소 함수
+const cancelUpload = () => {
+  if (abortController) {
+    abortController.abort()
+  }
+  uploading.value = false
+  toast.info('업로드가 취소되었습니다.')
+}
+
+// 현재 시간을 기준으로 한 최대 날짜시간 (미래 입력 방지)
+const maxDateTime = computed(() => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const date = String(now.getDate()).padStart(2, '0')
+  const hour = String(now.getHours()).padStart(2, '0')
+  const minute = String(now.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${date}T${hour}:${minute}`
+})
+
+// 현재 시간 표시용
+const currentTimeDisplay = computed(() => {
+  const now = new Date()
+  const month = now.getMonth() + 1
+  const date = now.getDate()
+  const hour = now.getHours()
+  const minute = now.getMinutes()
+  return `${month}월 ${date}일 ${hour}:${minute.toString().padStart(2, '0')}`
+})
 
 const onFileChange = (e) => {
   const file = e.target.files[0]
@@ -292,36 +373,69 @@ const suggestedMessage = computed(() => {
 const handleUpload = async () => {
   if (!imageFile.value) return;
 
+  uploading.value = true;
+
+  // AbortController 생성
+  abortController = new AbortController()
+
   const formData = new FormData();
   formData.append('file', imageFile.value);
-  uploading.value = true;
+
+  if (customMealTime.value) {
+    const localTime = new Date(customMealTime.value);
+    const offset = localTime.getTimezoneOffset();
+    const corrected = new Date(localTime.getTime() - offset * 60000);
+    const localISOString = corrected.toISOString().slice(0, 19);
+    formData.append('mealTime', localISOString);
+  }
 
   try {
     const token = localStorage.getItem('accessToken');
     const response = await axios.post('/api/meal/upload', formData, {
       headers: {
         'Authorization': `Bearer ${token}`
-      }
+      },
+      signal: abortController.signal  // AbortController 신호 추가
     });
+
     result.value = response.data.data;
     uploadComplete.value = true;
     toast.success('식단이 성공적으로 업로드되었습니다.')
   } catch (error) {
+    // 사용자가 취소한 경우
+    if (axios.isCancel(error)) {
+      console.log('업로드가 사용자에 의해 취소되었습니다.');
+      return;
+    }
+
     console.error('[❌ 업로드 에러 발생]', error);
 
     const msg = error?.response?.data?.message || '';
     if (msg.includes('감지된 음식이 없습니다')) {
-      toast.warning('😥 음식이 감지되지 않았어요. \n 더 선명한 사진으로 다시 시도해보세요! \n 음식의 전체가 보이도록 찍어주세요!!')
+      toast.warning('😥 음식이 감지되지 않았어요.\n더 선명한 사진으로 다시 시도해보세요!')
     } else {
       toast.error('🚨 식단 업로드 중 문제가 발생했습니다.')
     }
   } finally {
     uploading.value = false;
+    abortController = null;
   }
 }
+
 </script>
 
 <style scoped>
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
 /* 추가 커스텀 스타일 */
 .container {
   animation: fadeInUp 0.6s ease-out;
@@ -332,6 +446,7 @@ const handleUpload = async () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

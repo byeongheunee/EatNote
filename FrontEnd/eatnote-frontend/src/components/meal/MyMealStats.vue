@@ -46,7 +46,7 @@
             <p class="empty-description">식사를 기록하면 통계를 확인할 수 있어요!</p>
           </div>
 
-          <div v-else class="stats-grid">
+          <div v-else class="stats-grid stats-grid-2rows">
             <div class="stat-item week-stat">
               <div class="stat-content">
                 <p class="stat-label">주차</p>
@@ -102,53 +102,6 @@
         </div>
       </div>
 
-      <!-- AI 피드백 카드 -->
-      <div class="feedback-card">
-        <div class="card-header">
-          <h3 class="card-title">
-            <span class="card-icon">🤖</span>
-            AI 피드백
-          </h3>
-        </div>
-
-        <div class="feedback-content">
-          <div class="feedback-item warning-feedback">
-            <div class="feedback-icon-wrapper">
-              <span class="feedback-icon">⚠️</span>
-            </div>
-            <div class="feedback-text">
-              <h4 class="feedback-title">주의사항</h4>
-              <p class="feedback-description">{{ aiFeedback.warning }}</p>
-            </div>
-          </div>
-
-          <div class="feedback-item tip-feedback">
-            <div class="feedback-icon-wrapper">
-              <span class="feedback-icon">💡</span>
-            </div>
-            <div class="feedback-text">
-              <h4 class="feedback-title">건강 팁</h4>
-              <p class="feedback-description">{{ aiFeedback.tip }}</p>
-            </div>
-          </div>
-
-          <div v-if="aiFeedback.recommendedFoods?.length" class="feedback-item recommendation-feedback">
-            <div class="feedback-icon-wrapper">
-              <span class="feedback-icon">🍎</span>
-            </div>
-            <div class="feedback-text">
-              <h4 class="feedback-title">추천 식품</h4>
-              <div class="recommended-foods">
-                <div v-for="(food, i) in aiFeedback.recommendedFoods" :key="i" class="food-recommendation">
-                  <p class="food-name">{{ food.name }}</p>
-                  <p class="food-reason">{{ food.reason }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- 차트 섹션 -->
       <div class="charts-section">
         <!-- 일별 점수 차트 -->
@@ -195,44 +148,93 @@
         </div>
       </div>
 
+      <!-- AI 피드백과 상세 일별 데이터 통합 섹션 -->
+      <div class="feedback-table-section">
+        <!-- AI 피드백 카드 -->
+        <div class="feedback-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="card-icon">🤖</span>
+              AI 피드백
+            </h3>
+          </div>
 
-      <!-- 상세 통계 테이블 -->
-      <div class="table-card">
-        <div class="card-header">
-          <h3 class="card-title">
-            <span class="card-icon">📋</span>
-            상세 일별 데이터
-          </h3>
+          <div class="feedback-content">
+            <div class="feedback-item warning-feedback">
+              <div class="feedback-icon-wrapper">
+                <span class="feedback-icon">⚠️</span>
+              </div>
+              <div class="feedback-text">
+                <h4 class="feedback-title">주의사항</h4>
+                <p class="feedback-description">{{ aiFeedback.warning }}</p>
+              </div>
+            </div>
+
+            <div class="feedback-item tip-feedback">
+              <div class="feedback-icon-wrapper">
+                <span class="feedback-icon">💡</span>
+              </div>
+              <div class="feedback-text">
+                <h4 class="feedback-title">건강 팁</h4>
+                <p class="feedback-description">{{ aiFeedback.tip }}</p>
+              </div>
+            </div>
+
+            <div v-if="aiFeedback.recommendedFoods?.length" class="feedback-item recommendation-feedback">
+              <div class="feedback-icon-wrapper">
+                <span class="feedback-icon">🍎</span>
+              </div>
+              <div class="feedback-text">
+                <h4 class="feedback-title">추천 식품</h4>
+                <div class="recommended-foods">
+                  <div v-for="(food, i) in aiFeedback.recommendedFoods" :key="i" class="food-recommendation">
+                    <p class="food-name">{{ food.name }}</p>
+                    <p class="food-reason">{{ food.reason }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="table-wrapper">
-          <table class="stats-table">
-            <thead class="table-header">
-              <tr>
-                <th class="table-th">날짜</th>
-                <th class="table-th">AI 점수</th>
-                <th class="table-th">트레이너 점수</th>
-                <th class="table-th">식사 수</th>
-                <th class="table-th">평균 칼로리</th>
-              </tr>
-            </thead>
-            <tbody class="table-body">
-              <tr v-for="row in dailyStats" :key="row.day" class="table-row">
-                <td class="table-td font-medium">{{ row.day }}</td>
-                <td class="table-td">
-                  <span class="score-badge ai-score">
-                    {{ row.autoScore ?? '-' }}
-                  </span>
-                </td>
-                <td class="table-td">
-                  <span class="score-badge trainer-score">
-                    {{ row.trainerScore ?? '-' }}
-                  </span>
-                </td>
-                <td class="table-td">{{ row.mealCount }}</td>
-                <td class="table-td">{{ row.avgCalories }} kcal</td>
-              </tr>
-            </tbody>
-          </table>
+
+        <!-- 상세 통계 테이블 -->
+        <div class="table-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <span class="card-icon">📋</span>
+              상세 일별 데이터
+            </h3>
+          </div>
+          <div class="table-wrapper">
+            <table class="stats-table">
+              <thead class="table-header">
+                <tr>
+                  <th class="table-th">날짜</th>
+                  <th class="table-th">AI 점수</th>
+                  <th class="table-th">트레이너 점수</th>
+                  <th class="table-th">식사 수</th>
+                  <th class="table-th">평균 칼로리</th>
+                </tr>
+              </thead>
+              <tbody class="table-body">
+                <tr v-for="row in dailyStats" :key="row.day" class="table-row">
+                  <td class="table-td font-medium">{{ row.day.slice(5) }}</td>
+                  <td class="table-td">
+                    <span class="score-badge ai-score">
+                      {{ row.autoScore ?? '-' }}
+                    </span>
+                  </td>
+                  <td class="table-td">
+                    <span class="score-badge trainer-score">
+                      {{ row.trainerScore ?? '-' }}
+                    </span>
+                  </td>
+                  <td class="table-td">{{ row.mealCount }}</td>
+                  <td class="table-td">{{ row.avgCalories }} kcal</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -681,8 +683,13 @@ function drawPieChart(stat) {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
+}
+
+/* 2행 3열 그리드 */
+.stats-grid-2rows {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
 }
 
 .stat-item {
@@ -750,6 +757,48 @@ function drawPieChart(stat) {
 
 .fat-stat {
   border-left: 4px solid #8b5cf6;
+}
+
+/* 차트 섹션 */
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.chart-header {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  padding: 1.25rem 1.5rem;
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.chart-icon {
+  font-size: 1.1rem;
+}
+
+.chart-content {
+  padding: 1.5rem;
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 250px;
+}
+
+/* AI 피드백과 테이블 통합 섹션 */
+.feedback-table-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
 }
 
 /* AI 피드백 */

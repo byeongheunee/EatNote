@@ -1,12 +1,8 @@
 <template>
-  <div 
-    class="meal-card" 
-    :class="{ 
-      'pending': highlightPending && !meal.isFeedbackedByMe,
-      'completed': meal.isFeedbackedByMe
-    }"
-    @click="handleCardClick"
-  >
+  <div class="meal-card" :class="{
+    'pending': highlightPending && !meal.isFeedbackedByMe,
+    'completed': meal.isFeedbackedByMe
+  }" @click="handleCardClick">
     <!-- 상태 뱃지 -->
     <div class="status-badge" :class="getStatusBadgeClass()">
       <span class="status-icon">{{ getStatusIcon() }}</span>
@@ -56,11 +52,8 @@
     <!-- 피드백 상태 및 액션 -->
     <div class="action-section">
       <!-- 미작성 시 입력 버튼 -->
-      <button 
-        v-if="!meal.isFeedbackedByMe && highlightPending" 
-        @click.stop="$emit('feedback', meal.mealId)"
-        class="feedback-button primary"
-      >
+      <button v-if="!meal.isFeedbackedByMe && highlightPending" @click.stop="$emit('feedback', meal.mealId)"
+        class="feedback-button primary">
         <span class="button-icon">✏️</span>
         <span>피드백 입력</span>
       </button>
@@ -70,13 +63,10 @@
         <div class="completed-info">
           <div class="score-display">
             <span class="score-label">트레이너 점수</span>
-            <span class="score-value">{{ meal.trainerScore }}/10</span>
+            <span class="score-value">{{ formatTrainerScore(meal.trainerScore) }}/10</span>
           </div>
         </div>
-        <button 
-          @click.stop="$emit('view', meal.mealId)"
-          class="feedback-button secondary"
-        >
+        <button @click.stop="$emit('view', meal.mealId)" class="feedback-button secondary">
           <span class="button-icon">👁️</span>
           <span>상세 보기</span>
         </button>
@@ -96,6 +86,12 @@ const handleCardClick = () => {
   if (props.meal.isFeedbackedByMe) return
   emit('feedback', props.meal.mealId)
 }
+
+const formatTrainerScore = (score) => {
+  if (score == null) return '-'
+  return Number(score).toFixed(1)
+}
+
 
 const getMealImage = (path) =>
   path ? `http://localhost:8080${path}` : '/images/default-meal.jpg'
@@ -129,7 +125,7 @@ const getMealTypeEmoji = (type) => {
 const getMealTypeBadgeClass = (type) => {
   const classMap = {
     breakfast: 'breakfast',
-    lunch: 'lunch', 
+    lunch: 'lunch',
     dinner: 'dinner',
     extra: 'extra'
   }
@@ -310,11 +306,9 @@ const getStatusText = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.1) 100%);
   pointer-events: none;
 }
 
@@ -484,21 +478,21 @@ const getStatusText = () => {
   .meal-card {
     padding: 1rem;
   }
-  
+
   .meal-image {
     height: 10rem;
   }
-  
+
   .stats-grid {
     grid-template-columns: 1fr;
     gap: 0.5rem;
   }
-  
+
   .meal-header {
     flex-direction: column;
     gap: 0.75rem;
   }
-  
+
   .status-badge {
     position: static;
     align-self: flex-end;
@@ -510,11 +504,11 @@ const getStatusText = () => {
   .user-name {
     font-size: 1rem;
   }
-  
+
   .meal-date {
     font-size: 0.75rem;
   }
-  
+
   .feedback-button {
     padding: 0.625rem 0.875rem;
     font-size: 0.85rem;

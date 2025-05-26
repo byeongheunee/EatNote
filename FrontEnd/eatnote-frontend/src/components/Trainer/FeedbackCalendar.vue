@@ -5,11 +5,7 @@
       <div class="calendar-column">
         <!-- FullCalendar -->
         <div class="calendar-wrapper">
-          <FullCalendar
-            ref="calendar"
-            :options="calendarOptions"
-            class="custom-fullcalendar"
-          />
+          <FullCalendar ref="calendar" :options="calendarOptions" class="custom-fullcalendar" />
         </div>
 
         <!-- 범례 -->
@@ -56,11 +52,8 @@
               <span class="progress-percentage">{{ getCompletionPercentage(selectedDate) }}%</span>
             </div>
             <div class="progress-bar">
-              <div
-                class="progress-fill"
-                :class="getProgressBarClass(selectedDate)"
-                :style="{ width: getCompletionPercentage(selectedDate) + '%' }"
-              ></div>
+              <div class="progress-fill" :class="getProgressBarClass(selectedDate)"
+                :style="{ width: getCompletionPercentage(selectedDate) + '%' }"></div>
             </div>
           </div>
 
@@ -68,12 +61,8 @@
           <div v-if="selectedDateMeals.length > 0" class="pending-meals-section">
             <h4 class="section-title">🍽️ 미완료 식단 ({{ selectedDateMeals.length }}개)</h4>
             <div class="meals-container">
-              <div
-                v-for="meal in selectedDateMeals"
-                :key="meal.mealId"
-                class="meal-card"
-                @click="goToMeal(meal.mealId)"
-              >
+              <div v-for="meal in selectedDateMeals" :key="meal.mealId" class="meal-card"
+                @click="goToMeal(meal.mealId)">
                 <div class="meal-image">
                   <img :src="getFullImageUrl(meal.imageUrl)" :alt="meal.detectedFoods" />
                 </div>
@@ -243,9 +232,6 @@ const calendarOptions = computed(() => ({
       html: `
         <div class="custom-day-cell">
           <div class="day-number">${info.dayNumberText}</div>
-          ${stats && stats.total > 0 ? `
-            <div class="stats-indicator ${getStatusClass(stats)}"></div>
-          ` : ''}
         </div>
       `
     }

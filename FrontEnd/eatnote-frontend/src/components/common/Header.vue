@@ -307,7 +307,7 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 }
 
 .header-content {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -316,7 +316,7 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 80px;
+  height: 64px;
 }
 
 /* 로고 섹션 */
@@ -357,7 +357,7 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   gap: 6px;
   padding: 8px 16px;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 14px;
   color: #6b7280;
   text-decoration: none;
   background: transparent;

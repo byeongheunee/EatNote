@@ -1,17 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 flex items-center justify-center p-4">
+  <div
+    class="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 flex items-center justify-center p-4">
     <!-- 메인 컨테이너 -->
     <div class="w-full max-w-lg">
       <!-- 로고 및 제목 -->
       <div class="text-center mb-8">
         <div class="inline-flex items-center gap-3 mb-4">
-          <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl flex items-center justify-center shadow-lg">
+          <div
+            class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-xl flex items-center justify-center shadow-lg">
             <span class="text-white text-2xl">🍽️</span>
           </div>
-          <h1 
-            @click="goHome"
-            class="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent cursor-pointer hover:from-orange-700 hover:to-amber-700 transition-all duration-300"
-          >
+          <h1 @click="goHome"
+            class="text-3xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent cursor-pointer hover:from-orange-700 hover:to-amber-700 transition-all duration-300">
             EatNote
           </h1>
         </div>
@@ -25,16 +25,15 @@
           <span class="text-sm font-medium text-gray-600">{{ step }}/3</span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-2">
-          <div 
+          <div
             class="bg-gradient-to-r from-yellow-400 to-orange-400 h-2 rounded-full transition-all duration-500 ease-out"
-            :style="`width: ${(step / 3) * 100}%`"
-          ></div>
+            :style="`width: ${(step / 3) * 100}%`"></div>
         </div>
       </div>
 
       <!-- 메인 카드 -->
       <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden">
-        
+
         <!-- Step 1: 회원 유형 선택 -->
         <div v-if="step === 1" class="p-0 overflow-hidden">
           <div class="text-center mb-8 p-8 pb-4">
@@ -43,19 +42,16 @@
           </div>
 
           <!-- 좌우 분할 선택 영역 -->
-          <div class="flex h-80">
+          <div class="flex h-[22rem]">
             <!-- 트레이너 선택 -->
-            <div 
-              @click="selectUserType(1)" 
-              class="user-type-split trainer-side group"
-              :class="{ 'selected': selectedUserType === 1 }"
-            >
+            <div @click="selectUserType(1)" class="user-type-split trainer-side group"
+              :class="{ 'selected': selectedUserType === 1 }">
               <!-- 배경 이미지 -->
               <div class="split-background trainer-bg"></div>
-              
+
               <!-- 오버레이 -->
               <div class="split-overlay"></div>
-              
+
               <!-- 컨텐츠 -->
               <div class="split-content">
                 <div class="split-icon">💪</div>
@@ -70,7 +66,7 @@
                   <span class="tag trainer-tag">피드백 제공</span>
                 </div>
               </div>
-              
+
               <!-- 선택 표시 -->
               <div class="selection-indicator trainer-indicator">
                 <div class="check-circle"></div>
@@ -81,17 +77,14 @@
             <div class="divider"></div>
 
             <!-- 일반 회원 선택 -->
-            <div 
-              @click="selectUserType(2)" 
-              class="user-type-split member-side group"
-              :class="{ 'selected': selectedUserType === 2 }"
-            >
+            <div @click="selectUserType(2)" class="user-type-split member-side group"
+              :class="{ 'selected': selectedUserType === 2 }">
               <!-- 배경 이미지 -->
               <div class="split-background member-bg"></div>
-              
+
               <!-- 오버레이 -->
               <div class="split-overlay"></div>
-              
+
               <!-- 컨텐츠 -->
               <div class="split-content">
                 <div class="split-icon">🙋‍♂️</div>
@@ -106,7 +99,7 @@
                   <span class="tag member-tag">AI 분석</span>
                 </div>
               </div>
-              
+
               <!-- 선택 표시 -->
               <div class="selection-indicator member-indicator">
                 <div class="check-circle"></div>
@@ -116,7 +109,8 @@
 
           <!-- 홈으로 돌아가기 -->
           <div class="text-center p-6">
-            <button @click="goHome" class="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center gap-2 mx-auto">
+            <button @click="goHome"
+              class="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-300 flex items-center gap-2 mx-auto">
               🏠 홈으로 돌아가기
             </button>
           </div>
@@ -138,13 +132,8 @@
                   <span class="label-icon">📧</span>
                   이메일
                 </label>
-                <input 
-                  v-model="form.email" 
-                  type="email" 
-                  class="form-input"
-                  :class="{ 'error': errors.email }"
-                  placeholder="your@email.com"
-                />
+                <input v-model="form.email" type="email" class="form-input" :class="{ 'error': errors.email }"
+                  placeholder="your@email.com" />
                 <p v-if="errors.email" class="error-message">이메일은 필수 입력 항목입니다.</p>
               </div>
 
@@ -154,13 +143,8 @@
                   <span class="label-icon">🔒</span>
                   비밀번호
                 </label>
-                <input 
-                  v-model="form.password" 
-                  type="password" 
-                  class="form-input"
-                  :class="{ 'error': errors.password }"
-                  placeholder="안전한 비밀번호를 입력하세요"
-                />
+                <input v-model="form.password" type="password" class="form-input" :class="{ 'error': errors.password }"
+                  placeholder="안전한 비밀번호를 입력하세요" />
                 <p v-if="errors.password" class="error-message">비밀번호는 필수 입력 항목입니다.</p>
               </div>
 
@@ -170,13 +154,8 @@
                   <span class="label-icon">🔐</span>
                   비밀번호 확인
                 </label>
-                <input 
-                  v-model="form.passwordConfirm" 
-                  type="password" 
-                  class="form-input"
-                  :class="{ 'error': errors.passwordConfirm || passwordMismatch }"
-                  placeholder="비밀번호를 다시 입력하세요"
-                />
+                <input v-model="form.passwordConfirm" type="password" class="form-input"
+                  :class="{ 'error': errors.passwordConfirm || passwordMismatch }" placeholder="비밀번호를 다시 입력하세요" />
                 <p v-if="errors.passwordConfirm" class="error-message">비밀번호 확인은 필수입니다.</p>
                 <p v-if="passwordMismatch" class="error-message">비밀번호가 일치하지 않습니다.</p>
               </div>
@@ -187,13 +166,8 @@
                   <span class="label-icon">👤</span>
                   이름
                 </label>
-                <input 
-                  v-model="form.name" 
-                  type="text" 
-                  class="form-input"
-                  :class="{ 'error': errors.name }"
-                  placeholder="실명을 입력해주세요"
-                />
+                <input v-model="form.name" type="text" class="form-input" :class="{ 'error': errors.name }"
+                  placeholder="실명을 입력해주세요" />
                 <p v-if="errors.name" class="error-message">이름은 필수 입력 항목입니다.</p>
               </div>
 
@@ -204,18 +178,9 @@
                   닉네임
                 </label>
                 <div class="flex gap-2">
-                  <input 
-                    v-model="form.nickname" 
-                    type="text" 
-                    class="form-input flex-1"
-                    :class="{ 'error': errors.nickname }"
-                    placeholder="닉네임"
-                  />
-                  <button 
-                    type="button" 
-                    @click="checkNickname" 
-                    class="nickname-check-btn"
-                  >
+                  <input v-model="form.nickname" type="text" class="form-input flex-1"
+                    :class="{ 'error': errors.nickname }" placeholder="닉네임" />
+                  <button type="button" @click="checkNickname" class="nickname-check-btn">
                     확인
                   </button>
                 </div>
@@ -243,13 +208,8 @@
                     <span class="label-icon">🎂</span>
                     나이
                   </label>
-                  <input 
-                    v-model="form.age" 
-                    type="number" 
-                    class="form-input"
-                    :class="{ 'error': errors.age }"
-                    placeholder="나이"
-                  />
+                  <input v-model="form.age" type="number" class="form-input" :class="{ 'error': errors.age }"
+                    placeholder="나이" />
                   <p v-if="errors.age" class="error-message">나이는 필수 입력 항목입니다.</p>
                 </div>
               </div>
@@ -272,30 +232,18 @@
                     <p class="text-xs text-gray-500 mt-1">다른 파일을 선택하려면 클릭하세요</p>
                   </div>
                 </div>
-                <input 
-                  ref="fileInput"
-                  type="file" 
-                  @change="handleFileChange" 
-                  class="hidden"
-                  accept="image/*"
-                />
+                <input ref="fileInput" type="file" @change="handleFileChange" class="hidden" accept="image/*" />
               </div>
             </div>
           </div>
 
           <!-- 네비게이션 버튼들 -->
           <div class="flex justify-between items-center mt-8 px-8 pb-6">
-            <button 
-              @click="step = 1" 
-              class="nav-btn secondary flex items-center gap-2"
-            >
+            <button @click="step = 1" class="nav-btn secondary flex items-center gap-2">
               ← 뒤로가기
             </button>
-            
-            <button 
-              @click="goToNextStep" 
-              class="nav-btn primary flex items-center gap-2"
-            >
+
+            <button @click="goToNextStep" class="nav-btn primary flex items-center gap-2">
               다음 단계 →
             </button>
           </div>
@@ -308,13 +256,9 @@
             <p class="text-gray-600">{{ userType === 1 ? '트레이너' : '회원' }} 전용 정보를 입력해주세요</p>
           </div>
 
-          <component
-            :is="detailComponent"
-            v-model="formDetail"
-            @goBack="step = 2"
-            @validation-change="handleValidationChange"
-          />
-          
+          <component :is="detailComponent" v-model="formDetail" @goBack="step = 2"
+            @validation-change="handleValidationChange" />
+
           <!-- 네비게이션 버튼 -->
           <div class="flex justify-between mt-8">
             <button @click="step = 2" class="nav-btn secondary">
@@ -332,8 +276,9 @@
       <!-- 하단 링크 -->
       <div class="text-center mt-6">
         <p class="text-gray-600">
-          이미 계정이 있으신가요? 
-          <router-link to="/login" class="text-orange-600 hover:text-orange-700 font-medium transition-colors duration-300">
+          이미 계정이 있으신가요?
+          <router-link to="/login"
+            class="text-orange-600 hover:text-orange-700 font-medium transition-colors duration-300">
             로그인하기
           </router-link>
         </p>
@@ -371,7 +316,7 @@ const form = ref({
   age: 0,
 })
 
-const passwordMismatch = computed(() => 
+const passwordMismatch = computed(() =>
   form.value.password && form.value.passwordConfirm && form.value.password !== form.value.passwordConfirm
 )
 
@@ -460,7 +405,7 @@ const goToNextStep = () => {
       goal: '', trainerNickname: '', allergyIds: []
     }
   }
-  
+
   console.log('Moving to step 3, userType:', userType.value) // 디버깅용
   step.value = 3
 }
@@ -476,9 +421,9 @@ const submitForm = async () => {
     }
     return
   }
-  
+
   isSubmitting.value = true
-  
+
   try {
     const userJson = {
       ...form.value,
@@ -529,6 +474,16 @@ const checkNickname = async () => {
     nicknameMessage.value = '이미 사용 중인 닉네임입니다.'
   }
 }
+
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  if (step.value === 1) {
+    selectedUserType.value = null
+    userType.value = null
+  }
+})
+
 </script>
 
 <style scoped>
@@ -544,11 +499,11 @@ const checkNickname = async () => {
 }
 
 .user-type-split:hover {
-  flex-grow: 1.08;
+  flex-grow: 1.02;
 }
 
 .user-type-split.selected {
-  flex-grow: 1.15;
+  flex-grow: 1.05;
 }
 
 /* 배경 이미지 */
@@ -563,19 +518,17 @@ const checkNickname = async () => {
 }
 
 .trainer-bg {
-  background: linear-gradient(135deg, 
-    rgba(59, 130, 246, 0.4) 0%, 
-    rgba(99, 102, 241, 0.6) 50%,
-    rgba(139, 69, 197, 0.4) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.4) 0%,
+      rgba(99, 102, 241, 0.6) 50%,
+      rgba(139, 69, 197, 0.4) 100%);
 }
 
 .member-bg {
-  background: linear-gradient(135deg, 
-    rgba(34, 197, 94, 0.4) 0%, 
-    rgba(16, 185, 129, 0.6) 50%,
-    rgba(5, 150, 105, 0.4) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(34, 197, 94, 0.4) 0%,
+      rgba(16, 185, 129, 0.6) 50%,
+      rgba(5, 150, 105, 0.4) 100%);
 }
 
 .user-type-split:hover .split-background {
@@ -595,33 +548,27 @@ const checkNickname = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    180deg, 
-    rgba(255, 255, 255, 0.95) 0%, 
-    rgba(255, 255, 255, 0.85) 40%,
-    rgba(255, 255, 255, 0.75) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 40%,
+      rgba(255, 255, 255, 0.75) 100%);
   backdrop-filter: blur(1px);
   transition: all 0.4s ease;
 }
 
 .user-type-split:hover .split-overlay {
-  background: linear-gradient(
-    180deg, 
-    rgba(255, 255, 255, 0.9) 0%, 
-    rgba(255, 255, 255, 0.75) 40%,
-    rgba(255, 255, 255, 0.65) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.75) 40%,
+      rgba(255, 255, 255, 0.65) 100%);
   backdrop-filter: blur(0.5px);
 }
 
 .user-type-split.selected .split-overlay {
-  background: linear-gradient(
-    180deg, 
-    rgba(255, 255, 255, 0.85) 0%, 
-    rgba(255, 255, 255, 0.65) 40%,
-    rgba(255, 255, 255, 0.5) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.65) 40%,
+      rgba(255, 255, 255, 0.5) 100%);
   backdrop-filter: blur(0px);
 }
 
@@ -637,7 +584,7 @@ const checkNickname = async () => {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 2rem;
+  padding: 2.5rem 1.5rem;
   z-index: 10;
   transition: all 0.4s ease;
 }
@@ -772,12 +719,10 @@ const checkNickname = async () => {
 /* 구분선 */
 .divider {
   width: 1px;
-  background: linear-gradient(
-    to bottom, 
-    transparent 20%, 
-    rgba(156, 163, 175, 0.4) 50%, 
-    transparent 80%
-  );
+  background: linear-gradient(to bottom,
+      transparent 20%,
+      rgba(156, 163, 175, 0.4) 50%,
+      transparent 80%);
   z-index: 5;
 }
 
@@ -841,43 +786,43 @@ const checkNickname = async () => {
   .user-type-split {
     min-height: 280px;
   }
-  
+
   .split-content {
     padding: 1.5rem;
   }
-  
+
   .split-icon {
     font-size: 2.8rem;
     margin-bottom: 1rem;
   }
-  
+
   .user-type-split:hover .split-icon {
     font-size: 3.2rem;
   }
-  
+
   .split-title {
     font-size: 1.5rem;
     margin-bottom: 0.6rem;
   }
-  
+
   .user-type-split:hover .split-title {
     font-size: 1.7rem;
   }
-  
+
   .split-description {
     margin-bottom: 1rem;
     max-width: 180px;
   }
-  
+
   .description-item {
     font-size: 0.8rem;
     margin-bottom: 0.3rem;
   }
-  
+
   .user-type-split:hover .description-item {
     font-size: 0.85rem;
   }
-  
+
   .tag {
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
@@ -1094,6 +1039,7 @@ const checkNickname = async () => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1117,12 +1063,12 @@ const checkNickname = async () => {
   .user-type-card {
     padding: 1rem;
   }
-  
+
   .user-type-card .w-16 {
     width: 3rem;
     height: 3rem;
   }
-  
+
   .form-input {
     font-size: 1rem;
   }
