@@ -48,6 +48,8 @@ const scrollContainer = ref(null)
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 
+const emit = defineEmits(['update-count'])
+
 const scrollLeft = () => {
   scrollContainer.value?.scrollBy({ left: -1000, behavior: 'smooth' })
 }
@@ -81,7 +83,7 @@ onMounted(async () => {
       headers: { Authorization: `Bearer ${token}` }
     })
     meals.value = res.data.data || []
-
+    emit('update-count', meals.value.length)
     await nextTick()
     checkScroll()
     scrollContainer.value?.addEventListener('scroll', checkScroll)

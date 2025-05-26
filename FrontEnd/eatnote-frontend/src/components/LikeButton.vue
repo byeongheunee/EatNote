@@ -1,7 +1,7 @@
 <template>
   <button @click.stop="toggleLike" class="flex items-center gap-1">
-    <span v-if="reaction === 'LIKE'">💖</span>
-    <span v-else>🤍</span>
+    <span v-if="reaction === 'LIKE'">👍</span>
+    <span v-else>👍</span>
     <span class="text-sm text-gray-600">{{ count }}</span>
   </button>
 </template>
