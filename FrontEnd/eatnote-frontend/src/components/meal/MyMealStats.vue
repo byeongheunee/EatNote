@@ -23,10 +23,7 @@
           </div>
           <h3 class="selector-title">기간 선택</h3>
         </div>
-        <select
-          v-model="selectedWeek"
-          class="week-selector"
-        >
+        <select v-model="selectedWeek" class="week-selector">
           <option v-for="w in weekList" :key="w.week" :value="w.week">
             {{ w.week }}
           </option>
@@ -142,11 +139,7 @@
             <div class="feedback-text">
               <h4 class="feedback-title">추천 식품</h4>
               <div class="recommended-foods">
-                <div
-                  v-for="(food, i) in aiFeedback.recommendedFoods"
-                  :key="i"
-                  class="food-recommendation"
-                >
+                <div v-for="(food, i) in aiFeedback.recommendedFoods" :key="i" class="food-recommendation">
                   <p class="food-name">{{ food.name }}</p>
                   <p class="food-reason">{{ food.reason }}</p>
                 </div>
@@ -166,71 +159,42 @@
               일자별 점수 추이
             </h3>
           </div>
-
-          <!-- 영양소 비율 차트 -->
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
-              <h2 class="text-xl font-semibold text-white flex items-center">
-                <span class="mr-2">🥘</span>
-                영양소 비율
-              </h2>
-            </div>
-            <div class="p-6">
-              <div class="mb-6">
-                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                  <p class="text-sm text-amber-800">
-                    💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
-                  </p>
-                </div>
-                <select
-                  v-model="selectedDay"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                >
-                  <option v-for="row in dailyStats" :key="row.day" :value="row.day">
-                    {{ row.day }}
-                  </option>
-                </select>
-              </div>
-              <div class="flex justify-center">
-                <div class="w-64 h-64">
-                  <canvas ref="pieChartRef" class="w-full h-full"></canvas>
-                </div>
-              </div>
-            </div>
+          <div class="chart-content">
+            <canvas ref="dailyChartRef" class="chart-canvas"></canvas>
           </div>
         </div>
 
         <!-- 영양소 비율 차트 -->
-        <div class="chart-card">
-          <div class="chart-header">
-            <h3 class="chart-title">
-              <span class="chart-icon">🥘</span>
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white flex items-center">
+              <span class="mr-2">🥘</span>
               영양소 비율
-            </h3>
+            </h2>
           </div>
-          <div class="chart-content">
-            <div class="nutrition-info">
-              <p class="nutrition-guide">
-                💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
-              </p>
-            </div>
-            <div class="day-selector-wrapper">
-              <select
-                v-model="selectedDay"
-                class="day-selector"
-              >
-                <option disabled value="">날짜를 선택하세요</option>
+          <div class="p-6">
+            <div class="mb-6">
+              <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                <p class="text-sm text-amber-800">
+                  💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
+                </p>
+              </div>
+              <select v-model="selectedDay"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                 <option v-for="row in dailyStats" :key="row.day" :value="row.day">
                   {{ row.day }}
                 </option>
               </select>
             </div>
-            <div class="pie-chart-wrapper">
-              <canvas ref="pieChartRef" class="pie-chart"></canvas>
+            <div class="flex justify-center">
+              <div class="w-64 h-64">
+                <canvas ref="pieChartRef" class="w-full h-full"></canvas>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
 
       <!-- 상세 통계 테이블 -->
       <div class="table-card">
@@ -372,7 +336,6 @@ async function fetchDailyStats(headers) {
     await nextTick()
     if (dailyStats.value.length > 0) {
       drawDailyChart()
-      // 자동으로 첫 번째 데이터의 파이차트 그리기
       drawPieChart(dailyStats.value[0])
     }
   } catch (err) {
@@ -1024,11 +987,11 @@ function drawPieChart(stat) {
   .charts-section {
     grid-template-columns: 1fr;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
-  
+
   .period-selector-card {
     flex-direction: column;
     gap: 1rem;
@@ -1040,24 +1003,24 @@ function drawPieChart(stat) {
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .feedback-item {
     flex-direction: column;
     gap: 0.75rem;
   }
-  
+
   .recommended-foods {
     gap: 0.5rem;
   }
-  
+
   .chart-content {
     padding: 1rem;
   }
-  
+
   .chart-canvas {
     height: 200px;
   }
-  
+
   .table-th,
   .table-td {
     padding: 0.75rem 1rem;
@@ -1066,39 +1029,40 @@ function drawPieChart(stat) {
 }
 
 @media (max-width: 640px) {
+
   .summary-content,
   .feedback-content,
   .chart-content {
     padding: 1rem;
   }
-  
+
   .period-selector-card {
     padding: 1rem;
   }
-  
+
   .stat-item {
     padding: 1rem;
   }
-  
+
   .stat-value {
     font-size: 1.25rem;
   }
-  
+
   .stat-emoji {
     font-size: 1.25rem;
   }
-  
+
   .pie-chart {
     max-width: 250px;
     max-height: 250px;
   }
-  
+
   .table-th,
   .table-td {
     padding: 0.5rem 0.75rem;
     font-size: 0.75rem;
   }
-  
+
   .score-badge {
     padding: 0.25rem 0.5rem;
     font-size: 0.7rem;
@@ -1111,6 +1075,7 @@ function drawPieChart(stat) {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1121,6 +1086,7 @@ function drawPieChart(stat) {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -1150,12 +1116,12 @@ function drawPieChart(stat) {
   .chart-canvas {
     height: 180px;
   }
-  
+
   .pie-chart {
     max-width: 200px;
     max-height: 200px;
   }
-  
+
   .nutrition-guide {
     font-size: 0.8rem;
     padding: 0.5rem;
