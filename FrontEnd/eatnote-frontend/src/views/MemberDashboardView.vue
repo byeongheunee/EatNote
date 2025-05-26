@@ -6,7 +6,7 @@
       <!-- 환영 섹션 -->
       <section class="welcome-section">
         <h1 class="welcome-title">
-          안녕하세요, 
+          안녕하세요,
           <span class="username-highlight">{{ userNickname }}</span>님! 👋
         </h1>
       </section>
@@ -18,10 +18,7 @@
           <section class="stats-section" v-if="mealStats">
             <div class="section-header">
               <h2 class="section-title">나의 식단 현황</h2>
-              <RouterLink 
-                to="/meal/upload" 
-                class="new-meal-button"
-              >
+              <RouterLink to="/meal/upload" class="new-meal-button">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -36,7 +33,15 @@
           <!-- 최근 등록 식단 -->
           <section class="content-section">
             <div class="section-header">
-              <h2 class="section-title">최근 등록 식단</h2>
+              <div class="section-title-with-tooltip">
+                <h2 class="section-title">최근 등록 식단</h2>
+                <div class="tooltip-container">
+                  <div class="tooltip-trigger">❓</div>
+                  <div class="tooltip-content">
+                    최근 일주일간의 식사 기록을 확인할 수 있습니다.
+                  </div>
+                </div>
+              </div>
               <div class="section-badge">
                 <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                 <span class="badge-text">{{ recentMeals.length }}개</span>
@@ -49,21 +54,14 @@
                 <p class="empty-text">최근 등록 식단이 없습니다</p>
                 <p class="empty-subtext">새로운 식단을 등록해 보세요!</p>
               </div>
-              
+
               <!-- Swiper로 변경 -->
               <div v-else class="swiper-section">
-                <Swiper 
-                  :modules="[Navigation]" 
-                  :slides-per-view="2"
-                  :space-between="8" 
-                  :breakpoints="{
-                    640: { slidesPerView: 3, spaceBetween: 10 },
-                    768: { slidesPerView: 3, spaceBetween: 12 },
-                    1024: { slidesPerView: 3, spaceBetween: 14 }
-                  }"
-                  navigation
-                  class="recent-meal-swiper"
-                >
+                <Swiper :modules="[Navigation]" :slides-per-view="2" :space-between="8" :breakpoints="{
+                  640: { slidesPerView: 3, spaceBetween: 10 },
+                  768: { slidesPerView: 3, spaceBetween: 12 },
+                  1024: { slidesPerView: 3, spaceBetween: 14 }
+                }" navigation class="recent-meal-swiper">
                   <SwiperSlide v-for="meal in recentMeals" :key="meal.mealId">
                     <div class="meal-card-wrapper">
                       <RecentMealsCard :meal="meal" />
@@ -94,7 +92,15 @@
           <!-- 최근 받은 피드백 -->
           <section class="feedback-section">
             <div class="section-header">
-              <h2 class="section-title">최근 받은 피드백</h2>
+              <div class="section-title-with-tooltip">
+                <h2 class="section-title">최근 받은 피드백</h2>
+                <div class="tooltip-container">
+                  <div class="tooltip-trigger">❓</div>
+                  <div class="tooltip-content">
+                    최근 3일간 유저가 받은 피드백을 확인할 수 있습니다.
+                  </div>
+                </div>
+              </div>
               <div class="section-badge">
                 <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span class="badge-text">{{ recentFeedbacks.length }}개</span>
@@ -236,6 +242,13 @@ onMounted(fetchDashboardData)
   margin-bottom: 1.5rem;
 }
 
+/* 섹션 타이틀과 툴팁 컨테이너 */
+.section-title-with-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .section-title {
   font-size: 1.5rem;
   font-weight: 700;
@@ -244,6 +257,68 @@ onMounted(fetchDashboardData)
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+/* 툴팁 스타일 */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-trigger {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: help;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.tooltip-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
 }
 
 .section-icon {
@@ -287,7 +362,8 @@ onMounted(fetchDashboardData)
   display: flex;
   flex-direction: column;
   animation: fadeInUp 0.6s ease-out;
-  max-height: 1400px; /* 최대 높이 제한 */
+  max-height: 1400px;
+  /* 최대 높이 제한 */
 }
 
 /* 피드백 카드 컨테이너 - 스크롤 가능 */
@@ -303,8 +379,10 @@ onMounted(fetchDashboardData)
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 400px; /* 최소 높이 설정 */
-  max-height: 993px; /* 최대 높이 설정 */
+  min-height: 400px;
+  /* 최소 높이 설정 */
+  max-height: 993px;
+  /* 최대 높이 설정 */
 }
 
 .feedback-card-container:hover {
@@ -455,15 +533,22 @@ onMounted(fetchDashboardData)
   .dashboard-container {
     padding: 16px;
   }
-  
+
   .welcome-title {
     font-size: 1.5rem;
   }
-  
+
   .card-container,
   .stats-card,
   .feedback-card-container {
     padding: 1.25rem;
+  }
+
+  /* 모바일에서 툴팁 위치 조정 */
+  .tooltip-content {
+    top: -50px;
+    font-size: 11px;
+    padding: 6px 10px;
   }
 }
 
@@ -473,9 +558,16 @@ onMounted(fetchDashboardData)
     align-items: flex-start;
     gap: 0.75rem;
   }
-  
+
   .section-title {
     font-size: 1.25rem;
+  }
+
+  /* 모바일에서 툴팁 크기 조정 */
+  .tooltip-trigger {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
   }
 }
 
@@ -485,6 +577,7 @@ onMounted(fetchDashboardData)
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -501,7 +594,15 @@ onMounted(fetchDashboardData)
 }
 
 /* 스크롤 애니메이션 */
-.content-section:nth-child(1) { animation-delay: 0.2s; }
-.content-section:nth-child(2) { animation-delay: 0.3s; }
-.content-section:nth-child(3) { animation-delay: 0.4s; }
+.content-section:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.content-section:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.content-section:nth-child(3) {
+  animation-delay: 0.4s;
+}
 </style>

@@ -6,7 +6,6 @@ import NotificationBell from '@/components/common/NotificationBell.vue'
 const authStore = useAuthStore()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
-// ✅ 로그인 복원
 onMounted(() => {
   const token = localStorage.getItem('accessToken')
   const user = localStorage.getItem('user')
@@ -18,8 +17,6 @@ onMounted(() => {
     console.log('✅ 앱 시작 시 로그인 상태 복원 완료')
   }
 })
-
-// ✅ 맨 위로 가기 버튼 관련
 const showScrollTop = ref(false)
 
 const handleScroll = () => {
@@ -42,12 +39,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <router-view />
-  <NotificationBell v-if="isLoggedIn" />
+  <Suspense>
+    <keep-alive include="FollowerMealList">
+      <router-view />
+    </keep-alive>
+  </Suspense>
 
-  <button v-show="showScrollTop" @click="scrollToTop" class="scroll-top-btn" aria-label="맨 위로 이동">
-    ⬆
-  </button>
+  <NotificationBell v-if="isLoggedIn" />
+  <button v-show="showScrollTop" @click="scrollToTop" class="scroll-top-btn" aria-label="맨 위로 이동">⬆</button>
 </template>
 
 <style scoped>

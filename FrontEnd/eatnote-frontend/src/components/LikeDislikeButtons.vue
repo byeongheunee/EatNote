@@ -1,26 +1,19 @@
 <template>
   <div class="flex gap-4 text-xl">
-    <!-- 하트 버튼 -->
-    <button @click="submit('LIKE')">
-      <span v-if="reaction === 'LIKE'">💖</span>
-      <span v-else>🤍</span>
-      <span class="ml-1 text-base text-gray-600">{{ likeCount }}</span>
+    <!-- 좋아요 버튼 -->
+    <button @click="submit('LIKE')" class="flex items-center gap-1">
+      <span :class="{ 'opacity-100': reaction === 'LIKE', 'opacity-50': reaction !== 'LIKE' }">👍</span>
+      <span class="text-base text-gray-600 leading-none">{{ likeCount }}</span>
     </button>
 
-    <!-- 싫어요 버튼은 필요 시 유지 -->
-    <button @click="submit('DISLIKE')">
-      <span v-if="reaction === 'DISLIKE'">💔</span>
-      <span v-else>
-        <img
-            src="@/assets/icons/broken-heart-black.png"
-            alt="깨진 검은색 하트 아이콘"
-            class="w-5 h-5 inline-block align-middle"
-        />
-      </span>
-      <span class="ml-1 text-base text-gray-600">{{ dislikeCount }}</span>
+    <!-- 싫어요 버튼 -->
+    <button @click="submit('DISLIKE')" class="flex items-center gap-1">
+      <span :class="{ 'opacity-100': reaction === 'DISLIKE', 'opacity-50': reaction !== 'DISLIKE' }">👎</span>
+      <span class="text-base text-gray-600 leading-none">{{ dislikeCount }}</span>
     </button>
   </div>
 </template>
+
 
 <script setup>
 import { ref, watch } from 'vue'
@@ -32,7 +25,7 @@ const props = defineProps({
   likeCount: { type: Number, default: 0 },
   dislikeCount: { type: Number, default: 0 },
   myReaction: { type: String, default: null },
-  onUpdated: { type: Function, default: () => {} }
+  onUpdated: { type: Function, default: () => { } }
 })
 
 // 내부 반응형 상태로 따로 관리

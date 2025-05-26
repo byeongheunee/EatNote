@@ -1,18 +1,4 @@
-/* 애니메이션 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.welcome-title {
-  animation: fadeInUp 0.6s ease-out;
-}<template>
+<template>
   <div class="trainer-dashboard-page">
     <Header />
 
@@ -20,7 +6,7 @@
       <!-- 환영 섹션 -->
       <section class="welcome-section">
         <h1 class="welcome-title">
-          안녕하세요, 
+          안녕하세요,
           <span class="username-highlight">{{ userNickname }}</span>님! 💪
         </h1>
       </section>
@@ -29,7 +15,7 @@
         <!-- 오늘의 대기 중인 식단 -->
         <section class="content-section">
           <div class="section-header">
-            <h2 class="section-title">오늘의 대기 중인 식단</h2>
+            <h2 class="section-title">{{ userNickname }}님을 기다리고 있는 식단</h2>
             <div class="section-badge">
               <div class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
               <span class="badge-text">{{ pendingMealsCount }}개</span>
@@ -140,9 +126,17 @@ const updateFollowRequestCount = (count) => {
   animation: fadeInUp 0.6s ease-out;
 }
 
-.content-section:nth-child(1) { animation-delay: 0.2s; }
-.content-section:nth-child(2) { animation-delay: 0.3s; }
-.content-section:nth-child(3) { animation-delay: 0.4s; }
+.content-section:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.content-section:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.content-section:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 /* 대기 중인 식단 카드 - 높이 제한 */
 .pending-meals-card {
@@ -154,8 +148,10 @@ const updateFollowRequestCount = (count) => {
 
 /* 캘린더 카드 */
 .calendar-card {
-  min-height: 500px; /* 최소 높이 증가 */
-  max-height: 900px; /* 최대 높이 증가 */
+  min-height: 500px;
+  /* 최소 높이 증가 */
+  max-height: 900px;
+  /* 최대 높이 증가 */
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -221,11 +217,11 @@ const updateFollowRequestCount = (count) => {
   .dashboard-container {
     padding: 16px;
   }
-  
+
   .welcome-title {
     font-size: 1.5rem;
   }
-  
+
   .card-container {
     padding: 1.25rem;
   }
@@ -237,9 +233,26 @@ const updateFollowRequestCount = (count) => {
     align-items: flex-start;
     gap: 0.75rem;
   }
-  
+
   .section-title {
     font-size: 1.25rem;
   }
 }
+
+/* 애니메이션 */
+/* @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-title {
+  animation: fadeInUp 0.6s ease-out;
+} */
 </style>

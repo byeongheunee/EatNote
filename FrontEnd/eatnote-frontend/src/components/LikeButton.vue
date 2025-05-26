@@ -1,10 +1,10 @@
 <template>
   <button @click.stop="toggleLike" class="flex items-center gap-1">
-    <span v-if="reaction === 'LIKE'">💖</span>
-    <span v-else>🤍</span>
-    <span class="text-sm text-gray-600">{{ count }}</span>
+    <span :class="{ 'opacity-100': reaction === 'LIKE', 'opacity-50': reaction !== 'LIKE' }">👍</span>
+    <span class="text-sm text-gray-600 leading-none">{{ count }}</span>
   </button>
 </template>
+
 
 <script setup>
 import { ref, watch } from 'vue'

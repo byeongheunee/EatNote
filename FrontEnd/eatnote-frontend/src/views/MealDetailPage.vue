@@ -43,8 +43,15 @@
               <div class="card-container">
                 <div class="meal-image-section">
                   <img :src="getImageUrl(meal.imageUrl)" alt="식단 이미지" class="meal-image" />
-
                   <div class="meal-basic-info">
+                    <div class="meal-time-row">
+                      <span class="meal-time-label">식사 날짜</span>
+                      <span class="meal-time-value">{{ formatDate(meal.mealTime) }}</span>
+                    </div>
+                    <div class="meal-type-row">
+                      <span class="meal-type-label">식사 종류</span>
+                      <span class="meal-type-value">{{ getMealTypeText(meal.mealType) }}</span>
+                    </div>
                     <div class="author-info">
                       <span class="author-label">작성자</span>
                       <router-link :to="`/profile/${meal.userId}`" class="author-link">
@@ -378,6 +385,39 @@ onMounted(async () => {
 
 <style scoped>
 /* 페이지 전체 배경 */
+
+.meal-basic-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.meal-time-row,
+.meal-type-row {
+  background: rgba(249, 250, 251, 0.8);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.meal-time-label,
+.meal-type-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+
+.meal-time-value,
+.meal-type-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
 .meal-detail-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
@@ -657,12 +697,6 @@ onMounted(async () => {
   object-fit: cover;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.meal-basic-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .author-info,
