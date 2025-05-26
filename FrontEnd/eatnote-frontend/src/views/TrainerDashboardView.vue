@@ -15,7 +15,7 @@
         <!-- 오늘의 대기 중인 식단 -->
         <section class="content-section">
           <div class="section-header">
-            <h2 class="section-title">{{ userNickname }}님을 기다리고 있는 식단</h2>
+            <h2 class="section-title">피드백을 기다리고 있는 식단</h2>
             <div class="section-badge">
               <div class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
               <span class="badge-text">{{ pendingMealsCount }}개</span>

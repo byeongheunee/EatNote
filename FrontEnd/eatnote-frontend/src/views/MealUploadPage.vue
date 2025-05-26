@@ -41,52 +41,106 @@
               </label>
 
               <!-- 모드 선택 토글 -->
-              <div class="flex items-center gap-4 p-4 bg-yellow-50/50 rounded-2xl border border-yellow-200">
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" :value="false" v-model="useCustomTime" class="sr-only" />
-                  <div class="relative">
-                    <div class="w-4 h-4 border-2 border-yellow-400 rounded-full"
-                      :class="!useCustomTime ? 'bg-yellow-400' : 'bg-white'"></div>
-                    <div v-if="!useCustomTime" class="absolute inset-0 flex items-center justify-center">
-                      <div class="w-2 h-2 bg-white rounded-full"></div>
+              <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl p-5 border-2 border-yellow-200/50 shadow-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <!-- 현재 시간으로 자동 등록 옵션 -->
+                  <label class="flex items-center cursor-pointer group">
+                    <div class="relative">
+                      <input type="radio" :value="false" v-model="useCustomTime" class="sr-only" />
+                      <div class="w-5 h-5 border-2 rounded-full transition-all duration-200"
+                        :class="!useCustomTime
+                          ? 'border-yellow-500 bg-gradient-to-br from-yellow-400 to-orange-400 shadow-md'
+                          : 'border-gray-300 bg-white group-hover:border-yellow-300'">
+                        <div v-if="!useCustomTime" class="absolute inset-0 flex items-center justify-center">
+                          <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <span class="ml-2 text-gray-700 font-medium">🔄 현재 시간으로 자동 등록</span>
-                </label>
+                    <div class="ml-3 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="text-lg">🔄</span>
+                        <span class="font-medium text-gray-800">현재 시간으로 자동 등록</span>
+                      </div>
+                      <div class="text-sm text-gray-600 mt-1">
+                        {{ currentTimeDisplay }}로 등록됩니다
+                      </div>
+                    </div>
+                  </label>
 
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" :value="true" v-model="useCustomTime" class="sr-only" />
-                  <div class="relative">
-                    <div class="w-4 h-4 border-2 border-yellow-400 rounded-full"
-                      :class="useCustomTime ? 'bg-yellow-400' : 'bg-white'"></div>
-                    <div v-if="useCustomTime" class="absolute inset-0 flex items-center justify-center">
-                      <div class="w-2 h-2 bg-white rounded-full"></div>
+                  <!-- 시간 직접 입력 옵션 -->
+                  <label class="flex items-center cursor-pointer group">
+                    <div class="relative">
+                      <input type="radio" :value="true" v-model="useCustomTime" class="sr-only" />
+                      <div class="w-5 h-5 border-2 rounded-full transition-all duration-200"
+                        :class="useCustomTime
+                          ? 'border-yellow-500 bg-gradient-to-br from-yellow-400 to-orange-400 shadow-md'
+                          : 'border-gray-300 bg-white group-hover:border-yellow-300'">
+                        <div v-if="useCustomTime" class="absolute inset-0 flex items-center justify-center">
+                          <div class="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <span class="ml-2 text-gray-700 font-medium">✏️ 시간 직접 입력</span>
-                </label>
+                    <div class="ml-3 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="text-lg">✏️</span>
+                        <span class="font-medium text-gray-800">시간 직접 입력</span>
+                      </div>
+                      <div class="text-sm text-gray-600 mt-1">
+                        원하는 날짜와 시간 선택
+                      </div>
+                    </div>
+                  </label>
+                </div>
               </div>
-
 
               <!-- 직접 시간 입력 (커스텀 모드일 때만 표시) -->
-              <div v-if="useCustomTime" class="space-y-3">
-                <div class="relative">
-                  <input type="datetime-local" v-model="customMealTime" :max="maxDateTime" required
-                    class="w-full border-2 border-yellow-300 rounded-2xl px-4 py-3 text-gray-700 focus:border-yellow-400 focus:outline-none transition-colors bg-white/70 backdrop-blur-sm" />
-                  <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <span class="text-yellow-500">📅</span>
+              <div v-if="useCustomTime" class="space-y-4">
+                <!-- 시간 입력 카드 -->
+                <div class="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-6 border-2 border-yellow-200/50 shadow-sm transform transition-all duration-300">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-md">
+                      <span class="text-white text-lg">📅</span>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-gray-800 text-lg">식사 시간을 선택해주세요</h3>
+                      <p class="text-sm text-gray-600">언제 드신 식사인지 알려주세요</p>
+                    </div>
                   </div>
-                </div>
-                <p class="text-sm text-gray-500">
-                  💡 원하는 날짜와 시간을 선택하세요
-                </p>
-              </div>
 
-              <!-- 현재 시간 정보 (자동 모드일 때만 표시) -->
-              <div v-else class="bg-blue-50/50 rounded-xl p-3 border border-blue-200">
-                <div class="flex items-center gap-2 text-sm text-blue-800">
-                  <span>⏰</span>
-                  <span><strong>{{ currentTimeDisplay }}</strong>로 등록됩니다</span>
+                  <!-- 날짜시간 입력 -->
+                  <div class="relative">
+                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
+                      <span class="text-orange-500 text-xl">🕒</span>
+                    </div>
+                    <input
+                      type="datetime-local"
+                      v-model="customMealTime"
+                      :max="maxDateTime"
+                      required
+                      class="w-full border-2 border-yellow-300 rounded-2xl pl-14 pr-4 py-4 text-gray-700 font-medium
+                             focus:border-yellow-400 focus:ring-4 focus:ring-yellow-100 focus:outline-none
+                             transition-all duration-200 bg-white/80 backdrop-blur-sm shadow-sm
+                             hover:border-yellow-400 hover:shadow-md text-lg"
+                      placeholder="날짜와 시간을 선택하세요"
+                    />
+                  </div>
+
+                  <!-- 선택된 시간 미리보기 -->
+                  <div v-if="customMealTime" class="mt-4 p-4 bg-white/60 rounded-xl border border-yellow-200">
+                    <div class="flex items-center gap-2">
+                      <span class="text-orange-600">✅</span>
+                      <span class="text-sm font-medium text-orange-800">선택된 시간:</span>
+                      <span class="text-sm font-bold text-orange-900">{{ formatSelectedTime }}</span>
+                    </div>
+                  </div>
+
+                  <!-- 도움말 -->
+                  <div class="mt-4 flex items-start gap-2 p-3 bg-yellow-100/50 rounded-xl">
+                    <span class="text-orange-600 text-sm mt-0.5">💡</span>
+                    <div class="text-xs text-orange-700 leading-relaxed">
+                      <strong>팁:</strong> 실제로 식사하신 시간을 선택하시면 더 정확한 식단 분석을 받으실 수 있어요!
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -237,7 +291,6 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 const nickname = computed(() => authStore.user?.nickname || '회원')
 
-
 const toast = useToast()
 const customMealTime = ref('')
 const showTimeInput = ref(false)
@@ -289,6 +342,19 @@ const currentTimeDisplay = computed(() => {
   const hour = now.getHours()
   const minute = now.getMinutes()
   return `${month}월 ${date}일 ${hour}:${minute.toString().padStart(2, '0')}`
+})
+
+// 선택된 시간 포맷팅
+const formatSelectedTime = computed(() => {
+  if (!customMealTime.value) return ''
+
+  const date = new Date(customMealTime.value)
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+
+  return `${month}월 ${day}일 ${hour}:${minute.toString().padStart(2, '0')}`
 })
 
 const onFileChange = (e) => {
@@ -457,6 +523,25 @@ const handleUpload = async () => {
 .group:hover .text-6xl {
   transform: scale(1.1);
   transition: transform 0.2s ease;
+}
+
+/* datetime-local input 커스텀 스타일 */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+/* 포커스 상태에서의 추가 스타일 */
+input[type="datetime-local"]:focus {
+  transform: translateY(-1px);
 }
 
 /* 스크롤바 스타일링 */
