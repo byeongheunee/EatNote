@@ -7,7 +7,7 @@
       <!-- 페이지 헤더 -->
       <div class="text-center mb-12">
         <h1 class="text-4xl font-bold text-gray-900 mb-4">
-          <span class="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+          <span class="bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">
             커뮤니티
           </span>
         </h1>
@@ -22,18 +22,18 @@
       </div>
 
       <!-- 게시글 목록 -->
-      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-orange-100 overflow-hidden">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
         <!-- 게시글 헤더 + 검색 영역 통합 -->
-        <div class="bg-gradient-to-r from-orange-50 to-amber-50 px-6 py-6 border-b border-orange-200">
+        <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-6 border-b border-gray-300">
           <!-- 상단: 게시판 제목과 게시글 수 -->
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900">
               {{ selectedBoard?.name || 게시판 }}
             </h2>
-            <p v-if="selectedBoard?.description" class="text-sm text-gray-500 sm:ml-4">
+            <p v-if="selectedBoard?.description" class="text-sm text-gray-600 sm:ml-4">
               {{ selectedBoard.description }}
             </p>
-            <div class="text-sm text-gray-500 font-medium">
+            <div class="text-sm text-gray-600 font-medium">
               총 {{ articles.length }}개의 게시글
             </div>
           </div>
@@ -45,14 +45,14 @@
               <!-- 검색 기준 선택 -->
               <div class="relative flex-shrink-0">
                 <select v-model="searchField"
-                  class="appearance-none bg-white/90 border border-orange-200 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
+                  class="appearance-none bg-white/90 border border-gray-300 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200">
                   <option value="ALL">🔍 전체</option>
                   <option value="TITLE">📝 제목</option>
                   <option value="CONTENT">📄 내용</option>
                   <option value="NICKNAME">👤 작성자</option>
                 </select>
                 <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </div>
@@ -61,10 +61,10 @@
               <!-- 검색어 입력 - 더 넓게 -->
               <div class="relative flex-1">
                 <input v-model="keyword" type="text" placeholder="검색어를 입력하세요"
-                  class="w-full pl-10 pr-4 py-2.5 border border-orange-200 rounded-lg text-sm placeholder-gray-400 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-white/90"
+                  class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-gray-400 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200 bg-white/90"
                   @keyup.enter="handleSearch" />
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
@@ -74,12 +74,12 @@
               <!-- 정렬 기준 선택 -->
               <div class="relative flex-shrink-0">
                 <select v-model="sort"
-                  class="appearance-none bg-white/90 border border-orange-200 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200">
+                  class="appearance-none bg-white/90 border border-gray-300 rounded-lg px-4 py-2.5 pr-8 text-sm font-medium text-gray-700 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-all duration-200">
                   <option value="createdAt">🕒 최신순</option>
                   <option value="viewCnt">👁️ 조회순</option>
                 </select>
                 <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                  <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </div>
@@ -90,7 +90,7 @@
             <div class="flex gap-3 flex-shrink-0">
               <!-- 검색 버튼 -->
               <button
-                class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:from-orange-600 hover:to-amber-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-gray-600 to-gray-700 text-white text-sm font-medium rounded-lg hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
                 @click="handleSearch">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -101,7 +101,7 @@
 
               <!-- 글쓰기 버튼 -->
               <button v-if="canWriteArticle"
-                class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                class="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
                 @click="goToWrite">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -113,13 +113,13 @@
         </div>
 
         <!-- 게시글 리스트 -->
-        <div class="divide-y divide-orange-100">
+        <div class="divide-y divide-gray-200">
           <ArticleList :articles="pagedArticles" @open-detail="openDetail" @refresh="handleRefresh" />
         </div>
 
         <!-- 빈 상태 -->
         <div v-if="articles.length === 0" class="text-center py-16">
-          <div class="w-24 h-24 mx-auto mb-4 text-orange-300">
+          <div class="w-24 h-24 mx-auto mb-4 text-gray-400">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -129,7 +129,7 @@
           <h3 class="text-lg font-medium text-gray-900 mb-2">게시글이 없습니다</h3>
           <p class="text-gray-600 mb-6">첫 번째 게시글을 작성해보세요!</p>
           <button v-if="canWriteArticle" @click="goToWrite"
-            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm font-medium rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 shadow-md">
+            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-md">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -141,7 +141,7 @@
       <!-- 더보기 버튼 -->
       <div v-if="pagedArticles.length < articles.length" class="text-center mt-8">
         <button @click="loadMore"
-          class="inline-flex items-center px-8 py-3 bg-white/80 backdrop-blur-sm text-gray-700 text-sm font-medium rounded-lg border border-orange-200 hover:bg-white/90 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg">
+          class="inline-flex items-center px-8 py-3 bg-white/80 backdrop-blur-sm text-gray-700 text-sm font-medium rounded-lg border border-gray-300 hover:bg-white/90 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
@@ -324,10 +324,10 @@ onMounted(fetchBoards)
 </script>
 
 <style scoped>
-/* 페이지 전체 배경 - 홈뷰와 동일한 색상 */
+/* 페이지 전체 배경 - 회색톤으로 변경 */
 .community-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
 /* 그라데이션 텍스트 */
@@ -349,17 +349,17 @@ onMounted(fetchBoards)
 }
 
 ::-webkit-scrollbar-track {
-  background: #fef3c7;
+  background: #f1f5f9;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #f59e0b;
+  background: #64748b;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #d97706;
+  background: #475569;
 }
 
 /* 애니메이션 */
@@ -384,10 +384,10 @@ onMounted(fetchBoards)
   transform: scale(1.05);
 }
 
-/* 포커스 효과 - 오렌지 색상으로 변경 */
+/* 포커스 효과 - 그레이 색상으로 변경 */
 input:focus,
 select:focus {
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
 }
 
 /* 반응형 디자인 */
@@ -435,13 +435,13 @@ select:focus {
   }
 }
 
-/* 그림자 효과 개선 */
+/* 그림자 효과 개선 - 그레이 색상으로 변경 */
 .shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.1), 0 4px 6px -2px rgba(245, 158, 11, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
 }
 
 .shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.1), 0 2px 4px -1px rgba(245, 158, 11, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1), 0 2px 4px -1px rgba(100, 116, 139, 0.06);
 }
 
 /* 버튼 호버 효과 개선 */
@@ -462,36 +462,40 @@ button:hover {
   background-color: rgba(255, 255, 255, 0.6);
 }
 
-/* 오렌지 테마 색상 변수들 */
-.border-orange-100 {
-  border-color: #fed7aa;
+/* 그레이 테마 색상 변수들 */
+.border-gray-200 {
+  border-color: #e5e7eb;
 }
 
-.border-orange-200 {
-  border-color: #fec89f;
+.border-gray-300 {
+  border-color: #d1d5db;
 }
 
-.border-orange-300 {
-  border-color: #fdba74;
+.border-gray-400 {
+  border-color: #9ca3af;
 }
 
-.text-orange-300 {
-  color: #fdba74;
+.text-gray-400 {
+  color: #9ca3af;
 }
 
-.text-orange-400 {
-  color: #fb923c;
+.text-gray-500 {
+  color: #6b7280;
 }
 
-.from-orange-50 {
-  --tw-gradient-from: #fff7ed;
+.text-gray-600 {
+  color: #4b5563;
 }
 
-.to-amber-50 {
-  --tw-gradient-to: #fffbeb;
+.from-gray-50 {
+  --tw-gradient-from: #f9fafb;
 }
 
-.divide-orange-100> :not([hidden])~ :not([hidden]) {
-  border-color: #fed7aa;
+.to-gray-100 {
+  --tw-gradient-to: #f3f4f6;
+}
+
+.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e5e7eb;
 }
 </style>

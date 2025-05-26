@@ -2,22 +2,18 @@
   <div class="article-detail-page">
     <Header />
 
-    <!-- 메인 컨테이너 -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="container mx-auto px-6 py-12 max-w-7xl">
+      
       <!-- 페이지 헤더 -->
-      <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">
-          <span class="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
-            게시글 상세
-          </span>
-        </h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          게시글의 자세한 내용을 확인하세요
-        </p>
+      <div class="page-header">
+        <div class="header-content">
+          <h1 class="main-title">게시글 상세</h1>
+          <p class="main-subtitle">게시글의 자세한 내용을 확인하고 소통해보세요</p>
+        </div>
       </div>
 
       <!-- 게시판 슬라이더 -->
-      <div class="mb-8">
+      <div class="board-slider-wrapper">
         <BoardSlider
           :boards="filteredBoards"
           :selectedBoardId="selectedBoardId"
@@ -25,22 +21,32 @@
         />
       </div>
 
-      <!-- 뒤로가기 버튼 -->
-      <div class="mb-6">
-        <button 
-          @click="goBack"
-          class="inline-flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm text-gray-700 text-sm font-medium rounded-lg border border-orange-200 hover:bg-white/90 hover:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-          목록으로 돌아가기
-        </button>
-      </div>
-
       <!-- 게시글 상세 컨테이너 -->
       <div class="article-detail-container">
-        <ArticleDetail :articleId="articleId" />
+        <div class="article-wrapper">
+          <!-- 상단 네비게이션 -->
+          <div class="article-navigation">
+            <div class="breadcrumb">
+              <span class="breadcrumb-item">커뮤니티</span>
+              <span class="breadcrumb-separator">›</span>
+              <span class="breadcrumb-item current">게시글 상세</span>
+            </div>
+            <div class="article-actions">
+              <button 
+                @click="goBack"
+                class="action-button list"
+              >
+                <span class="action-icon">📋</span>
+                <span>목록으로</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 게시글 내용 -->
+          <div class="article-content-wrapper">
+            <ArticleDetail :articleId="articleId" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -68,16 +74,24 @@ const selectedBoardId = ref(Number(route.params.boardId))
 const boards = ref([])
 
 const fetchBoards = async () => {
-  const res = await axios.get('/api/boards')
-  boards.value = res.data.data
+  try {
+    const res = await axios.get('/api/boards')
+    boards.value = res.data.data
+  } catch (error) {
+    console.error('게시판 목록 조회 실패:', error)
+  }
 }
 
 const selectBoard = (id) => {
-  router.push(`/community/${id}`) // 게시판 선택 시 목록으로 이동
+  router.push(`/community/${id}`)
 }
 
 const goBack = () => {
   router.push(`/community/${selectedBoardId.value}`)
+}
+
+const goToWrite = () => {
+  router.push(`/community/${selectedBoardId.value}/write`)
 }
 
 const filteredBoards = computed(() => {
@@ -85,100 +99,200 @@ const filteredBoards = computed(() => {
 
   return boards.value.filter(b => {
     if (b.accessCode === 'TRAINER_ONLY') {
-      return type === 0 || type === 1 // 관리자 or 트레이너만 허용
+      return type === 0 || type === 1
     }
-    return true // 나머지는 모두 허용
+    return true
   })
 })
 
-onMounted(fetchBoards)
+onMounted(() => {
+  fetchBoards()
+})
 </script>
 
 <style scoped>
-/* 페이지 전체 배경 - 홈뷰와 동일한 색상 */
+/* 페이지 전체 배경 */
 .article-detail-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
+  position: relative;
 }
 
-/* 그라데이션 텍스트 */
-.bg-clip-text {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.article-detail-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 107, 71, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-/* 백드롭 블러 효과 */
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+.container {
+  max-width: 1400px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 페이지 헤더 */
+.page-header {
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid rgba(245, 158, 11, 0.2);
+}
+
+.header-content {
+  text-align: center;
+}
+
+.main-title {
+  font-size: 42px;
+  font-weight: 600;
+  color: #2D1810;
+  margin-bottom: 12px;
+}
+
+.main-subtitle {
+  font-size: 18px;
+  color: #5D4037;
+  line-height: 1.6;
+}
+
+/* 네비게이션 버튼 */
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.nav-button.secondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #5D4037;
+  border: 2px solid rgba(255, 140, 105, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.nav-button.secondary:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: #FF8C69;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 140, 105, 0.3);
+}
+
+.button-icon {
+  font-size: 18px;
+}
+
+/* 게시판 슬라이더 래퍼 */
+.board-slider-wrapper {
+  margin-bottom: 40px;
 }
 
 /* 게시글 상세 컨테이너 */
 .article-detail-container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 
+    0 12px 40px rgba(255, 107, 71, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 140, 105, 0.2);
   overflow: hidden;
-  padding: 0;
 }
 
-/* 뒤로가기 버튼 스타일 개선 */
-button:hover {
+.article-wrapper {
+  position: relative;
+}
+
+/* 상단 네비게이션 */
+.article-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFFBF0 100%);
+  border-bottom: 1px solid rgba(255, 140, 105, 0.2);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.breadcrumb-item {
+  color: #8D6E63;
+  font-weight: 500;
+}
+
+.breadcrumb-item.current {
+  color: #FF6B47;
+  font-weight: 600;
+}
+
+.breadcrumb-separator {
+  color: #8D6E63;
+  font-size: 16px;
+}
+
+.article-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 140, 105, 0.3);
+  border-radius: 8px;
+  color: #5D4037;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: #FF8C69;
   transform: translateY(-1px);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .article-detail-page {
-    padding: 1rem;
-  }
-
-  .max-w-7xl {
-    padding: 0 1rem;
-  }
-
-  .text-4xl {
-    font-size: 2rem;
-  }
-
-  .py-8 {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
+.action-icon {
+  font-size: 16px;
 }
 
-@media (max-width: 640px) {
-  .px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .py-8 {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-
-  .mb-8 {
-    margin-bottom: 1.5rem;
-  }
-
-  .mb-6 {
-    margin-bottom: 1rem;
-  }
+/* 게시글 내용 래퍼 */
+.article-content-wrapper {
+  padding: 0;
 }
 
 /* 애니메이션 */
-.article-detail-page {
-  animation: fadeIn 0.5s ease-out;
+.container {
+  animation: fadeInUp 0.6s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -186,54 +300,49 @@ button:hover {
   }
 }
 
-/* 그림자 효과 개선 */
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.1), 0 4px 6px -2px rgba(245, 158, 11, 0.05);
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px;
+  }
+  
+  .page-header {
+    margin-bottom: 32px;
+  }
+  
+  .main-title {
+    font-size: 32px;
+  }
+  
+  .main-subtitle {
+    font-size: 16px;
+  }
+  
+  .board-slider-wrapper {
+    margin-bottom: 32px;
+  }
+  
+  .article-navigation {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+  }
+  
+  .article-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.1), 0 2px 4px -1px rgba(245, 158, 11, 0.06);
-}
-
-/* 포커스 효과 - 오렌지 색상으로 변경 */
-button:focus {
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-}
-
-/* 테두리 및 배경 투명도 조정 */
-.bg-white\/80 {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-.bg-white\/90 {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-/* 오렌지 테마 색상 변수들 */
-.border-orange-200 {
-  border-color: #fec89f;
-}
-
-.border-orange-300 {
-  border-color: #fdba74;
-}
-
-.hover\:border-orange-300:hover {
-  border-color: #fdba74;
-}
-
-/* 부드러운 전환 효과 */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.duration-200 {
-  transition-duration: 200ms;
-}
-
-/* 호버 시 상승 효과 */
-.hover\:shadow-lg:hover {
-  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.1), 0 4px 6px -2px rgba(245, 158, 11, 0.05);
+@media (max-width: 480px) {
+  .article-navigation {
+    padding: 16px;
+  }
+  
+  .action-button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
 }
 </style>

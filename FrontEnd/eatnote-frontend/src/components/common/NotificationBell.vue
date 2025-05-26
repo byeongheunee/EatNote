@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-4 right-6 z-50">
+  <div class="fixed top-3 right-6 z-50">
     <div class="relative" ref="dropdownRef">
       <!-- 알림 아이콘 버튼 -->
       <button

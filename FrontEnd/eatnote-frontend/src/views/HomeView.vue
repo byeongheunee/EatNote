@@ -18,7 +18,7 @@
             :breakpoints="{
               640: { slidesPerView: 2, spaceBetween: 8 },
               768: { slidesPerView: 3, spaceBetween: 10 },
-              1024: { slidesPerView: 4, spaceBetween: 12 }
+              1024: { slidesPerView: 5, spaceBetween: 12 }
             }"
             navigation
             class="meal-swiper"
@@ -47,7 +47,7 @@
             :breakpoints="{
               640: { slidesPerView: 2, spaceBetween: 8 },
               768: { slidesPerView: 3, spaceBetween: 10 },
-              1024: { slidesPerView: 4, spaceBetween: 12 }
+              1024: { slidesPerView: 5, spaceBetween: 12 }
             }"
             navigation
             class="meal-swiper"
@@ -267,7 +267,7 @@ onMounted(fetchMeals)
 }
 
 .home-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -539,7 +539,7 @@ onMounted(fetchMeals)
     font-size: 2.5rem;
   }
 }
-z
+
 /* 스크롤 애니메이션 */
 @keyframes fadeInUp {
   from {

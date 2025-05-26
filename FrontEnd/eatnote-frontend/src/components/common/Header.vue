@@ -307,7 +307,7 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -316,7 +316,7 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 64px;
+  height: 75px;
 }
 
 /* 로고 섹션 */
