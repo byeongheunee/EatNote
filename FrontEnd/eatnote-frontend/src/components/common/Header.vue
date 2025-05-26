@@ -1,37 +1,38 @@
 <template>
-  <header class="bg-gradient-to-r from-yellow-50 via-orange-50 to-amber-50 backdrop-blur-md border-b border-yellow-200/50 shadow-lg sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-3">
-      <div class="flex justify-between items-center max-w-6xl mx-auto">
+  <header class="header-container">
+    <div class="header-content">
+      <div class="header-layout">
         
         <!-- 왼쪽: 로고 -->
-        <div class="flex items-center cursor-pointer group" @click="goHome">
-          <span class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent group-hover:from-orange-700 group-hover:to-amber-700 transition-all duration-300">
-            EatNote
-          </span>
+        <div class="logo-section" @click="goHome">
+          <span class="logo-text">EatNote</span>
         </div>
 
         <!-- 가운데: 네비게이션 메뉴 -->
-        <nav class="hidden md:flex items-center justify-center flex-1 mx-8">
-          <div class="flex items-center space-x-1 bg-white/60 backdrop-blur-sm rounded-full px-6 py-2 border border-yellow-200/50">
+        <nav class="nav-section">
+          <div class="nav-container">
             <!-- 로그인 안한 경우 -->
             <template v-if="!isLogin">
               <RouterLink 
                 :to="`/community/${defaultBoardId}`" 
-                class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                class="nav-link"
               >
-                <span>💬</span> 커뮤니티
+                <span class="nav-icon">💬</span> 
+                <span class="nav-text">커뮤니티</span>
               </RouterLink>
               <button 
                 @click="$emit('go-feature')" 
-                class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                class="nav-button"
               >
-                <span>✨</span> 주요기능
+                <span class="nav-icon">✨</span> 
+                <span class="nav-text">주요기능</span>
               </button>
               <button 
                 @click="$emit('go-usage')" 
-                class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                class="nav-button"
               >
-                <span>📖</span> 이용방법
+                <span class="nav-icon">📖</span> 
+                <span class="nav-text">이용방법</span>
               </button>
             </template>
 
@@ -39,24 +40,27 @@
             <template v-else>
               <RouterLink 
                 :to="`/community/${defaultBoardId}`" 
-                class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                class="nav-link"
               >
-                <span>💬</span> 커뮤니티
+                <span class="nav-icon">💬</span> 
+                <span class="nav-text">커뮤니티</span>
               </RouterLink>
               
               <!-- 일반회원 메뉴 -->
               <template v-if="user.userType === 2">
                 <RouterLink 
                   to="/meals" 
-                  class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                  class="nav-link"
                 >
-                  <span>🍽️</span> 식단
+                  <span class="nav-icon">🍽️</span> 
+                  <span class="nav-text">식단</span>
                 </RouterLink>
                 <RouterLink 
                   to="/videos" 
-                  class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                  class="nav-link"
                 >
-                  <span>🎥</span> 추천 영상
+                  <span class="nav-icon">🎥</span> 
+                  <span class="nav-text">추천 영상</span>
                 </RouterLink>
               </template>
 
@@ -64,9 +68,10 @@
               <template v-else-if="user.userType === 1">
                 <RouterLink 
                   to="/trainer/feedback" 
-                  class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-white/80 rounded-lg transition-all duration-300 font-medium"
+                  class="nav-link"
                 >
-                  <span>💪</span> 나의 피드백
+                  <span class="nav-icon">💪</span> 
+                  <span class="nav-text">나의 피드백</span>
                 </RouterLink>
               </template>
             </template>
@@ -74,30 +79,35 @@
         </nav>
 
         <!-- 오른쪽: 사용자 정보 & 버튼 -->
-        <div class="flex items-center space-x-3">
+        <div class="right-section">
           <!-- 로그인 한 경우 -->
           <template v-if="isLogin">
-            <div class="hidden sm:flex items-center space-x-2 bg-white/60 backdrop-blur-sm rounded-full px-3 py-1.5 border border-yellow-200/50">
+            <div class="user-info">
               <img 
                 :src="getProfileImage(user.profileImage)" 
                 alt="프로필" 
-                class="w-7 h-7 rounded-full object-cover border-2 border-white shadow-sm"
+                class="user-avatar"
               />
-              <span class="font-semibold text-gray-800 text-sm">{{ user.nickname }}</span>
+              <div class="user-details">
+                <span class="user-name">{{ user.nickname }}</span>
+                <span class="user-type">{{ user.userType === 1 ? '트레이너' : '회원' }}</span>
+              </div>
             </div>
             
             <button 
               @click="$router.push('/profile')" 
-              class="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-400 to-indigo-400 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm"
+              class="profile-button"
             >
-              <span>⚙️</span> 회원정보
+              <span class="button-icon">⚙️</span> 
+              <span class="button-text">회원정보</span>
             </button>
             
             <button 
               @click="handleLogout" 
-              class="flex items-center gap-1 px-3 py-1.5 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-gray-700 font-semibold rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-sm"
+              class="logout-button"
             >
-              <span>👋</span> 로그아웃
+              <span class="button-icon">👋</span> 
+              <span class="button-text">로그아웃</span>
             </button>
           </template>
 
@@ -105,24 +115,24 @@
           <template v-else>
             <button 
               @click="$router.push('/login')" 
-              class="px-4 py-1.5 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-gray-700 font-semibold rounded-full border border-gray-200 hover:border-gray-300 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-sm"
+              class="login-button"
             >
-              로그인
+              <span class="button-text">로그인</span>
             </button>
             <button 
               @click="$router.push('/register')" 
-              class="px-4 py-1.5 bg-gradient-to-r from-green-400 to-emerald-400 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm"
+              class="register-button"
             >
-              회원가입
+              <span class="button-text">회원가입</span>
             </button>
           </template>
 
           <!-- 모바일 메뉴 버튼 -->
           <button 
             @click="toggleMobileMenu"
-            class="md:hidden p-2 bg-white/70 hover:bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200 transition-all duration-300"
+            class="mobile-menu-button"
           >
-            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="menu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
@@ -130,97 +140,102 @@
       </div>
 
       <!-- 모바일 메뉴 -->
-      <div v-if="showMobileMenu" class="md:hidden mt-4 p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-yellow-200/50 shadow-lg">
-        <div class="space-y-3">
-          <!-- 로그인 안한 경우 -->
-          <template v-if="!isLogin">
-            <RouterLink 
-              :to="`/community/${defaultBoardId}`" 
-              @click="showMobileMenu = false"
-              class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium"
-            >
-              <span class="text-lg">💬</span> 커뮤니티
-            </RouterLink>
-            <button 
-              @click="$emit('go-feature'); showMobileMenu = false" 
-              class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium w-full text-left"
-            >
-              <span class="text-lg">✨</span> 주요기능
-            </button>
-            <button 
-              @click="$emit('go-usage'); showMobileMenu = false" 
-              class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium w-full text-left"
-            >
-              <span class="text-lg">📖</span> 이용방법
-            </button>
-          </template>
-
-          <!-- 로그인 한 경우 -->
-          <template v-else>
-            <!-- 사용자 정보 -->
-            <div class="flex items-center space-x-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200/50">
-              <img 
-                :src="getProfileImage(user.profileImage)" 
-                alt="프로필" 
-                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
-              />
-              <span class="font-semibold text-gray-800">{{ user.nickname }}</span>
-            </div>
-
-            <RouterLink 
-              :to="`/community/${defaultBoardId}`" 
-              @click="showMobileMenu = false"
-              class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium"
-            >
-              <span class="text-lg">💬</span> 커뮤니티
-            </RouterLink>
-            
-            <!-- 일반회원 메뉴 -->
-            <template v-if="user.userType === 2">
+      <transition name="mobile-menu">
+        <div v-if="showMobileMenu" class="mobile-menu">
+          <div class="mobile-menu-content">
+            <!-- 로그인 안한 경우 -->
+            <template v-if="!isLogin">
               <RouterLink 
-                to="/meals" 
+                :to="`/community/${defaultBoardId}`" 
                 @click="showMobileMenu = false"
-                class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium"
+                class="mobile-nav-link"
               >
-                <span class="text-lg">🍽️</span> 식단
+                <span class="mobile-nav-icon">💬</span> 커뮤니티
               </RouterLink>
-              <RouterLink 
-                to="/videos" 
-                @click="showMobileMenu = false"
-                class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium"
+              <button 
+                @click="$emit('go-feature'); showMobileMenu = false" 
+                class="mobile-nav-button"
               >
-                <span class="text-lg">🎥</span> 추천 영상
-              </RouterLink>
+                <span class="mobile-nav-icon">✨</span> 주요기능
+              </button>
+              <button 
+                @click="$emit('go-usage'); showMobileMenu = false" 
+                class="mobile-nav-button"
+              >
+                <span class="mobile-nav-icon">📖</span> 이용방법
+              </button>
             </template>
 
-            <!-- 트레이너 메뉴 -->
-            <template v-else-if="user.userType === 1">
-              <RouterLink 
-                to="/trainer/feedback" 
-                @click="showMobileMenu = false"
-                class="flex items-center gap-3 p-3 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-300 font-medium"
-              >
-                <span class="text-lg">💪</span> 나의 피드백
-              </RouterLink>
-            </template>
+            <!-- 로그인 한 경우 -->
+            <template v-else>
+              <!-- 사용자 정보 -->
+              <div class="mobile-user-info">
+                <img 
+                  :src="getProfileImage(user.profileImage)" 
+                  alt="프로필" 
+                  class="mobile-user-avatar"
+                />
+                <div class="mobile-user-details">
+                  <span class="mobile-user-name">{{ user.nickname }}</span>
+                  <span class="mobile-user-type">{{ user.userType === 1 ? '트레이너' : '회원' }}</span>
+                </div>
+              </div>
 
-            <div class="border-t border-gray-200 pt-3 space-y-2">
+              <RouterLink 
+                :to="`/community/${defaultBoardId}`" 
+                @click="showMobileMenu = false"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-nav-icon">💬</span> 커뮤니티
+              </RouterLink>
+              
+              <!-- 일반회원 메뉴 -->
+              <template v-if="user.userType === 2">
+                <RouterLink 
+                  to="/meals" 
+                  @click="showMobileMenu = false"
+                  class="mobile-nav-link"
+                >
+                  <span class="mobile-nav-icon">🍽️</span> 식단
+                </RouterLink>
+                <RouterLink 
+                  to="/videos" 
+                  @click="showMobileMenu = false"
+                  class="mobile-nav-link"
+                >
+                  <span class="mobile-nav-icon">🎥</span> 추천 영상
+                </RouterLink>
+              </template>
+
+              <!-- 트레이너 메뉴 -->
+              <template v-else-if="user.userType === 1">
+                <RouterLink 
+                  to="/trainer/feedback" 
+                  @click="showMobileMenu = false"
+                  class="mobile-nav-link"
+                >
+                  <span class="mobile-nav-icon">💪</span> 나의 피드백
+                </RouterLink>
+              </template>
+
+              <div class="mobile-menu-divider"></div>
+              
               <button 
                 @click="$router.push('/profile'); showMobileMenu = false" 
-                class="flex items-center gap-3 p-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300 font-medium w-full text-left"
+                class="mobile-action-button profile"
               >
-                <span class="text-lg">⚙️</span> 회원정보
+                <span class="mobile-nav-icon">⚙️</span> 회원정보
               </button>
               <button 
                 @click="handleLogout" 
-                class="flex items-center gap-3 p-3 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300 font-medium w-full text-left"
+                class="mobile-action-button logout"
               >
-                <span class="text-lg">👋</span> 로그아웃
+                <span class="mobile-nav-icon">👋</span> 로그아웃
               </button>
-            </div>
-          </template>
+            </template>
+          </div>
         </div>
-      </div>
+      </transition>
     </div>
   </header>
 </template>
@@ -281,67 +296,378 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 </script>
 
 <style scoped>
-/* 활성 링크 스타일 (@apply 대신 일반 CSS 사용) */
-.router-link-active {
-  color: #ea580c; /* text-orange-600 */
-  background-color: rgba(255, 255, 255, 0.7); /* bg-white/70 */
-  font-weight: 600; /* font-semibold */
+/* 헤더 컨테이너 */
+.header-container {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
-/* 그라데이션 텍스트 */
-.bg-clip-text {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-/* 백드롭 블러 */
-.backdrop-blur-md {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
 }
 
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+/* 로고 섹션 */
+.logo-section {
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
-/* 반응형 조정 */
-@media (max-width: 768px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+.logo-section:hover .logo-text {
+  color: #f59e0b;
 }
 
-/* 호버 효과 개선 */
-nav a:hover,
-nav button:hover {
-  transform: translateY(-1px);
+.logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
 }
 
-/* 그림자 효과 */
-.shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+/* 네비게이션 섹션 */
+.nav-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 48px;
 }
 
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+.nav-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.shadow-xl {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.nav-link,
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 18px;
+  color: #6b7280;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
-/* 모바일 메뉴 슬라이드 애니메이션 */
+.nav-link:hover,
+.nav-button:hover {
+  color: #f59e0b;
+}
+
+.nav-icon {
+  font-size: 16px;
+}
+
+/* 활성 링크 스타일 */
+.nav-link.router-link-active {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+/* 오른쪽 섹션 */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 사용자 정보 */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.user-type {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+/* 버튼들 */
+.profile-button,
+.logout-button,
+.login-button,
+.register-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 13px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.profile-button {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.profile-button:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.logout-button {
+  background: white;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.logout-button:hover {
+  background: #f9fafb;
+  color: #374151;
+  border-color: #9ca3af;
+}
+
+.login-button {
+  background: white;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.login-button:hover {
+  background: #f9fafb;
+  color: #374151;
+  border-color: #9ca3af;
+}
+
+.register-button {
+  background: #f59e0b;
+  color: white;
+  border-color: #f59e0b;
+}
+
+.register-button:hover {
+  background: #d97706;
+  border-color: #d97706;
+}
+
+/* 모바일 메뉴 버튼 */
+.mobile-menu-button {
+  display: none;
+  padding: 8px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+}
+
+/* 모바일 메뉴 */
+.mobile-menu {
+  margin-top: 8px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-menu-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.mobile-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+}
+
+.mobile-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobile-user-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 15px;
+}
+
+.mobile-user-type {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.mobile-nav-link,
+.mobile-nav-button,
+.mobile-action-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #6b7280;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-button:hover {
+  color: #f59e0b;
+  background: #fef3c7;
+}
+
+.mobile-action-button.profile:hover {
+  color: #3b82f6;
+  background: #dbeafe;
+}
+
+.mobile-action-button.logout:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+.mobile-nav-icon {
+  font-size: 16px;
+}
+
+.mobile-menu-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 8px 0;
+}
+
+/* 트랜지션 */
 .mobile-menu-enter-active,
 .mobile-menu-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .mobile-menu-enter-from,
 .mobile-menu-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .nav-section {
+    display: none;
+  }
+  
+  .mobile-menu-button {
+    display: block;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  .profile-button {
+    display: none;
+  }
+  
+  .header-content {
+    padding: 0 16px;
+  }
+  
+  .right-section {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 20px;
+  }
+  
+  .login-button,
+  .register-button,
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  .header-content {
+    padding: 0 12px;
+  }
+  
+  .right-section {
+    gap: 8px;
+  }
 }
 </style>

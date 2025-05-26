@@ -303,9 +303,9 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
-  padding-top: 2rem;
-  padding-bottom: 3rem;
+  margin-bottom: 20px;
+  padding-top: 10px;
+  padding-bottom: 30px;
   padding-left: 1rem;
   border-bottom: 2px solid rgba(245, 158, 11, 0.1);
   min-height: 120px; /* 최소 높이 설정으로 두 섹션 헤더 높이 맞춤 */
