@@ -70,13 +70,13 @@ public class YoutubeController {
         MemberDetails member =  memberDao.findByUserId(user.getUserId());
 
         String prompt = String.format(
-            "다음 사용자 정보를 바탕으로 적합한 운동 3가지를 추천해줘).\n" +
+            "다음 사용자 정보를 바탕으로 적합한 운동 4가지를 추천해줘).\n" +
             "- 성별: %s\n- 나이: %d\n- 키: %.1fcm\n- 몸무게: %.1fkg\n- 목표: %s\n" +
-            "운동 이름만 콤마로 구분해서 3개만 출력해줘. 다른 기호나 문자 없이 꼭 이 형식으로 운동 3개 이름만 출력해줘: '걷기, 스쿼트, 플랭크'",
+            "운동 이름만 콤마로 구분해서 4개만 출력해줘. 다른 기호나 문자 없이 꼭 이 형식으로 운동 4개 이름만 출력해줘 ex) '걷기, 스쿼트, 플랭크, 줄넘기'",
             user.getGender(), user.getAge(), member.getHeight(), member.getWeight(), member.getGoal()
         );
 
-        String gptResponse = chatGPTService.ask(prompt);  // → 예: "걷기, 스쿼트, 플랭크"
+        String gptResponse = chatGPTService.ask(prompt);  //
 
         List<String> exercises = Arrays.stream(gptResponse.split(","))
                                        .map(String::trim)
