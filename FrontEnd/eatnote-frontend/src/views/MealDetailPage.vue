@@ -44,25 +44,43 @@
                 <div class="meal-image-section">
                   <img :src="getImageUrl(meal.imageUrl)" alt="식단 이미지" class="meal-image" />
                   <div class="meal-basic-info">
-                    <div class="meal-time-row">
-                      <span class="meal-time-label">식사 날짜</span>
-                      <span class="meal-time-value">{{ formatDate(meal.mealTime) }}</span>
-                    </div>
-                    <div class="meal-type-row">
-                      <span class="meal-type-label">식사 종류</span>
-                      <span class="meal-type-value">{{ getMealTypeText(meal.mealType) }}</span>
-                    </div>
-                    <div class="author-info">
-                      <span class="author-label">작성자</span>
-                      <router-link :to="`/profile/${meal.userId}`" class="author-link">
-                        <span class="author-icon">👤</span>
-                        <span>{{ meal.userNickname }}</span>
-                      </router-link>
+                    <!-- 첫 번째 줄: 식사 날짜 + 식사 종류 -->
+                    <div class="info-row">
+                      <div class="info-item">
+                        <span class="info-label">식사 날짜</span>
+                        <span class="info-value">{{ formatDate(meal.mealTime) }}</span>
+                      </div>
+                      <div class="info-item">
+                        <span class="info-label">식사 종류</span>
+                        <span class="info-value">{{ getMealTypeText(meal.mealType) }}</span>
+                      </div>
                     </div>
 
-                    <div class="ai-score-display">
-                      <span class="score-label">AI 점수</span>
-                      <span class="score-value">{{ meal.autoScore }}/10</span>
+                    <!-- 두 번째 줄: 작성자 + AI 점수 -->
+                    <div class="info-row">
+                      <div class="info-item">
+                        <span class="info-label">작성자</span>
+                        <router-link :to="`/profile/${meal.userId}`" class="author-link">
+                          <span class="author-icon">👤</span>
+                          <span>{{ meal.userNickname }}</span>
+                        </router-link>
+                      </div>
+                      <div class="info-item">
+                        <span class="info-label">AI 점수</span>
+                        <span class="info-value score-highlight">{{ meal.autoScore }}/10</span>
+                      </div>
+                    </div>
+
+                    <!-- 세 번째 줄: 좋아요 버튼 (오른쪽 정렬) -->
+                    <div class="like-buttons-row">
+                      <LikeDislikeButtons 
+                        contentType="MEAL" 
+                        :contentId="meal.mealId" 
+                        :likeCount="meal.likeCount"
+                        :dislikeCount="meal.dislikeCount" 
+                        :myReaction="meal.myReaction" 
+                        :onUpdated="loadMeal" 
+                      />
                     </div>
                   </div>
                 </div>
@@ -115,7 +133,7 @@
               <div class="section-header">
                 <h2 class="section-title">💬 트레이너 피드백</h2>
                 <div v-if="trainerFeedbacks.length > 0" class="section-badge">
-                  <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <div class="pulse-dot"></div>
                   <span class="badge-text">{{ trainerFeedbacks.length }}개</span>
                 </div>
               </div>
@@ -165,31 +183,9 @@
           </div>
         </div>
 
-        <!-- 2행: 반응 + 댓글 -->
+        <!-- 2행: 댓글 -->
         <div class="bottom-row">
-          <section class="interaction-comments-section">
-            <!-- 반응 부분 -->
-            <div class="interaction-part">
-              <!-- <div class="section-header">
-                <h2 class="section-title">👍 반응</h2>
-              </div> -->
-
-              <LikeDislikeButtons contentType="MEAL" :contentId="meal.mealId" :likeCount="meal.likeCount"
-                :dislikeCount="meal.dislikeCount" :myReaction="meal.myReaction" :onUpdated="loadMeal" />
-
-
-              <!-- <div class="interaction-content">
-                <LikeDislikeButtons 
-                  contentType="MEAL" 
-                  :contentId="meal.mealId" 
-                  :likeCount="meal.likeCount"
-                  :dislikeCount="meal.dislikeCount" 
-                  :myReaction="meal.myReaction" 
-                  :onUpdated="loadMeal" 
-                />
-              </div> -->
-            </div>
-
+          <section class="comments-section-only">
             <!-- 댓글 부분 -->
             <div class="comments-part">
               <div class="comments-header">
@@ -205,13 +201,23 @@
 
               <div class="comments-content">
                 <div class="comment-input-section">
-                  <CommentInput :parentCommentId="null" :onSubmit="loadComments" :targetType="targetType"
-                    :targetId="mealId" />
+                  <CommentInput 
+                    :parentCommentId="null" 
+                    :onSubmit="loadComments" 
+                    :targetType="targetType"
+                    :targetId="mealId" 
+                  />
                 </div>
 
                 <div v-if="comments.length > 0" class="comments-list">
-                  <CommentItem v-for="comment in comments" :key="comment.commentId" :comment="comment"
-                    :onReload="loadComments" :targetType="targetType" :targetId="mealId" />
+                  <CommentItem 
+                    v-for="comment in comments" 
+                    :key="comment.commentId" 
+                    :comment="comment"
+                    :onReload="loadComments" 
+                    :targetType="targetType" 
+                    :targetId="mealId" 
+                  />
                 </div>
 
                 <div v-else class="empty-comments">
@@ -384,49 +390,18 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 페이지 전체 배경 */
-
-.meal-basic-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.meal-time-row,
-.meal-type-row {
-  background: rgba(249, 250, 251, 0.8);
-  border: 1px solid rgba(229, 231, 235, 0.5);
-  border-radius: 12px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.meal-time-label,
-.meal-type-label {
-  font-size: 0.8rem;
-  color: #6b7280;
-  font-weight: 600;
-}
-
-
-.meal-time-value,
-.meal-type-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #f59e0b;
-}
-
+/* 페이지 전체 배경 - 통일된 베이지 톤 */
 .meal-detail-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
+/* 메인 컨테이너 - 1400px로 통일 */
 .detail-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 32px 16px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 /* 페이지 헤더 */
@@ -434,7 +409,9 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f59e0b;
 }
 
 .header-left,
@@ -447,43 +424,39 @@ onMounted(async () => {
 }
 
 .page-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #374151;
+  font-size: 42px;
+  font-weight: 600;
+  color: #2D1810;
   margin: 0;
   text-align: center;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
-/* 뒤로가기 버튼 */
+/* 뒤로가기 버튼 - 통일된 버튼 스타일 */
 .back-button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
   color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
 }
 
 .back-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #d1d5db;
+  transform: translateY(-1px);
 }
 
 .back-icon {
-  font-size: 1.1rem;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -494,14 +467,14 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 64px 32px;
   text-align: center;
 }
 
 .loading-spinner,
 .error-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 48px;
+  margin-bottom: 16px;
 }
 
 .loading-spinner {
@@ -510,23 +483,23 @@ onMounted(async () => {
 
 .loading-text,
 .error-text {
-  font-size: 1.1rem;
+  font-size: 18px;
   color: #6b7280;
   font-weight: 500;
 }
 
-/* 콘텐츠 레이아웃 - 2행 구성 */
+/* 콘텐츠 레이아웃 */
 .content-layout {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 32px;
 }
 
 /* 1행: 식단 정보 + 트레이너 피드백 */
 .top-row {
   display: grid;
   grid-template-columns: 7fr 5fr;
-  gap: 2rem;
+  gap: 32px;
   align-items: start;
 }
 
@@ -535,66 +508,39 @@ onMounted(async () => {
   width: 100%;
 }
 
-.interaction-comments-section {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  animation: fadeInUp 0.6s ease-out;
-  animation-delay: 0.4s;
-}
-
-.interaction-comments-section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.3);
-}
-
-/* 반응 부분 */
-.interaction-part {
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 2px solid rgba(229, 231, 235, 0.3);
-}
-
-.interaction-content {
-  background: rgba(249, 250, 251, 0.8);
-  border: 1px solid rgba(229, 231, 235, 0.5);
+/* 2행: 댓글만 */
+.comments-section-only {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 24px;
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
 }
 
-/* 댓글 부분 */
-.comments-part {
-  flex: 1;
-}
-
-.comments-content {
-  max-height: 600px;
-  overflow-y: auto;
+.comments-section-only:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(100, 116, 139, 0.1), 0 10px 10px -5px rgba(100, 116, 139, 0.04);
 }
 
 /* 식단 열 */
 .meal-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 32px;
 }
 
 /* 피드백 열 */
 .feedback-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 32px;
 }
 
 /* 섹션 공통 */
 .meal-section,
-.interaction-section,
-.feedback-section,
-.comments-section {
+.feedback-section {
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -602,93 +548,97 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .section-title {
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 700;
-  color: #374151;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #2D1810;
 }
 
 .section-badge {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: rgba(245, 158, 11, 0.1);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
   border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 50px;
-  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  padding: 8px 16px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
 }
 
 .badge-text {
-  font-size: 0.85rem;
+  font-size: 14px;
   font-weight: 600;
   color: #f59e0b;
 }
 
-/* 카드 컨테이너 */
+/* 카드 컨테이너 - 통일된 글래스모피즘 스타일 */
 .card-container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
 }
 
 .card-container:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 20px 25px -5px rgba(100, 116, 139, 0.1), 0 10px 10px -5px rgba(100, 116, 139, 0.04);
 }
 
-/* 식사 타입 뱃지 */
+/* 식사 타입 뱃지 - 통일된 스타일 */
 .meal-type-badge {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .meal-type-badge.breakfast {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #d97706;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .meal-type-badge.lunch {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #2563eb;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .meal-type-badge.dinner {
-  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  color: #4338ca;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #8b5cf6;
+  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .meal-type-badge.extra {
-  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-  color: #be185d;
-  border: 1px solid rgba(236, 72, 153, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #ec4899;
+  border: 1px solid rgba(236, 72, 153, 0.2);
 }
 
 /* 식단 이미지 섹션 */
 .meal-image-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
 .meal-image {
@@ -696,146 +646,156 @@ onMounted(async () => {
   height: 250px;
   object-fit: cover;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
 }
 
-.author-info,
-.ai-score-display {
+.meal-basic-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 정보 행 스타일 */
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-item {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
-.author-label,
-.score-label {
-  font-size: 0.8rem;
+.info-label {
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
-.author-link {
+.info-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.info-value.score-highlight {
+  color: #f59e0b;
+}
+
+/* 좋아요 버튼 행 - 오른쪽 정렬 */
+.like-buttons-row {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  color: #f59e0b;
-  text-decoration: none;
-  font-weight: 700;
-  transition: color 0.3s ease;
 }
 
-.author-link:hover {
-  color: #d97706;
-}
-
-.author-icon {
-  font-size: 1rem;
-}
-
-.score-value {
-  font-size: 1.1rem;
-  color: #f59e0b;
-  font-weight: 700;
+/* LikeDislikeButtons 컴포넌트 크기 조정 */
+.like-buttons-row :deep(.reaction-buttons) {
+  transform: scale(0.7); /* 80% 크기로 축소 */
 }
 
 /* 정보 라벨 헤더 */
 .info-label-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .label-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .label-text {
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   color: #6b7280;
 }
 
 /* 음식 정보 */
 .food-info {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .food-text {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 1rem;
-  font-size: 0.95rem;
+  padding: 16px;
+  font-size: 15px;
   color: #374151;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
 /* AI 피드백 섹션 */
 .ai-feedback-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .ai-feedback-text {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+  background: rgba(59, 130, 246, 0.05);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 12px;
-  padding: 1rem;
-  font-size: 0.95rem;
+  padding: 16px;
+  font-size: 15px;
   color: #374151;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
 /* 영양 정보 */
 .nutrition-section {
-  margin-top: 1.5rem;
+  margin-top: 24px;
 }
 
 .nutrition-title {
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 700;
   color: #374151;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .nutrition-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .nutrition-item {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 0.75rem;
+  padding: 12px;
   text-align: center;
 }
 
 .nutrition-item.calories {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+  background: rgba(245, 158, 11, 0.05);
   border-color: rgba(245, 158, 11, 0.2);
 }
 
 .nutrition-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: 4px;
 }
 
 .nutrition-value {
   display: block;
-  font-size: 0.9rem;
+  font-size: 14px;
   color: #374151;
   font-weight: 700;
 }
@@ -849,38 +809,38 @@ onMounted(async () => {
 .feedbacks-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .feedback-item {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 16px;
-  padding: 1.25rem;
+  padding: 20px;
   transition: all 0.3s ease;
 }
 
 .feedback-item.my-feedback {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+  background: rgba(59, 130, 246, 0.05);
   border-color: rgba(59, 130, 246, 0.2);
 }
 
 .feedback-item:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
 }
 
 .feedback-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .trainer-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .trainer-name {
@@ -889,27 +849,27 @@ onMounted(async () => {
 }
 
 .my-badge {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
-  padding: 0.25rem 0.5rem;
+  padding: 4px 8px;
   border-radius: 8px;
-  font-size: 0.7rem;
+  font-size: 11px;
   font-weight: 600;
 }
 
 .feedback-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .action-button {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.375rem 0.75rem;
+  gap: 4px;
+  padding: 6px 12px;
   border: none;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -927,36 +887,36 @@ onMounted(async () => {
 
 .action-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 4px -1px rgba(100, 116, 139, 0.1);
 }
 
 .feedback-content {
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 
 .feedback-text {
-  font-size: 0.95rem;
+  font-size: 15px;
   color: #374151;
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .feedback-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 14px;
   color: #6b7280;
 }
 
 .score-display {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 6px;
 }
 
 .score-icon {
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 .score-text {
@@ -976,91 +936,122 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 48px 32px;
   min-height: 200px;
 }
 
 .empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 48px;
+  margin-bottom: 16px;
   opacity: 0.6;
 }
 
 .empty-text {
-  font-size: 1.1rem;
+  font-size: 18px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .empty-subtext {
-  font-size: 0.9rem;
+  font-size: 14px;
   color: #6b7280;
 }
 
-/* 댓글 컨테이너 */
-.comments-container {
+/* 댓글 부분 */
+.comments-part {
+  flex: 1;
+}
+
+.comments-header {
+  margin-bottom: 24px;
+}
+
+.comments-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-icon {
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+}
+
+.comments-content {
   max-height: 600px;
   overflow-y: auto;
 }
 
 .comment-input-section {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
   border-bottom: 1px solid rgba(229, 231, 235, 0.5);
 }
 
 .comments-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
 }
 
-/* Tailwind 클래스 대체 */
-.w-2 {
-  width: 0.5rem;
+/* 작성자 링크 스타일 */
+.author-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f59e0b;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.3s ease;
 }
 
-.h-2 {
-  height: 0.5rem;
+.author-link:hover {
+  color: #d97706;
 }
 
-.bg-green-400 {
-  background-color: #4ade80;
+.author-icon {
+  font-size: 16px;
 }
 
-.bg-blue-400 {
-  background-color: #60a5fa;
+/* 반응형 디자인 - 모바일에서 1열로 변경 */
+@media (max-width: 640px) {
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
-
-.rounded-full {
-  border-radius: 9999px;
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* 반응형 디자인 */
 @media (max-width: 1024px) {
   .top-row {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 24px;
   }
 
   .page-header {
     grid-template-columns: auto 1fr auto;
-    gap: 1rem;
+    gap: 16px;
   }
 
   .page-title {
-    font-size: 1.75rem;
+    font-size: 28px;
   }
 }
 
 @media (max-width: 768px) {
   .detail-container {
-    padding: 1rem;
+    padding: 16px 12px;
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .main-title {
+    font-size: 32px;
   }
 
   .meal-image-section {
@@ -1074,7 +1065,7 @@ onMounted(async () => {
   .feedback-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 12px;
   }
 
   .feedback-actions {
@@ -1085,7 +1076,7 @@ onMounted(async () => {
   .feedback-meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 8px;
   }
 }
 
@@ -1093,7 +1084,7 @@ onMounted(async () => {
   .page-header {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 1rem;
+    gap: 16px;
   }
 
   .header-left {
@@ -1103,12 +1094,12 @@ onMounted(async () => {
   .section-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 12px;
   }
 
   .back-button {
-    font-size: 0.8rem;
-    padding: 0.625rem 0.875rem;
+    font-size: 14px;
+    padding: 10px 16px;
   }
 }
 
@@ -1118,7 +1109,6 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1126,56 +1116,40 @@ onMounted(async () => {
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
   }
-
   50% {
     opacity: 0.5;
   }
 }
 
-/* 섹션별 애니메이션 지연 */
-.meal-section {
-  animation-delay: 0.1s;
-}
-
-.feedback-section {
-  animation-delay: 0.2s;
-}
-
+/* 애니메이션 업데이트 */
 .interaction-comments-section {
-  animation-delay: 0.4s;
+  animation-delay: 0.3s;
 }
 
-
-
-
-
-
-
-
-
-
-
-.comments-header {
-  margin-bottom: 1.5rem;
+.comments-section-only {
+  animation: fadeInUp 0.6s ease-out;
+  animation-delay: 0.3s;
 }
 
-.comments-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #374151;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.title-icon {
-  width: 20px;
-  height: 20px;
-  color: #f59e0b;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f59e0b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
 }
 </style>

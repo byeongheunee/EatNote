@@ -21,11 +21,11 @@
     <div v-else class="comment-input-container">
       <!-- 사용자 정보 -->
       <div class="user-info">
-        <div class="user-avatar">
+        <!-- <div class="user-avatar">
           <span class="avatar-emoji">💬</span>
-        </div>
+        </div> -->
         <div class="user-details">
-          <span class="user-name">{{ auth.user?.nickname || '사용자' }}</span>
+          <!-- <span class="user-name">{{ auth.user?.nickname || '사용자' }}</span> -->
           <span class="comment-label">{{ parentCommentId ? '답글' : '댓글' }} 작성</span>
         </div>
       </div>
@@ -279,7 +279,7 @@ const submitComment = async () => {
 .comment-input-container {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
   backdrop-filter: blur(8px);
-  border: 2px solid rgba(245, 158, 11, 0.1);
+  border: 3px solid rgba(14, 8, 0, 0.1);
   border-radius: 16px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -328,7 +328,7 @@ const submitComment = async () => {
 
 .comment-label {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: #43454b;
 }
 
 /* 입력 섹션 */

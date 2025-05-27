@@ -534,7 +534,7 @@ onMounted(async () => {
 }
 
 .edit-btn {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, 	#89cdf0, 	#89cdf0);
   color: white;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
@@ -546,7 +546,7 @@ onMounted(async () => {
 }
 
 .delete-btn {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #f07c7c, #f07c7c);
   color: white;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }

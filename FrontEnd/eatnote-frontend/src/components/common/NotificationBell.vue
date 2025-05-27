@@ -7,8 +7,15 @@
         class="notification-button"
         :class="{ 'active': showDropdown }"
       >
+
+        <img 
+          src="@/assets/icons/letter.png" 
+          alt="알림 아이콘"
+          class="w-7 h-7"
+        />
+
         <!-- 종 아이콘 -->
-        <svg 
+        <!-- <svg 
           class="notification-icon" 
           fill="none" 
           stroke="currentColor" 
@@ -20,7 +27,7 @@
             stroke-width="2" 
             d="M15 17h5l-5 5-5-5h5v-5a6 6 0 1 0-12 0v5H3l5 5 5-5H8v-5a3 3 0 1 1 6 0v5z"
           />
-        </svg>
+        </svg> -->
         
         <!-- 알림 배지 -->
         <transition name="badge-bounce">
@@ -43,9 +50,11 @@
           <div class="dropdown-header">
             <div class="header-content">
               <h3 class="header-title">
-                <svg class="header-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a6 6 0 1 0-12 0v5H3l5 5 5-5H8v-5a3 3 0 1 1 6 0v5z"/>
-                </svg>
+                <img 
+                  src="@/assets/icons/letter.png" 
+                  alt="알림 아이콘"
+                  class="w-5 h-5"
+                />
                 알림
               </h3>
               <span class="notification-count">{{ notifications.length }}개</span>

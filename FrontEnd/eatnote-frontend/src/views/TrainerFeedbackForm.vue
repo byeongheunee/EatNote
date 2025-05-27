@@ -5,9 +5,12 @@
     <div class="feedback-container">
       <!-- 페이지 헤더 -->
       <section class="page-header">
-        <h1 class="page-title">
-          {{ feedbackId ? '✏️ 피드백 수정' : '🍱 식단 피드백 작성' }}
-        </h1>
+        <div class="header-content">
+          <h1 class="page-title">
+            {{ feedbackId ? '✏️ 피드백 수정' : '🍱 식단 피드백 작성' }}
+          </h1>
+          <p class="page-subtitle">회원의 식단을 분석하고 전문적인 피드백을 제공해주세요</p>
+        </div>
       </section>
 
       <div v-if="loading" class="loading-state">
@@ -269,14 +272,14 @@ const submitFeedback = async () => {
         headers: { Authorization: `Bearer ${token}` }
       })
       toast.success('피드백이 수정되었습니다.')
+      router.replace(`/meal/${meal.value.mealId}`)
     } else {
       await axios.post(`/api/trainer/feedback/meal/${mealId}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       })
       toast.success('피드백이 등록되었습니다!')
+      router.replace(`/meal/${mealId}`)
     }
-
-    router.push('/trainer')
   } catch (e) {
     console.error('피드백 처리 실패', e)
     toast.error('피드백 요청에 실패했습니다.')
@@ -327,33 +330,42 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 페이지 전체 배경 */
+/* 페이지 전체 배경 - 베이지 톤으로 통일 */
 .feedback-form-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #fef7ed 0%, #fef3c7 50%, #fef3c7 100%);
+  background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
 
+/* 메인 컨테이너 - 1400px로 통일 */
 .feedback-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 32px 16px;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-/* 페이지 헤더 */
+/* 페이지 헤더 - 통일된 스타일 */
 .page-header {
-  margin-bottom: 2rem;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #f59e0b;
+}
+
+.header-content {
   text-align: center;
 }
 
 .page-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #374151;
-  margin: 0;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 42px;
+  font-weight: 600;
+  color: #2D1810;
+  margin-bottom: 12px;
+}
+
+.page-subtitle {
+  font-size: 18px;
+  color: #5D4037;
+  line-height: 1.6;
 }
 
 /* 로딩 상태 */
@@ -362,27 +374,27 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 64px 32px;
   text-align: center;
 }
 
 .loading-spinner {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 48px;
+  margin-bottom: 16px;
   animation: pulse 2s infinite;
 }
 
 .loading-text {
-  font-size: 1.1rem;
+  font-size: 18px;
   color: #6b7280;
   font-weight: 500;
 }
 
-/* 콘텐츠 레이아웃 */
+/* 콘텐츠 레이아웃 - 기존 7:5 비율 유지 */
 .content-layout {
   display: grid;
   grid-template-columns: 7fr 5fr;
-  gap: 2rem;
+  gap: 32px;
   align-items: start;
 }
 
@@ -390,13 +402,13 @@ onMounted(async () => {
 .info-column {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 32px;
 }
 
 /* 피드백 열 */
 .feedback-column {
   position: sticky;
-  top: 2rem;
+  top: 32px;
 }
 
 /* 섹션 공통 */
@@ -408,77 +420,72 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .section-title {
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 700;
-  color: #374151;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #2D1810;
 }
 
-/* 카드 컨테이너 */
+/* 카드 컨테이너 - 글래스모피즘 통일 */
 .card-container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
+  border: 1px solid #e5e7eb;
   transition: all 0.3s ease;
 }
 
 .card-container:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 20px 25px -5px rgba(100, 116, 139, 0.1), 0 10px 10px -5px rgba(100, 116, 139, 0.04);
 }
 
-/* 식사 타입 뱃지 */
+/* 식사 타입 뱃지 - 통일된 스타일 */
 .meal-type-badge {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .meal-type-badge.breakfast {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #d97706;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .meal-type-badge.lunch {
-  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-  color: #2563eb;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .meal-type-badge.dinner {
-  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  color: #4338ca;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #8b5cf6;
+  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .meal-type-badge.extra {
-  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-  color: #be185d;
-  border: 1px solid rgba(236, 72, 153, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  color: #ec4899;
+  border: 1px solid rgba(236, 72, 153, 0.2);
 }
 
 /* 식단 이미지 섹션 */
 .meal-image-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
 .meal-image {
@@ -486,137 +493,138 @@ onMounted(async () => {
   height: 200px;
   object-fit: cover;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
 }
 
 .meal-basic-info {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .info-item {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .info-label {
-  font-size: 0.8rem;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
 .info-value {
-  font-size: 0.95rem;
+  font-size: 15px;
   color: #374151;
   font-weight: 700;
 }
 
 .ai-score {
   color: #f59e0b;
-  font-size: 1.1rem;
+  font-size: 18px;
 }
 
 /* 정보 라벨 헤더 */
 .info-label-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .label-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .label-text {
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   color: #6b7280;
 }
 
 /* 음식 정보 */
 .food-info {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .food-text {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 1rem;
-  font-size: 0.95rem;
+  padding: 16px;
+  font-size: 15px;
   color: #374151;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
 /* AI 피드백 섹션 */
 .ai-feedback-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
 }
 
 .ai-feedback-text {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+  background: rgba(59, 130, 246, 0.05);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 12px;
-  padding: 1rem;
-  font-size: 0.95rem;
+  padding: 16px;
+  font-size: 15px;
   color: #374151;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }
 
 /* 영양 정보 */
 .nutrition-section {
-  margin-top: 1.5rem;
+  margin-top: 24px;
 }
 
 .nutrition-title {
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 700;
   color: #374151;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .nutrition-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .nutrition-item {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 0.75rem;
+  padding: 12px;
   text-align: center;
 }
 
 .nutrition-item.calories {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+  background: rgba(245, 158, 11, 0.05);
   border-color: rgba(245, 158, 11, 0.2);
 }
 
 .nutrition-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: 4px;
 }
 
 .nutrition-value {
   display: block;
-  font-size: 0.9rem;
+  font-size: 14px;
   color: #374151;
   font-weight: 700;
 }
@@ -625,27 +633,27 @@ onMounted(async () => {
 .member-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 16px;
 }
 
 .member-item {
   background: rgba(249, 250, 251, 0.8);
   border: 1px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  padding: 0.75rem;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
 .member-label {
-  font-size: 0.75rem;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
 }
 
 .member-value {
-  font-size: 0.9rem;
+  font-size: 14px;
   color: #374151;
   font-weight: 700;
 }
@@ -654,25 +662,25 @@ onMounted(async () => {
 .allergy-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .allergy-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.05);
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 12px;
-  padding: 0.5rem 0.75rem;
+  padding: 8px 12px;
 }
 
 .allergy-icon {
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 .allergy-name {
-  font-size: 0.85rem;
+  font-size: 13px;
   color: #dc2626;
   font-weight: 600;
 }
@@ -680,21 +688,21 @@ onMounted(async () => {
 /* 피드백 폼 */
 .feedback-card {
   position: sticky;
-  top: 2rem;
+  top: 32px;
 }
 
 .feedback-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 24px;
 }
 
 .form-label {
   display: block;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .textarea-wrapper {
@@ -705,10 +713,10 @@ onMounted(async () => {
 .feedback-textarea {
   width: 100%;
   min-height: 200px;
-  padding: 1rem;
+  padding: 16px;
   border: 2px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 14px;
   line-height: 1.6;
   resize: vertical;
   transition: all 0.3s ease;
@@ -731,14 +739,14 @@ onMounted(async () => {
 .score-selector {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .score-select {
-  padding: 0.75rem;
+  padding: 12px;
   border: 2px solid rgba(229, 231, 235, 0.5);
   border-radius: 12px;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(4px);
@@ -756,14 +764,14 @@ onMounted(async () => {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .score-text {
-  font-size: 1.1rem;
+  font-size: 18px;
   font-weight: 700;
   color: #f59e0b;
-  min-width: 3rem;
+  min-width: 48px;
 }
 
 .score-bar {
@@ -781,48 +789,56 @@ onMounted(async () => {
   transition: width 0.3s ease;
 }
 
-/* 제출 버튼 */
+/* 제출 버튼 - 통일된 스타일 */
 .submit-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 8px;
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 16px 24px;
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.1);
 }
 
 .submit-button:hover:not(:disabled) {
   background: linear-gradient(135deg, #059669, #047857);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 8px -1px rgba(100, 116, 139, 0.15);
 }
 
 .submit-button:disabled {
-  background: #d1d5db;
-  color: #9ca3af;
+  background: #9ca3af;
+  color: #6b7280;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
 .button-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
+  .feedback-container {
+    padding: 24px 16px;
+  }
+  
+  .page-title {
+    font-size: 32px;
+  }
+  
   .content-layout {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 24px;
   }
   
   .feedback-column {
@@ -836,11 +852,19 @@ onMounted(async () => {
 
 @media (max-width: 768px) {
   .feedback-container {
-    padding: 1rem;
+    padding: 16px 12px;
+  }
+  
+  .page-header {
+    margin-bottom: 32px;
   }
   
   .page-title {
-    font-size: 1.75rem;
+    font-size: 28px;
+  }
+  
+  .page-subtitle {
+    font-size: 16px;
   }
   
   .meal-image-section {
@@ -855,7 +879,17 @@ onMounted(async () => {
   .score-selector {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .section-title {
+    font-size: 20px;
   }
 }
 
@@ -881,8 +915,38 @@ onMounted(async () => {
 }
 
 /* 섹션별 애니메이션 지연 */
-.info-section:nth-child(1) { animation-delay: 0.1s; }
-.info-section:nth-child(2) { animation-delay: 0.2s; }
-.info-section:nth-child(3) { animation-delay: 0.3s; }
-.feedback-section { animation-delay: 0.4s; }
+.info-section:nth-child(1) { 
+  animation-delay: 0.1s; 
+}
+
+.info-section:nth-child(2) { 
+  animation-delay: 0.2s; 
+}
+
+.info-section:nth-child(3) { 
+  animation-delay: 0.3s; 
+}
+
+.feedback-section { 
+  animation-delay: 0.4s; 
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f59e0b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
 </style>

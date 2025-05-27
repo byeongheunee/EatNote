@@ -186,7 +186,7 @@ const submit = async (type) => {
 
 .reaction-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .reaction-button:active {
@@ -205,8 +205,8 @@ const submit = async (type) => {
 
 .like-button.active {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
-  border-color: #ef4444;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  border-color: #ec6060;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 /* 싫어요 버튼 스타일 */
@@ -222,7 +222,7 @@ const submit = async (type) => {
 .dislike-button.active {
   background: linear-gradient(135deg, rgba(107, 114, 128, 0.1), rgba(75, 85, 99, 0.05));
   border-color: #6b7280;
-  box-shadow: 0 0 20px rgba(107, 114, 128, 0.3);
+  box-shadow: 0 0 10px rgba(107, 114, 128, 0.3);
 }
 
 .icon-container {
@@ -256,8 +256,8 @@ const submit = async (type) => {
 }
 
 .heart-svg.filled {
-  color: #ef4444;
-  stroke: #ef4444;
+  color: #ec6060;
+  stroke: #ec6060;
   filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
 }
 
@@ -309,7 +309,7 @@ const submit = async (type) => {
 }
 
 .like-button.active .count-text {
-  color: #ef4444;
+  color: #ec6060;
 }
 
 .dislike-button.active .count-text {

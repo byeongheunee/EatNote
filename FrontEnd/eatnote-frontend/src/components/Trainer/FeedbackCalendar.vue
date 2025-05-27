@@ -594,7 +594,7 @@ onMounted(() => {
 }
 
 :deep(.fc-button) {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #f7a77f, #f79d70);
   border: none;
   color: white;
   border-radius: 8px;

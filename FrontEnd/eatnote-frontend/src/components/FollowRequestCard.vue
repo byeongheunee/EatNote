@@ -184,25 +184,25 @@ const handleImageError = (event) => {
 }
 
 .accept-button {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #93d48f, #93d48f);
   color: white;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .accept-button:hover {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, #7bbb77, #7bbb77);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .reject-button {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #f07c7c, #f07c7c);
   color: white;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
 .reject-button:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  background: linear-gradient(135deg, #ec5656, #ec5656);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }

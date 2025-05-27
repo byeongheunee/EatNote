@@ -90,9 +90,15 @@
       <div class="replies-header">
         <div class="replies-line"></div>
         <span class="replies-count">{{ comment.replies.length }}개의 답글</span>
+        <button @click="showReplies = !showReplies" class="toggle-replies-btn">
+          <svg class="toggle-icon" :class="{ 'rotated': showReplies }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+          {{ showReplies ? '접기' : '펼쳐보기' }}
+        </button>
       </div>
       
-      <div class="replies-list">
+      <div v-if="showReplies" class="replies-list">
         <CommentItem 
           v-for="reply in comment.replies" 
           :key="reply.commentId" 
@@ -130,6 +136,7 @@ const props = defineProps({
 
 const auth = useAuthStore()
 const showReply = ref(false)
+const showReplies = ref(false) // 답글 펼치기/접기 상태
 
 // 현재 로그인한 유저와 댓글 작성자가 동일한지 확인
 const isAuthor = computed(() => {
@@ -164,6 +171,8 @@ const formatDate = (datetime) => {
 // 답글 제출 처리
 const handleReplySubmit = () => {
   showReply.value = false
+  // 답글 작성 후 자동으로 답글 목록 펼치기
+  showReplies.value = true
   props.onReload()
 }
 
@@ -238,7 +247,7 @@ const handleDelete = async () => {
 .comment-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(245, 158, 11, 0.1);
+  border: 2.5px solid rgba(32, 21, 2, 0.1);
   border-radius: 16px;
   padding: 1.25rem;
   transition: all 0.3s ease;
@@ -317,7 +326,7 @@ const handleDelete = async () => {
 }
 
 .author-badge {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #93d48f, #93d48f);
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
@@ -388,12 +397,12 @@ const handleDelete = async () => {
 .like-btn:hover {
   background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.3);
-  color: #10b981;
+  color: #70d66b;
 }
 
 .like-btn.active {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-color: #10b981;
+  background: linear-gradient(135deg, #93d48f, #93d48f);
+  border-color: #88d684;
   color: white;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
@@ -409,8 +418,8 @@ const handleDelete = async () => {
 }
 
 .dislike-btn.active {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  border-color: #ef4444;
+  background: linear-gradient(135deg, #f07c7c, #f07c7c);
+  border-color: #ee6767;
   color: white;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
@@ -426,7 +435,7 @@ const handleDelete = async () => {
   align-items: center;
   gap: 0.3rem;
   padding: 0.4rem 0.75rem;
-  border: none;
+  border: 0.5px solid #bdc1c9;
   background: transparent;
   border-radius: 8px;
   cursor: pointer;
@@ -484,6 +493,39 @@ const handleDelete = async () => {
   font-weight: 500;
 }
 
+/* 답글 펼치기/접기 버튼 */
+.toggle-replies-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #f59e0b;
+  margin-left: auto;
+  margin-right: 23px;
+}
+
+.toggle-replies-btn:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.toggle-icon {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-icon.rotated {
+  transform: rotate(180deg);
+}
+
 .replies-list {
   display: flex;
   flex-direction: column;
@@ -534,6 +576,16 @@ const handleDelete = async () => {
 
   .content-text {
     font-size: 0.9rem;
+  }
+
+  .replies-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .toggle-replies-btn {
+    margin-left: 0;
+    margin-top: 0.25rem;
   }
 }
 

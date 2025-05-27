@@ -15,10 +15,10 @@
         <h3 class="user-name">{{ meal.nickname }}님</h3>
         <span class="meal-date">{{ formatDate(meal.mealTime) }}</span>
       </div>
-      <div class="meal-type-badge" :class="getMealTypeBadgeClass(meal.mealType)">
+      <!-- <div class="meal-type-badge" :class="getMealTypeBadgeClass(meal.mealType)">
         <span class="meal-emoji">{{ getMealTypeEmoji(meal.mealType) }}</span>
         <span class="meal-type-text">{{ mealTypeMap[meal.mealType] || meal.mealType }}</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- 이미지 -->

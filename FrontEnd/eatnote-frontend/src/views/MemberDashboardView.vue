@@ -258,7 +258,7 @@ onMounted(fetchDashboardData)
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
-  border-bottom: 3px solid #f59e0b;
+  border-bottom: 2px solid #f59e0b;
 }
 
 /* 툴팁 스타일 */
@@ -382,7 +382,7 @@ onMounted(fetchDashboardData)
   flex-direction: column;
   min-height: 400px;
   /* 최소 높이 설정 */
-  max-height: 993px;
+  max-height: 943px;
   /* 최대 높이 설정 */
 }
 
