@@ -8,7 +8,7 @@
       <div class="page-header">
         <div class="header-content">
           <h1 class="main-title">추천 운동 영상</h1>
-          <p class="main-subtitle">당신의 목표에 맞는 맞춤형 운동 영상을 추천해드립니다</p>
+          <p class="main-subtitle">{{ userNickname }}님을 위한 맞춤형 운동영상을 추천해 드립니다</p>
         </div>
       </div>
 
@@ -16,146 +16,112 @@
       <div class="content-grid">
         <!-- 왼쪽: 사용자 목표 기반 추천 -->
         <div class="goal-section">
-        <div class="content-card">
-          <!-- 섹션 헤더 -->
-          <div class="section-header">
-            <div class="header-icon">🎯</div>
-            <div class="header-content">
-              <h2 class="section-title">목표 기반 추천</h2>
-              <p class="section-subtitle">나의 목표: <span class="goal-highlight">{{ userGoalLabel }}</span></p>
-            </div>
-          </div>
-
-          <!-- 목표 선택 버튼 -->
-          <div class="selector-section">
-            <h3 class="selector-title">목표 변경</h3>
-            <div class="button-grid">
-              <button
-                v-for="item in goals"
-                :key="item.code"
-                @click="selectGoal(item)"
-                :class="[
-                  'selector-button',
-                  selectedGoal.code === item.code ? 'selector-button-active' : 'selector-button-inactive'
-                ]"
-              >
-                {{ item.label }}
-              </button>
-            </div>
-          </div>
-
-          <!-- 목표 기반 영상 리스트 -->
-          <div class="videos-section">
-            <div class="videos-grid">
-              <div
-                v-for="video in visibleGoalVideos"
-                :key="video.videoId"
-                class="video-card"
-              >
-                <div class="video-thumbnail">
-                  <iframe
-                    :src="`https://www.youtube.com/embed/${video.videoId}`"
-                    title="YouTube video"
-                    frameborder="0"
-                    allowfullscreen
-                    class="video-iframe"
-                  ></iframe>
-                </div>
-                <div class="video-info">
-                  <h4 class="video-title">{{ video.title }}</h4>
-                  <p class="video-meta">{{ video.channelTitle }} · {{ formatDate(video.publishedAt) }}</p>
-                </div>
+          <div class="content-card">
+            <!-- 섹션 헤더 -->
+            <div class="section-header">
+              <div class="header-icon">🎯</div>
+              <div class="header-content">
+                <h2 class="section-title">목표 기반 추천</h2>
+                <p class="section-subtitle">나의 목표: <span class="goal-highlight">{{ userGoalLabel }}</span></p>
               </div>
             </div>
 
-            <!-- 더보기 버튼 -->
-            <div class="show-more-container">
-              <button
-                v-if="goalBasedVideos.length > 4 && !showAllGoalVideos"
-                @click="showAllGoalVideos = true"
-                class="show-more-btn"
-              >
-                <svg class="show-more-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-                더 많은 영상 보기
-              </button>
+            <!-- 목표 선택 버튼 -->
+            <div class="selector-section">
+              <h3 class="selector-title">목표 변경</h3>
+              <div class="button-grid">
+                <button v-for="item in goals" :key="item.code" @click="selectGoal(item)" :class="[
+                  'selector-button',
+                  selectedGoal.code === item.code ? 'selector-button-active' : 'selector-button-inactive'
+                ]">
+                  {{ item.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- 목표 기반 영상 리스트 -->
+            <div class="videos-section">
+              <div class="videos-grid">
+                <div v-for="video in visibleGoalVideos" :key="video.videoId" class="video-card">
+                  <div class="video-thumbnail">
+                    <iframe :src="`https://www.youtube.com/embed/${video.videoId}`" title="YouTube video"
+                      frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                  </div>
+                  <div class="video-info">
+                    <h4 class="video-title">{{ video.title }}</h4>
+                    <p class="video-meta">{{ video.channelTitle }} · {{ formatDate(video.publishedAt) }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 더보기 버튼 -->
+              <div class="show-more-container">
+                <button v-if="goalBasedVideos.length > 4 && !showAllGoalVideos" @click="showAllGoalVideos = true"
+                  class="show-more-btn">
+                  <svg class="show-more-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                  더 많은 영상 보기
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
 
         <!-- 오른쪽: AI 추천 운동 -->
         <div class="ai-section">
-        <div class="content-card">
-          <!-- 섹션 헤더 -->
-          <div class="section-header">
-            <div class="header-icon nomi-icon">
-              <NomiBasic size="medium" />
-            </div>
-            <div class="header-content">
-              <h2 class="section-title">AI 맞춤 추천</h2>
-              <p class="section-subtitle">개인 정보 기반 AI 운동 추천</p>
-            </div>
-          </div>
-
-          <!-- AI 추천 운동 선택 -->
-          <div class="selector-section">
-            <h3 class="selector-title">추천 운동 목록</h3>
-            <div class="button-grid">
-              <button
-                v-for="exercise in gptExercises"
-                :key="exercise"
-                @click="searchExerciseVideo(exercise)"
-                :class="[
-                  'selector-button exercise-button',
-                  selectedExercise === exercise ? 'selector-button-active' : 'selector-button-inactive'
-                ]"
-              >
-                {{ exercise }}
-              </button>
-            </div>
-          </div>
-
-          <!-- AI 추천 영상 리스트 -->
-          <div class="videos-section">
-            <div class="videos-grid">
-              <div
-                v-for="video in visibleExerciseVideos"
-                :key="video.videoId"
-                class="video-card"
-              >
-                <div class="video-thumbnail">
-                  <iframe
-                    :src="`https://www.youtube.com/embed/${video.videoId}`"
-                    title="YouTube video"
-                    frameborder="0"
-                    allowfullscreen
-                    class="video-iframe"
-                  ></iframe>
-                </div>
-                <div class="video-info">
-                  <h4 class="video-title">{{ video.title }}</h4>
-                  <p class="video-meta">{{ video.channelTitle }} · {{ formatDate(video.publishedAt) }}</p>
-                </div>
+          <div class="content-card">
+            <!-- 섹션 헤더 -->
+            <div class="section-header">
+              <div class="header-icon nomi-icon">
+                <NomiBasic size="medium" />
+              </div>
+              <div class="header-content">
+                <h2 class="section-title">AI 맞춤 추천</h2>
+                <p class="section-subtitle">건강 정보 기반 추천</p>
               </div>
             </div>
 
-            <!-- 더보기 버튼 -->
-            <div class="show-more-container">
-              <button
-                v-if="exerciseVideos.length > 4 && !showAllExerciseVideos"
-                @click="showAllExerciseVideos = true"
-                class="show-more-btn"
-              >
-                <svg class="show-more-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-                더 많은 영상 보기
-              </button>
+            <!-- AI 추천 운동 선택 -->
+            <div class="selector-section">
+              <h3 class="selector-title">추천 운동 목록</h3>
+              <div class="button-grid">
+                <button v-for="exercise in gptExercises" :key="exercise" @click="searchExerciseVideo(exercise)" :class="[
+                  'selector-button exercise-button',
+                  selectedExercise === exercise ? 'selector-button-active' : 'selector-button-inactive'
+                ]">
+                  {{ exercise }}
+                </button>
+              </div>
+            </div>
+
+            <!-- AI 추천 영상 리스트 -->
+            <div class="videos-section">
+              <div class="videos-grid">
+                <div v-for="video in visibleExerciseVideos" :key="video.videoId" class="video-card">
+                  <div class="video-thumbnail">
+                    <iframe :src="`https://www.youtube.com/embed/${video.videoId}`" title="YouTube video"
+                      frameborder="0" allowfullscreen class="video-iframe"></iframe>
+                  </div>
+                  <div class="video-info">
+                    <h4 class="video-title">{{ video.title }}</h4>
+                    <p class="video-meta">{{ video.channelTitle }} · {{ formatDate(video.publishedAt) }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 더보기 버튼 -->
+              <div class="show-more-container">
+                <button v-if="exerciseVideos.length > 4 && !showAllExerciseVideos" @click="showAllExerciseVideos = true"
+                  class="show-more-btn">
+                  <svg class="show-more-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                  더 많은 영상 보기
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
@@ -178,6 +144,7 @@ const goals = [
   { code: '체력향상', label: '체력 향상' }
 ]
 
+const userNickname = ref(auth.user?.nickname || '회원')
 const userGoalLabel = ref('')
 const selectedGoal = ref(goals[0])
 const goalBasedVideos = ref([])
@@ -350,9 +317,12 @@ onMounted(async () => {
 }
 
 @keyframes nomiFloat {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-5px);
   }
@@ -553,6 +523,7 @@ onMounted(async () => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -600,15 +571,15 @@ onMounted(async () => {
   .main-container {
     padding: 16px 12px;
   }
-  
+
   .page-header {
     margin-bottom: 32px;
   }
-  
+
   .main-title {
     font-size: 32px;
   }
-  
+
   .main-subtitle {
     font-size: 16px;
   }
@@ -644,7 +615,7 @@ onMounted(async () => {
   .main-title {
     font-size: 28px;
   }
-  
+
   .main-subtitle {
     font-size: 16px;
   }
