@@ -12,7 +12,9 @@
           </button>
         </div>
 
-        <h1 class="page-title">🍽️ 식단 상세보기</h1>
+        <h1 class="page-title">식단 상세보기</h1>
+        
+        <!-- 빈 공간 -->
         <div class="header-right"></div>
       </section>
 
@@ -34,9 +36,20 @@
             <section class="meal-section">
               <div class="section-header">
                 <h2 class="section-title">🥗 식단 정보</h2>
-                <div class="meal-type-badge" :class="getMealTypeBadgeClass(meal.mealType)">
-                  <span class="meal-emoji">{{ getMealTypeEmoji(meal.mealType) }}</span>
-                  <span class="meal-type-text">{{ getMealTypeText(meal.mealType) }}</span>
+                <div class="header-actions">
+                  <!-- 삭제 버튼을 여기로 이동 -->
+                  <button 
+                    v-if="meal && myUserId === meal.userId" 
+                    @click="deleteMeal" 
+                    class="delete-button-small"
+                  >
+                    <span class="delete-icon">🗑️</span>
+                    <span>삭제</span>
+                  </button>
+                  <div class="meal-type-badge" :class="getMealTypeBadgeClass(meal.mealType)">
+                    <span class="meal-emoji">{{ getMealTypeEmoji(meal.mealType) }}</span>
+                    <span class="meal-type-text">{{ getMealTypeText(meal.mealType) }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -243,7 +256,9 @@ import CommentInput from '@/components/CommentInput.vue'
 import LikeDislikeButtons from '@/components/LikeDislikeButtons.vue'
 import Header from '@/components/common/Header.vue'
 import { useToast } from 'vue-toastification'
+import { useAuthStore } from '@/stores/auth'
 
+const auth = useAuthStore()
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
@@ -310,10 +325,7 @@ const extractUserIdFromToken = (token) => {
 
 const loadMeal = async () => {
   try {
-    const token = localStorage.getItem('accessToken')
-    const response = await axios.get(`/api/meal/${mealId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const response = await axios.get(`/api/meal/${mealId}`)
     meal.value = response.data.data
   } catch (err) {
     console.error('식단 불러오기 실패:', err)
@@ -322,14 +334,11 @@ const loadMeal = async () => {
 
 const loadTrainerFeedbacks = async () => {
   try {
-    const token = localStorage.getItem('accessToken')
-    if (!token) {
+    if (!auth.accessToken) {
       console.warn('토큰이 없습니다. 피드백 요청에 실패할 수 있습니다.')
     }
 
-    const res = await axios.get(`/api/meal/${mealId}/feedback`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const res = await axios.get(`/api/meal/${mealId}/feedback`)
 
     console.log('🥩 받은 피드백:', res.data.data)
     trainerFeedbacks.value = res.data.data || []
@@ -341,10 +350,8 @@ const loadTrainerFeedbacks = async () => {
 
 const loadComments = async () => {
   try {
-    const token = localStorage.getItem('accessToken')
     const res = await axios.get('/api/comments', {
-      params: { targetType: 'MEAL', targetId: mealId },
-      headers: { Authorization: `Bearer ${token}` }
+      params: { targetType: 'MEAL', targetId: mealId }
     })
     comments.value = res.data.data
   } catch (e) {
@@ -359,11 +366,8 @@ const goToEditFeedback = (feedbackId) => {
 const deleteFeedback = async (feedbackId) => {
   if (!confirm('정말로 이 피드백을 삭제하시겠습니까?')) return
   try {
-    const token = localStorage.getItem('accessToken')
-    console.log('🔐 token:', token)
-    await axios.delete(`/api/trainer/feedback/${feedbackId}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    console.log('🔐 token:', auth.accessToken)
+    await axios.delete(`/api/trainer/feedback/${feedbackId}`)
     toast.success('피드백이 삭제되었습니다!')
 
     await loadTrainerFeedbacks()
@@ -373,10 +377,35 @@ const deleteFeedback = async (feedbackId) => {
   }
 }
 
+// 식단 삭제 함수 추가
+const deleteMeal = async () => {
+  if (!confirm('정말로 이 식단을 삭제하시겠습니까?')) return
+  
+  try {
+    await axios.delete(`/api/meal/${mealId}`)
+    
+    toast.success('식단이 삭제되었습니다!')
+    
+    // 삭제 후 이전 페이지로 이동
+    router.back()
+  } catch (e) {
+    console.error('식단 삭제 실패:', e)
+    
+    // 에러 메시지 처리
+    if (e.response && e.response.data && e.response.data.message) {
+      toast.error(e.response.data.message)
+    } else {
+      toast.error('식단 삭제에 실패했습니다.')
+    }
+  }
+}
+
 onMounted(async () => {
   try {
-    const token = localStorage.getItem('accessToken')
-    myUserId.value = extractUserIdFromToken(token)
+    // 로그인한 사용자의 경우에만 userId 설정
+    if (auth.user && auth.user.userId) {
+      myUserId.value = auth.user.userId
+    }
 
     await loadMeal()
     await loadComments()
@@ -458,6 +487,40 @@ onMounted(async () => {
 .back-icon {
   font-size: 18px;
   font-weight: 700;
+}
+
+/* 섹션 헤더 액션 영역 - 식단 타입 뱃지와 삭제 버튼을 나란히 배치 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 작은 삭제 버튼 스타일 */
+.delete-button-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #e96969, #dd5a5a);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 5px -1px rgba(239, 68, 68, 0.3);
+}
+
+.delete-button-small:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 7px -1px rgba(239, 68, 68, 0.4);
+}
+
+.delete-button-small .delete-icon {
+  font-size: 14px;
 }
 
 /* 로딩 및 에러 상태 */
@@ -1025,6 +1088,7 @@ onMounted(async () => {
     gap: 12px;
   }
 }
+
 @media (max-width: 1024px) {
   .top-row {
     grid-template-columns: 1fr;
@@ -1038,6 +1102,12 @@ onMounted(async () => {
 
   .page-title {
     font-size: 28px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 
@@ -1100,6 +1170,11 @@ onMounted(async () => {
   .back-button {
     font-size: 14px;
     padding: 10px 16px;
+  }
+
+  .delete-button-small {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }
 

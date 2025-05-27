@@ -319,7 +319,7 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(4px);
   border-radius: 16px;
-  padding: 24px;
+  padding: 17px;
   box-shadow: 0 10px 15px -3px rgba(100, 116, 139, 0.1), 0 4px 6px -2px rgba(100, 116, 139, 0.05);
   border: 1px solid #e5e7eb;
   transition: all 0.3s ease;

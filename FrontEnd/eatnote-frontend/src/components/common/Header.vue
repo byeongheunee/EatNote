@@ -5,12 +5,11 @@
         
         <!-- 왼쪽: 로고 -->
         <div class="logo-section" @click="goHome">
-          <!-- <span class="logo-text">EatNote</span> -->
           <img
             @click="goHome"
             src="@/assets/icons/EatNoteLogo.png"
             alt="EatNote 로고"
-            class="h-10 mt-8 mb-5 cursor-pointer hover:opacity-80 transition-all duration-300"
+            class="logo-image"
           />
         </div>
 
@@ -96,7 +95,6 @@
               />
               <div class="user-details">
                 <span class="user-name">{{ user.nickname }}</span>
-                <span class="user-type">{{ user.userType === 1 ? '트레이너' : '회원' }}</span>
               </div>
             </div>
             
@@ -146,102 +144,100 @@
       </div>
 
       <!-- 모바일 메뉴 -->
-      <transition name="mobile-menu">
-        <div v-if="showMobileMenu" class="mobile-menu">
-          <div class="mobile-menu-content">
-            <!-- 로그인 안한 경우 -->
-            <template v-if="!isLogin">
-              <RouterLink 
-                :to="`/community/${defaultBoardId}`" 
-                @click="showMobileMenu = false"
-                class="mobile-nav-link"
-              >
-                <span class="mobile-nav-icon">💬</span> 커뮤니티
-              </RouterLink>
-              <button 
-                @click="$emit('go-feature'); showMobileMenu = false" 
-                class="mobile-nav-button"
-              >
-                <span class="mobile-nav-icon">✨</span> 주요기능
-              </button>
-              <button 
-                @click="$emit('go-usage'); showMobileMenu = false" 
-                class="mobile-nav-button"
-              >
-                <span class="mobile-nav-icon">📖</span> 이용방법
-              </button>
-            </template>
+      <div v-if="showMobileMenu" class="mobile-menu">
+        <div class="mobile-menu-content">
+          <!-- 로그인 안한 경우 -->
+          <template v-if="!isLogin">
+            <RouterLink 
+              :to="`/community/${defaultBoardId}`" 
+              @click="showMobileMenu = false"
+              class="mobile-nav-link"
+            >
+              <span class="mobile-nav-icon">💬</span> 커뮤니티
+            </RouterLink>
+            <button 
+              @click="$emit('go-feature'); showMobileMenu = false" 
+              class="mobile-nav-button"
+            >
+              <span class="mobile-nav-icon">✨</span> 주요기능
+            </button>
+            <button 
+              @click="$emit('go-usage'); showMobileMenu = false" 
+              class="mobile-nav-button"
+            >
+              <span class="mobile-nav-icon">📖</span> 이용방법
+            </button>
+          </template>
 
-            <!-- 로그인 한 경우 -->
-            <template v-else>
-              <!-- 사용자 정보 -->
-              <div class="mobile-user-info">
-                <img 
-                  :src="getProfileImage(user.profileImage)" 
-                  alt="프로필" 
-                  class="mobile-user-avatar"
-                />
-                <div class="mobile-user-details">
-                  <span class="mobile-user-name">{{ user.nickname }}</span>
-                  <span class="mobile-user-type">{{ user.userType === 1 ? '트레이너' : '회원' }}</span>
-                </div>
+          <!-- 로그인 한 경우 -->
+          <template v-else>
+            <!-- 사용자 정보 -->
+            <div class="mobile-user-info">
+              <img 
+                :src="getProfileImage(user.profileImage)" 
+                alt="프로필" 
+                class="mobile-user-avatar"
+              />
+              <div class="mobile-user-details">
+                <span class="mobile-user-name">{{ user.nickname }}</span>
+                <span class="mobile-user-type">{{ user.userType === 1 ? '트레이너' : '회원' }}</span>
               </div>
+            </div>
 
+            <RouterLink 
+              :to="`/community/${defaultBoardId}`" 
+              @click="showMobileMenu = false"
+              class="mobile-nav-link"
+            >
+              <span class="mobile-nav-icon">💬</span> 커뮤니티
+            </RouterLink>
+            
+            <!-- 일반회원 메뉴 -->
+            <template v-if="user.userType === 2">
               <RouterLink 
-                :to="`/community/${defaultBoardId}`" 
+                to="/meals" 
                 @click="showMobileMenu = false"
                 class="mobile-nav-link"
               >
-                <span class="mobile-nav-icon">💬</span> 커뮤니티
+                <span class="mobile-nav-icon">🍽️</span> 식단
               </RouterLink>
-              
-              <!-- 일반회원 메뉴 -->
-              <template v-if="user.userType === 2">
-                <RouterLink 
-                  to="/meals" 
-                  @click="showMobileMenu = false"
-                  class="mobile-nav-link"
-                >
-                  <span class="mobile-nav-icon">🍽️</span> 식단
-                </RouterLink>
-                <RouterLink 
-                  to="/videos" 
-                  @click="showMobileMenu = false"
-                  class="mobile-nav-link"
-                >
-                  <span class="mobile-nav-icon">🎥</span> 추천 영상
-                </RouterLink>
-              </template>
-
-              <!-- 트레이너 메뉴 -->
-              <template v-else-if="user.userType === 1">
-                <RouterLink 
-                  to="/trainer/feedback" 
-                  @click="showMobileMenu = false"
-                  class="mobile-nav-link"
-                >
-                  <span class="mobile-nav-icon">💪</span> 나의 피드백
-                </RouterLink>
-              </template>
-
-              <div class="mobile-menu-divider"></div>
-              
-              <button 
-                @click="$router.push('/profile'); showMobileMenu = false" 
-                class="mobile-action-button profile"
+              <RouterLink 
+                to="/videos" 
+                @click="showMobileMenu = false"
+                class="mobile-nav-link"
               >
-                <span class="mobile-nav-icon">⚙️</span> 회원정보
-              </button>
-              <button 
-                @click="handleLogout" 
-                class="mobile-action-button logout"
-              >
-                <span class="mobile-nav-icon">👋</span> 로그아웃
-              </button>
+                <span class="mobile-nav-icon">🎥</span> 추천 영상
+              </RouterLink>
             </template>
-          </div>
+
+            <!-- 트레이너 메뉴 -->
+            <template v-else-if="user.userType === 1">
+              <RouterLink 
+                to="/trainer/feedback" 
+                @click="showMobileMenu = false"
+                class="mobile-nav-link"
+              >
+                <span class="mobile-nav-icon">💪</span> 나의 피드백
+              </RouterLink>
+            </template>
+
+            <div class="mobile-menu-divider"></div>
+            
+            <button 
+              @click="$router.push('/profile'); showMobileMenu = false" 
+              class="mobile-action-button profile"
+            >
+              <span class="mobile-nav-icon">⚙️</span> 회원정보
+            </button>
+            <button 
+              @click="handleLogout" 
+              class="mobile-action-button logout"
+            >
+              <span class="mobile-nav-icon">👋</span> 로그아웃
+            </button>
+          </template>
         </div>
-      </transition>
+      </div>
     </div>
   </header>
 </template>
@@ -302,44 +298,46 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 </script>
 
 <style scoped>
-/* 헤더 컨테이너 */
+/* 헤더 컨테이너 - 완전 고정 디자인 */
 .header-container {
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  background: #fafbfc;
+  border-bottom: 1px solid #e1e5e9;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
 .header-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 32px;
 }
 
 .header-layout {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 75px;
+  height: 80px;
 }
 
 /* 로고 섹션 */
 .logo-section {
   cursor: pointer;
-  transition: color 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
-.logo-section:hover .logo-text {
-  color: #f59e0b;
+.logo-section:hover {
+  background: #f8fafc;
 }
 
-.logo-text {
-  font-size: 24px;
-  font-weight: 700;
-  color: #111827;
-  letter-spacing: -0.5px;
+.logo-image {
+  height: 40px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
 }
 
 /* 네비게이션 섹션 */
@@ -347,34 +345,37 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   flex: 1;
   display: flex;
   justify-content: center;
-  margin: 0 48px;
+  margin: 0 60px;
 }
 
 .nav-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 24px;
 }
 
 .nav-link,
 .nav-button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  font-size: 14px;
-  color: #6b7280;
+  gap: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #475569;
   text-decoration: none;
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: color 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover,
 .nav-button:hover {
-  color: #f59e0b;
+  color: #1e293b;
+  background: #f1f5f9;
 }
 
 .nav-icon {
@@ -383,8 +384,10 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 
 /* 활성 링크 스타일 */
 .nav-link.router-link-active {
-  color: #f59e0b;
-  font-weight: 600;
+  color: #0f172a;
+  background: #e2e8f0;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* 오른쪽 섹션 */
@@ -398,62 +401,57 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
 }
 
 .user-avatar {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #cbd5e1;
 }
 
 .user-details {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .user-name {
-  font-weight: 600;
-  color: #111827;
-  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 14px;
   line-height: 1.2;
 }
 
-.user-type {
-  font-size: 11px;
-  color: #6b7280;
-  font-weight: 400;
-}
-
-/* 버튼들 */
+/* 버튼들 - 깔끔한 솔리드 디자인 */
 .profile-button,
 .logout-button,
 .login-button,
 .register-button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  font-size: 13px;
-  border: 1px solid;
+  gap: 8px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  white-space: nowrap;
 }
 
 .profile-button {
-  background: #6496ee;
+  background: #3b82f6;
   color: white;
-  border-color: #6496ee;
+  border-color: #3b82f6;
 }
 
 .profile-button:hover {
@@ -462,27 +460,27 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 }
 
 .logout-button {
-  background: white;
-  color: #6b7280;
-  border-color: #d1d5db;
+  background: #f8fafc;
+  color: #64748b;
+  border-color: #cbd5e1;
 }
 
 .logout-button:hover {
-  background: #f9fafb;
-  color: #374151;
-  border-color: #9ca3af;
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #94a3b8;
 }
 
 .login-button {
   background: white;
-  color: #6b7280;
-  border-color: #d1d5db;
+  color: #64748b;
+  border-color: #cbd5e1;
 }
 
 .login-button:hover {
-  background: #f9fafb;
-  color: #374151;
-  border-color: #9ca3af;
+  background: #f8fafc;
+  color: #475569;
+  border-color: #94a3b8;
 }
 
 .register-button {
@@ -499,36 +497,36 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 /* 모바일 메뉴 버튼 */
 .mobile-menu-button {
   display: none;
-  padding: 8px;
+  padding: 12px;
   background: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .mobile-menu-button:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  background: #f8fafc;
+  border-color: #94a3b8;
 }
 
 .menu-icon {
   width: 20px;
   height: 20px;
-  color: #6b7280;
+  color: #64748b;
 }
 
 /* 모바일 메뉴 */
 .mobile-menu {
-  margin-top: 8px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-top: 12px;
+  background: #fafbfc;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .mobile-menu-content {
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -537,38 +535,32 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
 .mobile-user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 12px;
 }
 
 .mobile-user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #cbd5e1;
 }
 
 .mobile-user-details {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .mobile-user-name {
-  font-weight: 600;
-  color: #111827;
-  font-size: 15px;
-}
-
-.mobile-user-type {
-  font-size: 13px;
-  color: #6b7280;
-  font-weight: 400;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 16px;
 }
 
 .mobile-nav-link,
@@ -577,10 +569,10 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  font-weight: 500;
-  font-size: 14px;
-  color: #6b7280;
+  padding: 14px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #64748b;
   text-decoration: none;
   background: transparent;
   border: none;
@@ -588,45 +580,34 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   transition: all 0.2s ease;
   width: 100%;
   text-align: left;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .mobile-nav-link:hover,
 .mobile-nav-button:hover {
-  color: #f59e0b;
-  background: #fef3c7;
+  color: #1e293b;
+  background: #f1f5f9;
 }
 
 .mobile-action-button.profile:hover {
   color: #3b82f6;
-  background: #dbeafe;
+  background: #eff6ff;
 }
 
 .mobile-action-button.logout:hover {
   color: #ef4444;
-  background: #fee2e2;
+  background: #fef2f2;
 }
 
 .mobile-nav-icon {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .mobile-menu-divider {
-  height: 1px;
-  background: #e5e7eb;
-  margin: 8px 0;
-}
-
-/* 트랜지션 */
-.mobile-menu-enter-active,
-.mobile-menu-leave-active {
-  transition: all 0.2s ease;
-}
-
-.mobile-menu-enter-from,
-.mobile-menu-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
+  height: 2px;
+  background: #e2e8f0;
+  margin: 12px 0;
+  border-radius: 1px;
 }
 
 /* 반응형 디자인 */
@@ -648,32 +629,44 @@ const getProfileImage = (path) => path ? `http://localhost:8080${path}` : defaul
   }
   
   .header-content {
-    padding: 0 16px;
+    padding: 0 20px;
   }
   
   .right-section {
     gap: 12px;
   }
+
+  .header-layout {
+    height: 70px;
+  }
 }
 
 @media (max-width: 480px) {
-  .logo-text {
-    font-size: 20px;
+  .logo-image {
+    height: 36px;
   }
   
   .login-button,
   .register-button,
   .logout-button {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 10px 16px;
+    font-size: 13px;
   }
   
   .header-content {
-    padding: 0 12px;
+    padding: 0 16px;
   }
   
   .right-section {
     gap: 8px;
+  }
+
+  .header-layout {
+    height: 65px;
+  }
+
+  .nav-container {
+    gap: 16px;
   }
 }
 </style>

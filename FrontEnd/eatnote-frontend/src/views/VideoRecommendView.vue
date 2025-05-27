@@ -412,10 +412,10 @@ onMounted(async () => {
 }
 
 .selector-button-active {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #93d48f, #93d48f);
   color: white;
-  border-color: rgba(16, 185, 129, 0.3);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  border-color: #83ce7f;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
   transform: translateY(-1px);
 }
 
@@ -434,9 +434,9 @@ onMounted(async () => {
 
 /* 운동 버튼 (AI 추천용) */
 .exercise-button.selector-button-active {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, 	#54aedb, 	#54aedb);
+  border-color: #3f97c4;
+  box-shadow: 0 4px 15px rgba(109, 161, 245, 0.3);
 }
 
 .exercise-button.selector-button-inactive:hover {

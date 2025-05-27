@@ -208,7 +208,6 @@ watch(() => props.isLoading, (newValue) => {
   transition: all 0.3s ease;
 }
 
-
 .nomi-loading-container {
   display: flex;
   flex-direction: column;
@@ -247,12 +246,9 @@ watch(() => props.isLoading, (newValue) => {
 }
 
 @keyframes bounce {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-10px);
   }
@@ -268,7 +264,6 @@ watch(() => props.isLoading, (newValue) => {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }
@@ -280,19 +275,15 @@ watch(() => props.isLoading, (newValue) => {
 }
 
 @keyframes blink {
-
-  0%,
-  90%,
-  100% {
+  0%, 90%, 100% {
     opacity: 1;
   }
-
   95% {
     opacity: 0;
   }
 }
 
-/* 생각 중 점들 */
+/* 생각 중 점들 - 고정된 픽셀 값 사용 */
 .thinking-dots .dot-1 {
   animation: dot-bounce 1.4s ease-in-out infinite;
 }
@@ -306,14 +297,10 @@ watch(() => props.isLoading, (newValue) => {
 }
 
 @keyframes dot-bounce {
-
-  0%,
-  60%,
-  100% {
-    transform: translateY(0px);
+  0%, 60%, 100% {
+    transform: translateY(0);
     opacity: 0.4;
   }
-
   30% {
     transform: translateY(-15px);
     opacity: 1;
@@ -338,13 +325,10 @@ watch(() => props.isLoading, (newValue) => {
 }
 
 @keyframes sparkle {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0;
     transform: scale(0);
   }
-
   50% {
     opacity: 1;
     transform: scale(1);
@@ -357,12 +341,9 @@ watch(() => props.isLoading, (newValue) => {
 }
 
 @keyframes fade-in-out {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.2;
   }
-
   50% {
     opacity: 0.8;
   }
@@ -394,5 +375,4 @@ watch(() => props.isLoading, (newValue) => {
   .message-text {
     font-size: 1rem;
   }
-}
-</style>
+}</style>

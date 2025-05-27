@@ -187,6 +187,7 @@ onMounted(fetchDashboardData)
 .welcome-section {
   margin-bottom: 1.5rem;
   text-align: center;
+  padding-bottom: 30px;
 }
 
 .welcome-title {

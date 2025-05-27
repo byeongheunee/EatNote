@@ -105,7 +105,7 @@ const handleLogout = () => {
 .page-header {
   margin-bottom: 48px;
   padding-bottom: 24px;
-  border-bottom: 2px solid #f59e0b;
+  border-bottom: 2px solid #0c0c0c;
 }
 
 .header-content {
@@ -167,14 +167,14 @@ const handleLogout = () => {
 }
 
 .tab-button.active {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #ebb861, #e99a40);
   color: white;
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
   transform: translateY(-2px);
 }
 
 .tab-button.active:hover {
-  background: linear-gradient(135deg, #d97706, #b45309);
+  background: linear-gradient(135deg, #d8a753, #ce8634);
   box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
 }
 

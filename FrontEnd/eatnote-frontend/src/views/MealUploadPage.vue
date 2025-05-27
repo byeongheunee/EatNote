@@ -41,7 +41,7 @@
                 식사 시간 설정
               </label>
 
-              <!-- 모드 선택 토글 -->
+              <!-- 모드 선택 토글 - 한 줄로 배치 -->
               <div class="time-mode-selector">
                 <label class="mode-option">
                   <input type="radio" :value="false" v-model="useCustomTime" class="mode-radio" />
@@ -59,14 +59,19 @@
               <!-- 직접 시간 입력 -->
               <div v-if="useCustomTime" class="custom-time-section">
                 <div class="datetime-input-wrapper">
-                  <input 
-                    type="datetime-local" 
-                    v-model="customMealTime" 
-                    :max="maxDateTime" 
-                    required
-                    class="datetime-input"
-                  />
-                  <div class="input-icon">📅</div>
+                  <div class="datetime-input-container">
+                    <svg class="calendar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <input 
+                      type="datetime-local" 
+                      v-model="customMealTime" 
+                      :max="maxDateTime" 
+                      required
+                      class="datetime-input"
+                      placeholder="날짜와 시간을 선택하세요"
+                    />
+                  </div>
                 </div>
                 <p class="input-hint">💡 원하는 날짜와 시간을 선택하세요</p>
               </div>
@@ -188,8 +193,13 @@
           📋 식단 목록으로
         </button>
 
-        <button v-if="uploadComplete" @click="resetForm" class="nav-button primary">
-          ➕ 새 식단 등록
+        <button v-if="uploadComplete" @click="resetForm" class="nav-button primary flex items-center justify-center gap-2">
+          <img
+            src="@/assets/icons/plus.png"
+            class="w-4 h-4 filter invert brightness-0"
+            alt="플러스"
+          />
+               새 식단 등록
         </button>
       </div>
     </div>
@@ -211,9 +221,8 @@
               <NomiLoading size="xl" :is-loading="uploading" :messages="[
                 '사진을 분석하고 있어요! 🔍',
                 `${nickname}님을\n위한 피드백 작성 중이에요! ✏️`,
-                '맛있는 음식을 찾고 있어요! 🍽️',
                 '영양 정보를 계산하고 있어요! 📊',
-                '거의 다 끝났어요! ✨'
+                '거의 다 끝나가고 있어요! ✨✨'
               ]" />
               <div class="loading-text">
                 <p class="loading-title">AI가 식단을 분석하고 있어요</p>
@@ -577,15 +586,15 @@ const handleUpload = async () => {
   font-size: 20px;
 }
 
-/* 시간 모드 선택자 */
+/* 시간 모드 선택자 - 한 줄로 배치 */
 .time-mode-selector {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 24px;
   padding: 20px;
   background: rgba(249, 250, 251, 0.5);
   border-radius: 16px;
   border: 1px solid rgba(245, 158, 11, 0.2);
+  justify-content: center;
 }
 
 .mode-option {
@@ -593,6 +602,8 @@ const handleUpload = async () => {
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  flex: 1;
+  justify-content: center;
 }
 
 .mode-radio {
@@ -607,6 +618,7 @@ const handleUpload = async () => {
   background: white;
   position: relative;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .mode-indicator.active {
@@ -628,6 +640,7 @@ const handleUpload = async () => {
 .mode-text {
   font-weight: 500;
   color: #374151;
+  white-space: nowrap;
 }
 
 /* 커스텀 시간 섹션 */
@@ -641,36 +654,89 @@ const handleUpload = async () => {
   position: relative;
 }
 
+.datetime-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.calendar-icon {
+  position: absolute;
+  left: 16px;
+  width: 20px;
+  height: 20px;
+  color: #f59e0b;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .datetime-input {
   width: 100%;
-  padding: 12px 48px 12px 16px;
-  border: 2px solid #f59e0b;
+  padding: 16px 16px 16px 48px;
+  border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 16px;
   color: #374151;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
+  background: white;
   transition: all 0.3s ease;
+  font-family: inherit;
 }
 
 .datetime-input:focus {
   outline: none;
-  border-color: #d97706;
+  border-color: #f59e0b;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
-.input-icon {
+.datetime-input::-webkit-calendar-picker-indicator {
   position: absolute;
-  right: 12px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
-  pointer-events: none;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.datetime-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.datetime-input::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.datetime-input::-webkit-datetime-edit {
+  padding: 0;
+}
+
+.datetime-input::-webkit-datetime-edit-year-field,
+.datetime-input::-webkit-datetime-edit-month-field,
+.datetime-input::-webkit-datetime-edit-day-field,
+.datetime-input::-webkit-datetime-edit-hour-field,
+.datetime-input::-webkit-datetime-edit-minute-field {
+  padding: 2px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.datetime-input::-webkit-datetime-edit-year-field:focus,
+.datetime-input::-webkit-datetime-edit-month-field:focus,
+.datetime-input::-webkit-datetime-edit-day-field:focus,
+.datetime-input::-webkit-datetime-edit-hour-field:focus,
+.datetime-input::-webkit-datetime-edit-minute-field:focus {
+  background-color: rgba(245, 158, 11, 0.1);
+  outline: none;
 }
 
 .input-hint {
   font-size: 14px;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* 현재 시간 정보 */
@@ -687,6 +753,7 @@ const handleUpload = async () => {
   gap: 8px;
   font-size: 14px;
   color: #1e40af;
+  justify-content: center;
 }
 
 .time-icon {
@@ -905,7 +972,7 @@ const handleUpload = async () => {
 .detail-button {
   width: 100%;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #67a0fc, #4d81f1);
   color: white;
   border: none;
   border-radius: 12px;
@@ -976,13 +1043,13 @@ const handleUpload = async () => {
 }
 
 .nav-button.primary {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #7fc7ae, #5b9c88);
   color: white;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .nav-button.primary:hover {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, #11946a, #0f7a5c);
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
 }
@@ -1148,6 +1215,20 @@ const handleUpload = async () => {
     padding: 24px;
     margin: 16px;
   }
+
+  /* 모바일에서 시간 모드 선택자 세로 배치 */
+  .time-mode-selector {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mode-option {
+    justify-content: flex-start;
+  }
+
+  .mode-text {
+    white-space: normal;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1178,6 +1259,17 @@ const handleUpload = async () => {
   .modal-container {
     padding: 20px;
   }
+
+  .datetime-input {
+    font-size: 14px;
+    padding: 14px 14px 14px 44px;
+  }
+
+  .calendar-icon {
+    width: 18px;
+    height: 18px;
+    left: 14px;
+  }
 }
 
 /* 접근성 */
@@ -1190,5 +1282,11 @@ const handleUpload = async () => {
 
 .mode-option:focus-within .mode-indicator {
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+}
+
+.datetime-input:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 </style>

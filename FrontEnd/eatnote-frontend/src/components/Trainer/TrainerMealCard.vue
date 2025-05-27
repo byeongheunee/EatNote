@@ -211,7 +211,7 @@ const getStatusText = () => {
 }
 
 .status-badge.status-completed {
-  background: rgba(16, 185, 129, 0.9);
+  background: rgba(80, 180, 147, 0.9);
   color: white;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
@@ -400,7 +400,7 @@ const getStatusText = () => {
 }
 
 .feedback-button.primary {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #e68f64, #d67c4f);
   color: white;
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
@@ -412,13 +412,13 @@ const getStatusText = () => {
 }
 
 .feedback-button.secondary {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #72b191, #5a9678);
   color: white;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .feedback-button.secondary:hover {
-  background: linear-gradient(135deg, #059669, #047857);
+  background: linear-gradient(135deg, #059669, #087959);
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
 }

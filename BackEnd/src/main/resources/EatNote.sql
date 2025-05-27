@@ -395,7 +395,7 @@ CREATE TABLE notification (
 
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (type_code) REFERENCES notification_type(type_code),
-    FOREIGN KEY (related_meal_id) REFERENCES meal(meal_id)
+    FOREIGN KEY (related_meal_id) REFERENCES meal(meal_id) ON DELETE CASCADE
 );
 
 

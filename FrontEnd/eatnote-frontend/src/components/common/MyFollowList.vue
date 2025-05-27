@@ -197,6 +197,7 @@ onMounted(fetchUsers)
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin-left: 5px;
 }
 
 .follow-card:hover {

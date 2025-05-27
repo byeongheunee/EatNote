@@ -25,7 +25,7 @@
         </div>
         <select v-model="selectedWeek" class="week-selector">
           <option v-for="w in weekList" :key="w.week" :value="w.week">
-            {{ w.week }}
+            {{ formatWeekDisplay(w.week) }}
           </option>
         </select>
       </div>
@@ -50,7 +50,7 @@
             <div class="stat-item week-stat">
               <div class="stat-content">
                 <p class="stat-label">주차</p>
-                <p class="stat-value">{{ weekly.week }}</p>
+                <p class="stat-value">{{ formatWeekDisplay(weekly.week) }}</p>
               </div>
               <div class="stat-emoji">🗓️</div>
             </div>
@@ -118,30 +118,29 @@
         </div>
 
         <!-- 영양소 비율 차트 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-4">
-            <h2 class="text-xl font-semibold text-white flex items-center">
-              <span class="mr-2">🥘</span>
+        <div class="chart-card">
+          <div class="chart-header nutrition-header">
+            <h3 class="chart-title">
+              <span class="chart-icon">🥘</span>
               영양소 비율
-            </h2>
+            </h3>
           </div>
-          <div class="p-6">
-            <div class="mb-6">
-              <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-                <p class="text-sm text-amber-800">
-                  💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%
-                </p>
+          <div class="chart-content">
+            <div class="nutrition-info">
+              <div class="nutrition-guide">
+                <p>💡 <strong>이상적인 비율:</strong> 탄수화물 50~60%, 단백질 20~30%, 지방 20~25%</p>
               </div>
-              <select v-model="selectedDay"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                <option v-for="row in dailyStats" :key="row.day" :value="row.day">
-                  {{ row.day }}
-                </option>
-              </select>
+              <div class="day-selector-wrapper">
+                <select v-model="selectedDay" class="day-selector">
+                  <option v-for="row in dailyStats" :key="row.day" :value="row.day">
+                    {{ formatDateDisplay(row.day) }}
+                  </option>
+                </select>
+              </div>
             </div>
-            <div class="flex justify-center">
-              <div class="w-64 h-64">
-                <canvas ref="pieChartRef" class="w-full h-full"></canvas>
+            <div class="pie-chart-wrapper">
+              <div class="pie-chart">
+                <canvas ref="pieChartRef"></canvas>
               </div>
             </div>
           </div>
@@ -218,7 +217,7 @@
               </thead>
               <tbody class="table-body">
                 <tr v-for="row in dailyStats" :key="row.day" class="table-row">
-                  <td class="table-td font-medium">{{ row.day.slice(5) }}</td>
+                  <td class="table-td font-medium">{{ formatDateDisplay(row.day) }}</td>
                   <td class="table-td">
                     <span class="score-badge ai-score">
                       {{ row.autoScore ?? '-' }}
@@ -270,6 +269,51 @@ function getCurrentWeekString() {
   const week = Math.ceil(diffInMs / (1000 * 60 * 60 * 24 * 7))
 
   return `${year}-W${String(week).padStart(2, '0')}`
+}
+
+// 주차 형식을 월별 주차로 변환하는 함수
+function formatWeekDisplay(weekString) {
+  if (!weekString) return ''
+  
+  // 예: "2025-W10" → "3월 2주차"
+  const [year, weekPart] = weekString.split('-W')
+  const weekNum = parseInt(weekPart)
+  
+  // 해당 주차의 첫 번째 날 계산
+  const jan4 = new Date(parseInt(year), 0, 4)
+  const jan4Day = jan4.getDay() || 7
+  const firstWeekStart = new Date(jan4)
+  firstWeekStart.setDate(jan4.getDate() - jan4Day + 1)
+  
+  const targetWeekStart = new Date(firstWeekStart)
+  targetWeekStart.setDate(firstWeekStart.getDate() + (weekNum - 1) * 7)
+  
+  const month = targetWeekStart.getMonth() + 1
+  
+  // 해당 월의 첫 번째 주 계산
+  const firstDayOfMonth = new Date(parseInt(year), targetWeekStart.getMonth(), 1)
+  const firstWeekOfMonth = new Date(firstDayOfMonth)
+  const firstDayWeekday = firstDayOfMonth.getDay() || 7
+  firstWeekOfMonth.setDate(firstDayOfMonth.getDate() - firstDayWeekday + 1)
+  
+  // 월 내 주차 계산
+  const diffWeeks = Math.floor((targetWeekStart - firstWeekOfMonth) / (7 * 24 * 60 * 60 * 1000)) + 1
+  const weekOfMonth = Math.max(1, diffWeeks)
+  
+  return `${month}월 ${weekOfMonth}주차`
+}
+
+// 날짜 표시 형식을 개선하는 함수
+function formatDateDisplay(dateString) {
+  if (!dateString) return ''
+  
+  const date = new Date(dateString)
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const weekdays = ['일', '월', '화', '수', '목', '금', '토']
+  const weekday = weekdays[date.getDay()]
+  
+  return `${month}/${day} (${weekday})`
 }
 
 onMounted(async () => {
@@ -359,31 +403,31 @@ function drawDailyChart() {
   dailyChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: dailyStats.value.map(d => d.day),
+      labels: dailyStats.value.map(d => formatDateDisplay(d.day)),
       datasets: [
         {
           label: 'AI 점수',
           data: dailyStats.value.map(d => d.autoScore),
-          borderColor: '#f59e0b',
-          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          borderColor: '#fbbf24',
+          backgroundColor: 'rgba(251, 191, 36, 0.1)',
           tension: 0.4,
           fill: true,
           pointRadius: 6,
           pointHoverRadius: 8,
-          pointBackgroundColor: '#f59e0b',
+          pointBackgroundColor: '#fbbf24',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 2
         },
         {
           label: '트레이너 점수',
           data: dailyStats.value.map(d => d.trainerScore),
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderColor: '#34d399',
+          backgroundColor: 'rgba(52, 211, 153, 0.1)',
           tension: 0.4,
           fill: true,
           pointRadius: 6,
           pointHoverRadius: 8,
-          pointBackgroundColor: '#10b981',
+          pointBackgroundColor: '#34d399',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 2
         }
@@ -453,8 +497,8 @@ function drawPieChart(stat) {
     ],
     datasets: [{
       data: [stat.avgCarbohydrates, stat.avgProtein, stat.avgFat],
-      backgroundColor: ['#f59e0b', '#10b981', '#ef4444'],
-      borderColor: ['#d97706', '#059669', '#dc2626'],
+      backgroundColor: ['#fbbf24', '#34d399', '#f472b6'],
+      borderColor: ['#f59e0b', '#10b981', '#ec4899'],
       borderWidth: 2,
       hoverOffset: 4
     }]
@@ -506,16 +550,12 @@ function drawPieChart(stat) {
 .section-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #374151;
+  color: #2D1810;
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .section-subtitle {
-  color: #6b7280;
+  color: #5D4037;
   font-size: 0.95rem;
   margin: 0;
 }
@@ -536,8 +576,8 @@ function drawPieChart(stat) {
 .loading-spinner {
   width: 2rem;
   height: 2rem;
-  border: 2px solid rgba(245, 158, 11, 0.2);
-  border-top: 2px solid #f59e0b;
+  border: 2px solid rgba(251, 191, 36, 0.2);
+  border-top: 2px solid #fbbf24;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 0.75rem;
@@ -561,7 +601,7 @@ function drawPieChart(stat) {
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(194, 193, 193, 0.8);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   display: flex;
   justify-content: space-between;
@@ -575,8 +615,8 @@ function drawPieChart(stat) {
 }
 
 .selector-icon-wrapper {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1));
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.2);
   border-radius: 12px;
   padding: 0.5rem;
 }
@@ -601,12 +641,13 @@ function drawPieChart(stat) {
   color: #374151;
   font-weight: 500;
   transition: all 0.3s ease;
+  min-width: 200px;
 }
 
 .week-selector:focus {
   outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
 }
 
 /* 카드 공통 스타일 */
@@ -628,14 +669,18 @@ function drawPieChart(stat) {
 .chart-card:hover,
 .table-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 8px 30px rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.2);
 }
 
 /* 카드 헤더 */
 .card-header {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
   padding: 1.25rem 1.5rem;
+}
+
+.nutrition-header {
+  background: linear-gradient(135deg, #34d399, #10b981);
 }
 
 .card-title {
@@ -734,29 +779,29 @@ function drawPieChart(stat) {
   opacity: 0.8;
 }
 
-/* 통계별 색상 */
+/* 통계별 색상 - 파스텔 톤 */
 .week-stat {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid #93c5fd;
 }
 
 .score-stat {
-  border-left: 4px solid #10b981;
+  border-left: 4px solid #a7f3d0;
 }
 
 .calorie-stat {
-  border-left: 4px solid #f59e0b;
+  border-left: 4px solid #fde68a;
 }
 
 .carb-stat {
-  border-left: 4px solid #eab308;
+  border-left: 4px solid #fef3c7;
 }
 
 .protein-stat {
-  border-left: 4px solid #ef4444;
+  border-left: 4px solid #fecaca;
 }
 
 .fat-stat {
-  border-left: 4px solid #8b5cf6;
+  border-left: 4px solid #ddd6fe;
 }
 
 /* 차트 섹션 */
@@ -767,7 +812,7 @@ function drawPieChart(stat) {
 }
 
 .chart-header {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #beb2e2, #a394c5);
   padding: 1.25rem 1.5rem;
 }
 
@@ -792,6 +837,51 @@ function drawPieChart(stat) {
 .chart-canvas {
   width: 100%;
   height: 250px;
+}
+
+.nutrition-info {
+  margin-bottom: 1rem;
+}
+
+.nutrition-guide {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: #d97706;
+  margin: 0 0 1rem 0;
+}
+
+.day-selector-wrapper {
+  margin-bottom: 1rem;
+}
+
+.day-selector {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(229, 231, 235, 0.8);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #374151;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.day-selector:focus {
+  outline: none;
+  border-color: #34d399;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1);
+}
+
+.pie-chart-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.pie-chart {
+  max-width: 300px;
+  max-height: 300px;
 }
 
 /* AI 피드백과 테이블 통합 섹션 */
@@ -819,18 +909,18 @@ function drawPieChart(stat) {
 }
 
 .warning-feedback {
-  background: rgba(254, 242, 242, 0.8);
-  border-left-color: #ef4444;
+  background: rgba(254, 226, 226, 0.5);
+  border-left-color: #fca5a5;
 }
 
 .tip-feedback {
-  background: rgba(239, 246, 255, 0.8);
-  border-left-color: #3b82f6;
+  background: rgba(219, 234, 254, 0.5);
+  border-left-color: #93c5fd;
 }
 
 .recommendation-feedback {
-  background: rgba(240, 253, 244, 0.8);
-  border-left-color: #10b981;
+  background: rgba(220, 252, 231, 0.5);
+  border-left-color: #a7f3d0;
 }
 
 .feedback-icon-wrapper {
@@ -866,7 +956,7 @@ function drawPieChart(stat) {
   background: rgba(255, 255, 255, 0.8);
   padding: 0.75rem;
   border-radius: 8px;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(52, 211, 153, 0.2);
 }
 
 .food-name {
@@ -880,86 +970,6 @@ function drawPieChart(stat) {
   font-size: 0.8rem;
   color: #059669;
   margin: 0;
-}
-
-/* 차트 섹션 */
-.charts-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-}
-
-.chart-header {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  padding: 1.25rem 1.5rem;
-}
-
-.chart-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: white;
-  margin: 0;
-}
-
-.chart-icon {
-  font-size: 1.1rem;
-}
-
-.chart-content {
-  padding: 1.5rem;
-}
-
-.chart-canvas {
-  width: 100%;
-  height: 250px;
-}
-
-.nutrition-info {
-  margin-bottom: 1rem;
-}
-
-.nutrition-guide {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 8px;
-  padding: 0.75rem;
-  font-size: 0.85rem;
-  color: #d97706;
-  margin: 0;
-}
-
-.day-selector-wrapper {
-  margin-bottom: 1rem;
-}
-
-.day-selector {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid rgba(229, 231, 235, 0.8);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #374151;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.day-selector:focus {
-  outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.pie-chart-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.pie-chart {
-  max-width: 300px;
-  max-height: 300px;
 }
 
 /* 테이블 */
@@ -1020,20 +1030,24 @@ function drawPieChart(stat) {
 }
 
 .ai-score {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(52, 211, 153, 0.1);
   color: #047857;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(52, 211, 153, 0.2);
 }
 
 .trainer-score {
-  background: rgba(59, 130, 246, 0.1);
-  color: #1d4ed8;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(147, 197, 253, 0.1);
+  color: #1e40af;
+  border: 1px solid rgba(147, 197, 253, 0.2);
 }
 
 /* 반응형 디자인 */
 @media (max-width: 1024px) {
   .charts-section {
+    grid-template-columns: 1fr;
+  }
+
+  .feedback-table-section {
     grid-template-columns: 1fr;
   }
 
@@ -1045,6 +1059,11 @@ function drawPieChart(stat) {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+  
+  .week-selector {
+    width: 100%;
+    min-width: auto;
   }
 }
 
@@ -1078,7 +1097,6 @@ function drawPieChart(stat) {
 }
 
 @media (max-width: 640px) {
-
   .summary-content,
   .feedback-content,
   .chart-content {
@@ -1124,7 +1142,6 @@ function drawPieChart(stat) {
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1135,7 +1152,6 @@ function drawPieChart(stat) {
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }

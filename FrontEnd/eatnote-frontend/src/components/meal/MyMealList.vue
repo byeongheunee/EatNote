@@ -31,7 +31,7 @@
       <div v-for="meal in visibleMeals" :key="meal.mealId" class="meal-card" @click="goToDetail(meal.mealId)">
         <div class="meal-image-container">
           <img :src="getImageUrl(meal.imageUrl)" alt="meal" class="meal-image" />
-          <div class="meal-type-badge">{{ mealTypeKor(meal.mealType) }}</div>
+          <div class="meal-type-badge">{{ getMealTypeEmoji(meal.mealType) }}</div>
         </div>
 
         <div class="meal-content">
@@ -103,6 +103,18 @@ const changeFilter = (code) => {
 const visibleMeals = computed(() => filteredMeals.value.slice(0, visibleCount.value))
 const formatDate = (datetime) => new Date(datetime).toLocaleDateString('ko-KR')
 const getImageUrl = (path) => `http://localhost:8080${path}`
+
+// 식사 타입에 따른 이모티콘
+const getMealTypeEmoji = (mealType) => {
+  switch (mealType) {
+    case 'breakfast': return '☀️' // 아침
+    case 'lunch': return '🍽️' // 점심  
+    case 'dinner': return '🌙' // 저녁
+    case 'extra': return '🍩' // 간식
+    default: return '🍽️'
+  }
+}
+
 const mealTypeKor = (type) => {
   switch (type) {
     case 'breakfast': return '아침'
@@ -153,14 +165,13 @@ function resetTime(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 }
 
-
-
 const goToDetail = (mealId) => router.push(`/meal/${mealId}`)
 
 onMounted(loadMyMeals)
 </script>
 
 <style scoped>
+/* 페이지 전체 */
 .my-meal-list {
   width: 100%;
   animation: fadeInUp 0.6s ease-out;
@@ -168,43 +179,40 @@ onMounted(loadMyMeals)
 
 /* 헤더 섹션 */
 .header-section {
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .section-title {
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 700;
-  color: #374151;
+  color: #2D1810;
   margin: 0;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .section-subtitle {
-  color: #6b7280;
-  font-size: 0.95rem;
+  color: #5D4037;
+  font-size: 15px;
   margin: 0;
+  line-height: 1.5;
 }
 
 .upload-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, #10b981, #059669);
+  gap: 8px;
+  background: linear-gradient(135deg, #7fc7ae, #5b9c88);
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 0.75rem 1.25rem;
-  font-size: 0.9rem;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -213,52 +221,51 @@ onMounted(loadMyMeals)
 }
 
 .upload-button:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #11946a, #0f7a5c);
+  transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
 }
 
 .button-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 /* 필터 섹션 */
 .filter-section {
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .filter-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .filter-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border: 2px solid rgba(229, 231, 235, 0.8);
-  background: rgba(255, 255, 255, 0.9);
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.8);
   color: #6b7280;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 14px;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
 }
 
 .filter-button:hover {
-  border-color: rgba(245, 158, 11, 0.5);
-  background: rgba(255, 255, 255, 1);
+  border-color: #f59e0b;
+  background: white;
   color: #374151;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
 }
 
 .filter-button.active {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, #f3ae36, #ee9024);
   border-color: #f59e0b;
   color: white;
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
@@ -266,32 +273,31 @@ onMounted(loadMyMeals)
 }
 
 .filter-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 /* 식단 그리드 */
 .meals-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .meal-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .meal-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 12px 35px rgba(245, 158, 11, 0.2);
+  border-color: #f59e0b;
 }
 
 .meal-image-container {
@@ -316,116 +322,123 @@ onMounted(loadMyMeals)
   position: absolute;
   top: 12px;
   right: 12px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9));
-  color: white;
-  padding: 0.375rem 0.75rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  backdrop-filter: blur(5px);
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  font-size: 1rem;
+}
+
+.meal-card:hover .meal-type-badge {
+  transform: scale(1.1);
 }
 
 .meal-content {
-  padding: 1.25rem;
+  padding: 20px;
 }
 
 .meal-title {
-  font-size: 1.1rem;
+  font-size: 18px;
   font-weight: 700;
   color: #374151;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 8px 0;
   line-height: 1.4;
 }
 
 .meal-date {
   color: #6b7280;
-  font-size: 0.85rem;
-  margin: 0 0 0.75rem 0;
+  font-size: 14px;
+  margin: 0 0 12px 0;
 }
 
 .meal-info {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .calorie-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.1));
-  padding: 0.5rem 0.75rem;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .calorie-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .calorie-text {
   font-weight: 600;
   color: #d97706;
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 .meal-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(229, 231, 235, 0.5);
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .feedback-count {
   display: flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 6px;
   color: #6b7280;
-  font-size: 0.85rem;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .feedback-icon {
-  font-size: 0.9rem;
+  font-size: 14px;
 }
 
 /* 빈 상태 */
 .empty-state {
   text-align: center;
-  padding: 3rem 1rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
+  padding: 48px 16px;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 16px;
   border: 2px dashed rgba(245, 158, 11, 0.3);
 }
 
 .empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+  font-size: 64px;
+  margin-bottom: 16px;
   opacity: 0.7;
 }
 
 .empty-title {
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 700;
   color: #374151;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 8px 0;
 }
 
 .empty-description {
   color: #6b7280;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 24px 0;
 }
 
 .empty-upload-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: white;
   border: none;
   border-radius: 12px;
-  padding: 0.875rem 1.5rem;
-  font-size: 0.9rem;
+  padding: 14px 24px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -434,27 +447,26 @@ onMounted(loadMyMeals)
 
 .empty-upload-button:hover {
   background: linear-gradient(135deg, #d97706, #b45309);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
 }
 
 /* 더보기 버튼 */
 .load-more-section {
   text-align: center;
-  padding-top: 1rem;
+  padding-top: 16px;
 }
 
 .load-more-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
-  backdrop-filter: blur(10px);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.8);
   color: #6b7280;
-  border: 2px solid rgba(229, 231, 235, 0.8);
+  border: 2px solid #e5e7eb;
   border-radius: 12px;
-  padding: 0.875rem 1.5rem;
-  font-size: 0.9rem;
+  padding: 14px 24px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -464,29 +476,29 @@ onMounted(loadMyMeals)
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: white;
   border-color: #f59e0b;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
 }
 
 .load-more-icon {
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;
-    gap: 1rem;
+    gap: 16px;
     align-items: flex-start;
   }
 
   .section-title {
-    font-size: 1.25rem;
+    font-size: 20px;
   }
 
   .meals-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 16px;
   }
 
   .filter-buttons {
@@ -501,25 +513,25 @@ onMounted(loadMyMeals)
 
 @media (max-width: 640px) {
   .upload-button {
-    padding: 0.625rem 1rem;
-    font-size: 0.85rem;
+    padding: 10px 16px;
+    font-size: 14px;
   }
 
   .filter-button {
-    padding: 0.625rem 1rem;
-    font-size: 0.85rem;
+    padding: 10px 16px;
+    font-size: 14px;
   }
 
   .meal-content {
-    padding: 1rem;
+    padding: 16px;
   }
 
   .empty-state {
-    padding: 2rem 1rem;
+    padding: 32px 16px;
   }
 
   .empty-icon {
-    font-size: 3rem;
+    font-size: 48px;
   }
 }
 
@@ -529,7 +541,6 @@ onMounted(loadMyMeals)
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);

@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-3 right-6 z-50">
+  <div class="fixed top-4 right-6 notification-container">
     <div class="relative" ref="dropdownRef">
       <!-- 알림 아이콘 버튼 -->
       <button
@@ -333,6 +333,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 전체 컨테이너 - z-index 높게 설정 */
+.notification-container {
+  z-index: 9999;
+}
+
 /* 알림 버튼 */
 .notification-button {
   position: relative;
@@ -400,7 +405,7 @@ onUnmounted(() => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  backdrop-filter: blur(10px);
+  z-index: 10000;
 }
 
 /* 헤더 */

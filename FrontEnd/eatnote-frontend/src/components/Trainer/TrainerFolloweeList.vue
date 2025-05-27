@@ -159,6 +159,8 @@ const getStatusEmoji = (user) => {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin-top: 10px;
+  margin-left: 5px;
 }
 
 .followee-card:hover {
