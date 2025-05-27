@@ -106,7 +106,7 @@ const handleLogout = () => {
 .page-header {
   margin-bottom: 48px;
   padding-bottom: 24px;
-  border-bottom: 2px solid #0c0c0c;
+  border-bottom: 2px solid #d1a735;
 }
 
 .header-content {

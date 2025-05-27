@@ -260,9 +260,9 @@
           ⚠️ 트레이너 닉네임 확인을 눌러주세요.
         </p>
       </div>
-      <p v-if="errors.trainerNickname" class="error-message">
+      <!-- <p v-if="errors.trainerNickname" class="error-message">
         트레이너 닉네임을 입력한 경우 반드시 확인 버튼을 눌러서 검증해주세요.
-      </p>
+      </p> -->
     </div>
 
     <!-- 알레르기 섹션 -->

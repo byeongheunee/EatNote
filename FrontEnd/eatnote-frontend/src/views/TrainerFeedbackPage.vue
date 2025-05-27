@@ -15,7 +15,7 @@
         <!-- 유저 목록 섹션 -->
         <section class="user-list-section">
           <div class="section-header">
-            <h2 class="section-title">팔로워 목록</h2>
+            <h2 class="section-title">관리중인 회원 목록</h2>
             <div class="section-badge">
               <div class="pulse-dot blue"></div>
               <span class="badge-text">{{ users.length }}명</span>
