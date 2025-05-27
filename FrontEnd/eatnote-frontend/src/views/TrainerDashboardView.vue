@@ -110,6 +110,7 @@ const updateFollowRequestCount = (count) => {
 <style scoped>
 /* 페이지 전체 배경 - 멤버와 동일한 베이지 톤 */
 .trainer-dashboard-page {
+  padding-top: 80px; /* 헤더 높이만큼 여백 */
   min-height: 100vh;
   background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }

@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="p-4">
     <h2 class="text-xl font-bold mb-4">식단 목록</h2>
     <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -69,4 +69,4 @@ const goToDetail = (mealId) => router.push(`/meal/${mealId}`)
 
 <style scoped>
 /* 필요 시 스타일 추가 */
-</style>
+</style> -->

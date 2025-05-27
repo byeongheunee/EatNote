@@ -492,6 +492,7 @@ onMounted(async () => {
 <style scoped>
 /* 기본 레이아웃 */
 .my-page {
+  padding-top: 80px; /* 헤더 높이만큼 여백 */
   min-height: 100vh;
   background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }

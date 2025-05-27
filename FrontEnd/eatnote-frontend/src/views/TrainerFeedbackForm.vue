@@ -332,6 +332,7 @@ onMounted(async () => {
 <style scoped>
 /* 페이지 전체 배경 - 베이지 톤으로 통일 */
 .feedback-form-page {
+  padding-top: 80px; /* 헤더 높이만큼 여백 */
   min-height: 100vh;
   background: linear-gradient(135deg, #faf7f2 0%, #faf7f2 100%);
 }
