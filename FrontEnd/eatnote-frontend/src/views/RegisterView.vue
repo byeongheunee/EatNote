@@ -133,9 +133,46 @@
                   <span class="label-icon">📧</span>
                   이메일
                 </label>
-                <input v-model="form.email" type="email" class="form-input" :class="{ 'error': errors.email }"
-                  placeholder="your@email.com" />
+                <div class="flex gap-2">
+                  <input v-model="form.email" type="email" class="form-input flex-1" 
+                    :class="{ 'error': errors.email }" placeholder="your@email.com" 
+                    :disabled="emailVerified" />
+                  <button type="button" @click="checkEmail" class="email-check-btn" 
+                    :disabled="!form.email || emailChecking || emailVerified">
+                    <span v-if="emailChecking">확인중...</span>
+                    <span v-else-if="emailVerified">✓ 완료</span>
+                    <span v-else>중복확인</span>
+                  </button>
+                </div>
                 <p v-if="errors.email" class="error-message">이메일은 필수 입력 항목입니다.</p>
+                <p v-if="emailMessage" :class="emailAvailable ? 'success-message' : 'error-message'">
+                  {{ emailMessage }}
+                </p>
+                
+                <!-- 이메일 인증 -->
+                <div v-if="emailAvailable && !emailVerified" class="email-auth-section">
+                  <button type="button" @click="sendAuthCode" class="send-code-btn" 
+                    :disabled="codeSending || authCodeSent">
+                    <span v-if="codeSending">전송 중...</span>
+                    <span v-else-if="authCodeSent">✓ 전송 완료</span>
+                    <span v-else>📨 인증 코드 전송</span>
+                  </button>
+                  
+                  <div v-if="authCodeSent" class="auth-code-input">
+                    <div class="flex gap-2">
+                      <input v-model="authCode" type="text" maxlength="6" 
+                        class="form-input flex-1" placeholder="6자리 인증 코드 입력"
+                        :class="{ 'error': authCodeError }" />
+                      <button type="button" @click="verifyAuthCode" class="verify-code-btn"
+                        :disabled="!authCode || authCode.length !== 6 || codeVerifying">
+                        <span v-if="codeVerifying">인증 중...</span>
+                        <span v-else>인증하기</span>
+                      </button>
+                    </div>
+                    <p v-if="authCodeError" class="error-message">{{ authCodeError }}</p>
+                    <p v-if="authCodeMessage" class="success-message">{{ authCodeMessage }}</p>
+                  </div>
+                </div>
               </div>
 
               <!-- 비밀번호 -->
@@ -339,6 +376,18 @@ const errors = ref({
 const nicknameAvailable = ref(null)
 const nicknameMessage = ref('')
 
+// 이메일 인증 관련 상태
+const emailAvailable = ref(null)
+const emailMessage = ref('')
+const emailChecking = ref(false)
+const emailVerified = ref(false)
+const authCodeSent = ref(false)
+const codeSending = ref(false)
+const codeVerifying = ref(false)
+const authCode = ref('')
+const authCodeError = ref('')
+const authCodeMessage = ref('')
+
 const goHome = () => {
   router.push('/')
 }
@@ -384,6 +433,12 @@ const goToNextStep = () => {
 
   if (nicknameAvailable.value !== true) {
     toast.warning('닉네임 중복 확인을 해주세요.')
+    return
+  }
+
+  // 이메일 인증 확인 체크
+  if (!emailVerified.value) {
+    toast.warning('이메일 인증을 완료해주세요.')
     return
   }
 
@@ -473,6 +528,77 @@ const checkNickname = async () => {
   } catch (err) {
     nicknameAvailable.value = false
     nicknameMessage.value = '이미 사용 중인 닉네임입니다.'
+  }
+}
+
+// 이메일 중복 확인
+const checkEmail = async () => {
+  if (!form.value.email) {
+    emailMessage.value = '이메일을 입력해주세요.'
+    emailAvailable.value = false
+    return
+  }
+
+  emailChecking.value = true
+  emailMessage.value = ''
+
+  try {
+    const response = await axios.get(`/api/users/check-email?email=${form.value.email}`)
+    emailAvailable.value = true
+    emailMessage.value = '사용 가능한 이메일입니다.'
+  } catch (error) {
+    emailAvailable.value = false
+    emailMessage.value = '이미 사용 중인 이메일입니다.'
+  } finally {
+    emailChecking.value = false
+  }
+}
+
+// 인증 코드 발송
+const sendAuthCode = async () => {
+  if (!emailAvailable.value) {
+    toast.error('이메일 중복 확인을 먼저 해주세요.')
+    return
+  }
+
+  codeSending.value = true
+
+  try {
+    await axios.post(`/api/users/send-code?email=${form.value.email}`)
+    authCodeSent.value = true
+    toast.success('인증 코드가 이메일로 전송되었습니다.')
+  } catch (error) {
+    console.error('인증 코드 발송 실패:', error)
+    toast.error('인증 코드 발송에 실패했습니다.')
+  } finally {
+    codeSending.value = false
+  }
+}
+
+// 인증 코드 검증
+const verifyAuthCode = async () => {
+  if (!authCode.value || authCode.value.length !== 6) {
+    authCodeError.value = '6자리 인증 코드를 입력해주세요.'
+    return
+  }
+
+  codeVerifying.value = true
+  authCodeError.value = ''
+
+  try {
+    await axios.post('/api/users/verify-code', {
+      email: form.value.email,
+      code: authCode.value
+    })
+    
+    emailVerified.value = true
+    authCodeMessage.value = '이메일 인증이 완료되었습니다.'
+    toast.success('이메일 인증이 완료되었습니다! 🎉')
+  } catch (error) {
+    console.error('인증 코드 검증 실패:', error)
+    authCodeError.value = '인증 코드가 올바르지 않거나 만료되었습니다.'
+  } finally {
+    codeVerifying.value = false
   }
 }
 
@@ -830,8 +956,6 @@ onMounted(() => {
   }
 }
 
-/* 삼각형 네비게이션 버튼 제거 - 일반 버튼으로 교체됨 */
-
 /* 입력 카드 스타일 */
 .input-card {
   background: rgba(255, 255, 255, 0.6);
@@ -931,7 +1055,8 @@ onMounted(() => {
   font-size: 0.75rem;
 }
 
-/* 중복확인 버튼 */
+/* 이메일 및 닉네임 중복확인 버튼 */
+.email-check-btn,
 .nickname-check-btn {
   padding: 0.875rem 1rem;
   background-color: #f3f4f6;
@@ -942,13 +1067,87 @@ onMounted(() => {
   font-weight: 600;
   transition: all 0.3s ease;
   white-space: nowrap;
-  min-width: 70px;
+  min-width: 85px;
 }
 
+.email-check-btn:hover,
 .nickname-check-btn:hover {
   background-color: #e5e7eb;
   border-color: #d1d5db;
   transform: translateY(-1px);
+}
+
+.email-check-btn:disabled,
+.nickname-check-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 이메일 인증 섹션 */
+.email-auth-section {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(249, 250, 251, 0.8);
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+/* 인증 코드 전송 버튼 */
+.send-code-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(to right, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.send-code-btn:hover:not(:disabled) {
+  background: linear-gradient(to right, #2563eb, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.send-code-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 인증 코드 입력 영역 */
+.auth-code-input {
+  margin-top: 0.75rem;
+}
+
+/* 인증하기 버튼 */
+.verify-code-btn {
+  padding: 0.875rem 1rem;
+  background: linear-gradient(to right, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 85px;
+}
+
+.verify-code-btn:hover:not(:disabled) {
+  background: linear-gradient(to right, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.verify-code-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* 파일 업로드 영역 */
@@ -973,8 +1172,6 @@ onMounted(() => {
 .file-upload-selected {
   transition: all 0.3s ease;
 }
-
-/* 반응형 - 삼각형 버튼 관련 코드 제거됨 */
 
 /* 네비게이션 버튼 */
 .nav-btn {
