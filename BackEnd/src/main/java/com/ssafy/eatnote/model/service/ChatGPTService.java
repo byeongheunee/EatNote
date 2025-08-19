@@ -32,7 +32,7 @@ import com.ssafy.eatnote.model.dto.response.WeeklyNutritionStatsResponse;
 @Service
 public class ChatGPTService {
 
-    private final String API_KEY = "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";
+    private final String API_KEY = ;
     private final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     private final RestTemplate restTemplate;
