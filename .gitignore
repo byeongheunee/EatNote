@@ -54,3 +54,6 @@ Thumbs.db
 /output/
 /output/**
 BackEnd/bin/
+eatnote-uploads.zip
+BackEnd/src/main/resources/eatnote-uploads.zip
+BackEnd/analyzer-python/weights/best.pt
